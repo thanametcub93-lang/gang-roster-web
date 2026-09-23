@@ -51,8 +51,7 @@ def load_gang_data():
                     "role_desc": "ผู้บัญชาการสูงสุด",
                     "status": "online",
                     "joined_date": "2026-01-01",
-                    "weapon": "Heavy Rifle & Katana",
-                    "note": "ผู้ก่อตั้งแก๊ง"
+                    "weapon": "Heavy Rifle & Katana"
                 }
             ]
         }
