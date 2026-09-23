@@ -1510,12 +1510,24 @@
         </div>
       </div>
 
-      <button class="btn btn-secondary" onclick="openAttendanceModal()" style="border-color: rgba(245, 158, 11, 0.4); color: #fef08a;" title="ระบบเช็คชื่อรวมพล & ดูประวัติ Log">
-        <i class="fa-solid fa-calendar-check" style="color: #f59e0b;"></i> <span>เช็คชื่อรวมพล</span>
-      </button>
+      <!-- Admin Action Group: ซ่อนไว้เป็นค่าเริ่มต้น (จะแสดงขึ้นมาเฉพาะตอนใส่รหัส Admin สำเร็จ) -->
+      <div id="adminActionGroup" style="display: none; align-items: center; gap: 8px;">
+        <button class="btn btn-secondary" onclick="openAttendanceModal()" style="border-color: rgba(245, 158, 11, 0.4); color: #fef08a;" title="ระบบเช็คชื่อรวมพล & ดูประวัติ Log">
+          <i class="fa-solid fa-calendar-check" style="color: #f59e0b;"></i> <span>เช็คชื่อรวมพล</span>
+        </button>
 
-      <button class="btn btn-editor" id="btnEditorToggle" onclick="handleEditorButtonClick()">
-        <i class="fa-solid fa-lock"></i> <span id="btnEditorText">ใส่รหัสปรับแต่ง</span>
+        <button class="btn btn-editor-active" id="btnEditorToggle" onclick="handleEditorButtonClick()" title="จัดการแก๊ง / ปิด-เปิดแถบเครื่องมือ">
+          <i class="fa-solid fa-gear"></i> <span id="btnEditorText">จัดการแก๊ง (Admin)</span>
+        </button>
+
+        <button class="btn btn-secondary" onclick="adminLogout()" style="padding: 8px 12px; color: #f87171; border-color: rgba(239, 68, 68, 0.3); font-size: 0.85rem;" title="ออกจากระบบ Admin (ซ่อนปุ่มทั้งหมด)">
+          <i class="fa-solid fa-right-from-bracket"></i>
+        </button>
+      </div>
+
+      <!-- Admin Login Button (แสดงตอนยังไม่ได้ล็อกอิน admin) -->
+      <button class="btn btn-secondary" id="btnAdminLoginTrigger" onclick="openAdminLoginModal()" style="border-color: rgba(255, 255, 255, 0.12); color: #cbd5e1; font-size: 0.82rem; padding: 7px 14px; display: inline-flex; align-items: center; gap: 6px;" title="เข้าสู่ระบบ Admin (เฉพาะเจ้าของ)">
+        <i class="fa-solid fa-shield-halved" style="color: #f59e0b;"></i> <span>Admin</span>
       </button>
     </div>
   </nav>
@@ -1640,19 +1652,19 @@
 
   <!-- ==================== MODALS ==================== -->
 
-  <!-- Passcode Login Modal -->
+  <!-- Admin Passcode Login Modal -->
   <div class="modal-backdrop" id="passcodeModal">
     <div class="modal-dialog" style="max-width: 440px;">
       <div class="modal-title">
-        <i class="fa-solid fa-shield-halved" style="color: var(--primary);"></i>
-        <span>เข้าสู่โหมดปรับแต่ง</span>
+        <i class="fa-solid fa-crown" style="color: #f59e0b;"></i>
+        <span>เข้าสู่ระบบ Admin (เฉพาะเจ้าของ)</span>
       </div>
-      <p class="modal-subtitle">กรุณากรอกรหัสผ่านสำหรับแก้ไขข้อมูลและปรับแต่งรายชื่อแก๊ง</p>
+      <p class="modal-subtitle">กรุณากรอกรหัสผ่านลับ Admin เพื่อปลดล็อคระบบเช็คชื่อรวมพลและการปรับแต่งข้อมูลแก๊ง</p>
 
       <div class="form-group">
-        <label class="form-label">รหัสผ่านผู้ดูแล (Editor Passcode)</label>
+        <label class="form-label">รหัสผ่าน Admin ลับ (Master Passcode)</label>
         <div style="position: relative;">
-          <input type="password" id="passcodeInput" class="form-control" placeholder="กรอกรหัสผ่าน (รหัสเริ่มต้น: gang123)" onkeypress="if(event.key === 'Enter') submitPasscode()">
+          <input type="password" id="passcodeInput" class="form-control" placeholder="กรอกรหัสผ่าน Admin..." onkeypress="if(event.key === 'Enter') submitPasscode()">
           <i class="fa-solid fa-eye" id="togglePassEye" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--text-muted);" onclick="togglePasswordVisibility()"></i>
         </div>
         <div id="passcodeError" style="color: #f87171; font-size: 0.85rem; margin-top: 6px; display: none;"></div>
@@ -1661,7 +1673,7 @@
       <div class="modal-footer">
         <button class="btn btn-secondary" onclick="closeModal('passcodeModal')">ยกเลิก</button>
         <button class="btn btn-primary" onclick="submitPasscode()" id="btnSubmitPasscode">
-          <i class="fa-solid fa-key"></i> <span>เข้าสู่ระบบ</span>
+          <i class="fa-solid fa-key"></i> <span>ปลดล็อคระบบ</span>
         </button>
       </div>
     </div>
@@ -2066,7 +2078,7 @@
     };
 
     let isEditorActive = false;
-    let currentPasscode = sessionStorage.getItem("standalone_gang_pass") || "";
+    let currentPasscode = localStorage.getItem("sb577_admin_pass") || sessionStorage.getItem("standalone_gang_pass") || "";
     let selectedRoleFilter = "all";
 
     // Instant local cache restore
@@ -2081,9 +2093,7 @@
       renderAll();
       fetchGangData();
       applyMusicVolume(currentVolume);
-      if (currentPasscode) {
-        verifySavedPasscode();
-      }
+      verifySavedPasscode();
     });
 
     async function fetchGangData() {
@@ -2246,15 +2256,51 @@
       grid.innerHTML = cardsHtml;
     }
 
-    // ==================== AUTH & PASSCODE ====================
+    // ==================== AUTH & ADMIN SYSTEM ====================
+
+    function openAdminLoginModal() {
+      const errEl = document.getElementById("passcodeError");
+      if (errEl) errEl.style.display = "none";
+      const inp = document.getElementById("passcodeInput");
+      if (inp) inp.value = "";
+      openModal("passcodeModal");
+      setTimeout(() => { if (inp) inp.focus(); }, 150);
+    }
 
     function handleEditorButtonClick() {
-      if (isEditorActive) {
-        logoutEditor();
-      } else {
-        openModal('passcodeModal');
-        document.getElementById('passcodeInput').focus();
+      const strip = document.getElementById("editorStrip");
+      if (strip) {
+        strip.style.display = strip.style.display === "none" ? "flex" : "none";
       }
+    }
+
+    function setAdminMode(active) {
+      isEditorActive = active;
+      const adminGroup = document.getElementById("adminActionGroup");
+      const loginBtn = document.getElementById("btnAdminLoginTrigger");
+      const strip = document.getElementById("editorStrip");
+      const btnText = document.getElementById("btnEditorText");
+
+      if (active) {
+        if (adminGroup) adminGroup.style.display = "inline-flex";
+        if (loginBtn) loginBtn.style.display = "none";
+        if (strip) strip.style.display = "flex";
+        if (btnText) btnText.textContent = "จัดการแก๊ง (Admin)";
+      } else {
+        if (adminGroup) adminGroup.style.display = "none";
+        if (loginBtn) loginBtn.style.display = "inline-flex";
+        if (strip) strip.style.display = "none";
+        if (btnText) btnText.textContent = "ใส่รหัสปรับแต่ง";
+      }
+      renderRoster();
+    }
+
+    function adminLogout() {
+      currentPasscode = "";
+      localStorage.removeItem("sb577_admin_pass");
+      sessionStorage.removeItem("standalone_gang_pass");
+      setAdminMode(false);
+      showToast("🔒 ออกจากระบบ Admin เรียบร้อยแล้ว (ซ่อนปุ่มทั้งหมด)");
     }
 
     async function submitPasscode() {
@@ -2263,13 +2309,13 @@
       const btn = document.getElementById("btnSubmitPasscode");
 
       if (!input) {
-        errEl.textContent = "กรุณากรอกรหัสผ่าน";
+        errEl.textContent = "กรุณากรอกรหัสผ่าน Admin";
         errEl.style.display = "block";
         return;
       }
 
       btn.disabled = true;
-      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> ตรวจสอบ...`;
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> ตรวจสอบสิทธิ์ Admin...`;
 
       try {
         const res = await fetch("/api/gang/auth", {
@@ -2279,76 +2325,51 @@
         });
         const json = await res.json();
 
-        if (json.success) {
+        if (json.success && json.is_admin) {
           currentPasscode = input;
+          localStorage.setItem("sb577_admin_pass", input);
           sessionStorage.setItem("standalone_gang_pass", input);
-          setEditorMode(true);
+          setAdminMode(true);
           closeModal("passcodeModal");
-          showToast("🔓 เข้าสู่โหมดปรับแต่งเรียบร้อยแล้ว!");
+          showToast("👑 ยินดีต้อนรับ Admin สูงสุด! ปลดล็อคระบบเช็คชื่อและปรับแต่งแก๊งแล้ว");
         } else {
-          errEl.textContent = json.error || "รหัสผ่านไม่ถูกต้อง";
+          errEl.textContent = json.error || "รหัสผ่านไม่ถูกต้อง (เฉพาะ Admin สูงสุดเท่านั้น)";
           errEl.style.display = "block";
         }
       } catch (e) {
-        // Fallback check
-        if (input === "gang123" || input === "admin" || input === "123" || input === "dekrew888") {
-          currentPasscode = input;
-          sessionStorage.setItem("standalone_gang_pass", input);
-          setEditorMode(true);
-          closeModal("passcodeModal");
-          showToast("🔓 เข้าสู่โหมดปรับแต่งเรียบร้อยแล้ว!");
-        } else {
-          errEl.textContent = "รหัสผ่านไม่ถูกต้อง หรือไม่สามารถเชื่อมต่อเซิร์ฟเวอร์";
-          errEl.style.display = "block";
-        }
+        errEl.textContent = "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์เพื่อตรวจสอบรหัสได้";
+        errEl.style.display = "block";
       } finally {
         btn.disabled = false;
-        btn.innerHTML = `<i class="fa-solid fa-key"></i> <span>เข้าสู่ระบบ</span>`;
+        btn.innerHTML = `<i class="fa-solid fa-key"></i> <span>ปลดล็อคระบบ</span>`;
       }
     }
 
     async function verifySavedPasscode() {
-      if (!currentPasscode) return;
+      const savedPass = localStorage.getItem("sb577_admin_pass") || sessionStorage.getItem("standalone_gang_pass") || currentPasscode;
+      if (!savedPass) {
+        setAdminMode(false);
+        return;
+      }
       try {
         const res = await fetch("/api/gang/auth", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ passcode: currentPasscode })
+          body: JSON.stringify({ passcode: savedPass })
         });
         const json = await res.json();
-        if (json.success) {
-          setEditorMode(true);
+        if (json.success && json.is_admin) {
+          currentPasscode = savedPass;
+          setAdminMode(true);
         } else {
-          logoutEditor();
+          adminLogout();
         }
       } catch (e) {
-        setEditorMode(true);
+        if (savedPass) {
+          currentPasscode = savedPass;
+          setAdminMode(true);
+        }
       }
-    }
-
-    function setEditorMode(active) {
-      isEditorActive = active;
-      const btn = document.getElementById("btnEditorToggle");
-      const btnText = document.getElementById("btnEditorText");
-      const strip = document.getElementById("editorStrip");
-
-      if (active) {
-        btn.className = "btn btn-editor-active";
-        btnText.textContent = "🔓 โหมดแก้ไข (เปิดอยู่)";
-        strip.style.display = "flex";
-      } else {
-        btn.className = "btn btn-editor";
-        btnText.textContent = "ใส่รหัสปรับแต่ง";
-        strip.style.display = "none";
-      }
-      renderRoster();
-    }
-
-    function logoutEditor() {
-      currentPasscode = "";
-      sessionStorage.removeItem("standalone_gang_pass");
-      setEditorMode(false);
-      showToast("🔒 ออกจากโหมดปรับแต่งเรียบร้อยแล้ว");
     }
 
     // ==================== MEMBER CRUD ====================

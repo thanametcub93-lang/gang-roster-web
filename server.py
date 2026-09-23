@@ -272,10 +272,10 @@ class GangRequestHandler(SimpleHTTPRequestHandler):
             input_pass = str(body.get("passcode", "")).strip()
             data = load_gang_data()
             correct_pass = str(data.get("passcode", "gang123")).strip()
-            if input_pass == correct_pass or input_pass in ["admin", "123", "dekrew888"]:
-                self.send_json_response(200, {"success": True, "message": "รหัสผ่านถูกต้อง ยินดีต้อนรับเข้าสู่โหมดปรับแต่ง"})
+            if input_pass and input_pass == correct_pass:
+                self.send_json_response(200, {"success": True, "is_admin": True, "message": "ยืนยันสิทธิ์ Admin สูงสุดเรียบร้อย"})
             else:
-                self.send_json_response(401, {"success": False, "error": "รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง"})
+                self.send_json_response(401, {"success": False, "error": "รหัสผ่าน Admin ไม่ถูกต้อง คุณไม่มีสิทธิ์เข้าถึงระบบนี้"})
             return
 
         elif clean_path == "/api/gang/update":
@@ -283,15 +283,8 @@ class GangRequestHandler(SimpleHTTPRequestHandler):
             data = load_gang_data()
             correct_pass = str(data.get("passcode", "gang123")).strip()
             
-            # Allow correct passcode, default gang123, or admin bypass
-            is_authorized = (
-                input_pass == correct_pass or
-                input_pass in ["admin", "123", "dekrew888", "gang123"] or
-                (not input_pass and correct_pass == "gang123")
-            )
-
-            if not is_authorized:
-                self.send_json_response(401, {"success": False, "error": "รหัสผ่านไม่ถูกต้อง ไม่มีสิทธิ์แก้ไข"})
+            if not input_pass or input_pass != correct_pass:
+                self.send_json_response(401, {"success": False, "error": "รหัสผ่านไม่ถูกต้อง คุณไม่มีสิทธิ์แก้ไขข้อมูล"})
                 return
 
             updated_data = body.get("gang_data", {})
@@ -308,7 +301,7 @@ class GangRequestHandler(SimpleHTTPRequestHandler):
             data = load_gang_data()
             correct_pass = str(data.get("passcode", "gang123")).strip()
 
-            if old_pass != correct_pass and old_pass not in ["admin", "123", "dekrew888"]:
+            if not old_pass or old_pass != correct_pass:
                 self.send_json_response(401, {"success": False, "error": "รหัสผ่านเดิมไม่ถูกต้อง"})
                 return
 
@@ -433,8 +426,8 @@ class GangRequestHandler(SimpleHTTPRequestHandler):
             input_pass = str(body.get("passcode", "")).strip()
             data = load_gang_data()
             correct_pass = str(data.get("passcode", "gang123")).strip()
-            if input_pass != correct_pass and input_pass not in ["admin", "123", "dekrew888", "gang123"]:
-                self.send_json_response(401, {"success": False, "error": "รหัสผ่านไม่ถูกต้อง"})
+            if not input_pass or input_pass != correct_pass:
+                self.send_json_response(401, {"success": False, "error": "เฉพาะ Admin สูงสุดเท่านั้นที่มีสิทธิ์ลบประวัติ Log"})
                 return
 
             log_id = body.get("log_id", "")
