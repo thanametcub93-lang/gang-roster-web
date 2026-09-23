@@ -30,9 +30,9 @@ def load_gang_data():
             "logo_url": "https://cdn.discordapp.com/embed/avatars/0.png",
             "banner_url": "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=1600&auto=format&fit=crop&q=80",
             "theme_color": "#e11d48",
-            "song_url": "",
-            "song_title": "เพลงประจำแก๊ง SPONGEBOB",
-            "song_autoplay": False,
+            "song_url": "https://www.youtube.com/watch?v=tQz93eTCpSA",
+            "song_title": "Lana Del Rey - Cinnamon Girl",
+            "song_autoplay": True,
             "passcode": "gang123",
             "roles": [
                 {"name": "👑 หัวหน้าแก๊ง (Leader)", "color": "#f59e0b", "priority": 1},

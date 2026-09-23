@@ -1311,9 +1311,9 @@
       slogan: "NEW GEN",
       logo_url: "https://cdn.discordapp.com/embed/avatars/0.png",
       banner_url: "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=1600&auto=format&fit=crop&q=80",
-      song_url: "",
-      song_title: "เพลงประจำแก๊ง SPONGEBOB",
-      song_autoplay: false,
+      song_url: "https://www.youtube.com/watch?v=tQz93eTCpSA",
+      song_title: "Lana Del Rey - Cinnamon Girl",
+      song_autoplay: true,
       roles: [
         {"name": "👑 หัวหน้าแก๊ง (Leader)", "color": "#f59e0b"},
         {"name": "⚔️ รองหัวหน้า (Co-Leader)", "color": "#ef4444"},
@@ -1974,15 +1974,30 @@
       const titleSpan = document.getElementById("floatingMediaSongName");
       if (!card || !body) return;
 
-      titleSpan.textContent = GANG_DATA.song_title || "เพลงประจำแก๊ง SPONGEBOB 577";
+      titleSpan.textContent = GANG_DATA.song_title || "Lana Del Rey - Cinnamon Girl";
 
-      if (media.type === "spotify") {
+      if (media.type === "youtube") {
+        body.innerHTML = `
+          <div class="media-embed-wrapper" style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:12px;">
+            <iframe id="ytIframePlayer" src="https://www.youtube.com/embed/${media.id}?autoplay=1&enablejsapi=1&loop=1&playlist=${media.id}" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          </div>
+        `;
+        card.style.display = "block";
+        isMusicPlaying = true;
+        document.getElementById("musicWidget")?.classList.add("playing");
+        const icon = document.getElementById("musicPlayIcon");
+        if (icon) icon.className = "fa-solid fa-pause";
+      } else if (media.type === "spotify") {
         body.innerHTML = `
           <div class="media-embed-wrapper">
             <iframe style="border-radius:12px" src="https://open.spotify.com/embed/${media.kind}/${media.id}?utm_source=generator&theme=0" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
           </div>
         `;
         card.style.display = "block";
+        isMusicPlaying = true;
+        document.getElementById("musicWidget")?.classList.add("playing");
+        const icon = document.getElementById("musicPlayIcon");
+        if (icon) icon.className = "fa-solid fa-pause";
       } else if (media.type === "soundcloud") {
         body.innerHTML = `
           <div class="media-embed-wrapper">
@@ -1990,6 +2005,10 @@
           </div>
         `;
         card.style.display = "block";
+        isMusicPlaying = true;
+        document.getElementById("musicWidget")?.classList.add("playing");
+        const icon = document.getElementById("musicPlayIcon");
+        if (icon) icon.className = "fa-solid fa-pause";
       }
     }
 
@@ -2005,7 +2024,7 @@
       }
 
       widget.style.display = "flex";
-      title.textContent = GANG_DATA.song_title || "เพลงแก๊ง 577";
+      title.textContent = GANG_DATA.song_title || "Lana Del Rey - Cinnamon Girl";
 
       // Icon badge based on platform
       const parsed = media || parseMediaUrl(GANG_DATA.song_url);
@@ -2035,38 +2054,26 @@
       const widget = document.getElementById("musicWidget");
       const icon = document.getElementById("musicPlayIcon");
 
-      // 1. YouTube
-      if (media.type === "youtube") {
-        if (ytPlayer && ytPlayer.getPlayerState) {
-          const state = ytPlayer.getPlayerState();
-          if (state === YT.PlayerState.PLAYING) {
-            ytPlayer.pauseVideo();
-          } else {
-            ytPlayer.playVideo();
-          }
-        } else {
-          initYouTubePlayer(media.id);
-          showToast("▶️ กำลังเริ่มเล่นเพลงจาก YouTube...");
-        }
-        return;
-      }
-
-      // 2. Spotify / SoundCloud (Open/Toggle Floating Player)
-      if (media.type === "spotify" || media.type === "soundcloud") {
+      // 1. YouTube / Spotify / SoundCloud (Open/Toggle Floating Player)
+      if (media.type === "youtube" || media.type === "spotify" || media.type === "soundcloud") {
         const card = document.getElementById("floatingMediaCard");
         if (card) {
-          if (card.style.display === "none") {
+          const isCurrentlyHidden = card.style.display === "none" || !card.style.display;
+          if (isCurrentlyHidden) {
             renderEmbeddedPlayer(media);
             card.style.display = "block";
             card.classList.remove("minimized");
+            showToast("▶️ กำลังเล่นเพลง: " + (GANG_DATA.song_title || "Lana Del Rey"));
           } else {
             card.classList.toggle("minimized");
+            const isMin = card.classList.contains("minimized");
+            showToast(isMin ? "🔽 ย่อหน้าต่างเพลงแก๊ง" : "🔼 ขยายหน้าต่างเพลงแก๊ง");
           }
         }
         return;
       }
 
-      // 3. Direct Audio (.mp3)
+      // 2. Direct Audio (.mp3)
       const audio = document.getElementById("gangAudioPlayer");
       if (!audio) return;
       if (!audio.src || audio.src !== songUrl) {
