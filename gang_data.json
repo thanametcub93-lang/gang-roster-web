@@ -1,11 +1,14 @@
 {
-  "gang_name": "RONIN CLAN",
-  "gang_tag": "RONIN",
-  "slogan": "เกียรติยศ ศักดิ์ศรี และความจงรักภักดี",
-  "announcement": "ยินดีต้อนรับสู่ทำเนียบสมาชิกแก๊งอย่างเป็นทางการ",
+  "gang_name": "SPONGEBOB",
+  "gang_tag": "577",
+  "slogan": "NEW GEN",
+  "announcement": "ยินดีต้อนรับสู่ทำเนียบสมาชิกแก๊ง SPONGEBOB [577] อย่างเป็นทางการ",
   "logo_url": "https://cdn.discordapp.com/embed/avatars/0.png",
   "banner_url": "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=1600&auto=format&fit=crop&q=80",
   "theme_color": "#e11d48",
+  "song_url": "",
+  "song_title": "เพลงประจำแก๊ง SPONGEBOB",
+  "song_autoplay": false,
   "passcode": "gang123",
   "roles": [
     {
@@ -42,16 +45,16 @@
   "members": [
     {
       "id": "1",
-      "name": "Kuro Ronin",
-      "nickname": "คุโระ",
+      "name": "SPONGEBOB Leader",
+      "nickname": "บอส",
       "rank": "👑 หัวหน้าแก๊ง (Leader)",
-      "phone": "089-999-9999",
+      "phone": "577-999-9999",
       "discord_id": "1499880829055144107",
       "avatar": "https://cdn.discordapp.com/embed/avatars/0.png",
-      "role_desc": "ผู้บัญชาการสูงสุด",
+      "role_desc": "ผู้บัญชาการสูงสุด SPONGEBOB 577",
       "status": "online",
       "joined_date": "2026-01-01",
-      "weapon": "Heavy Rifle & Katana"
+      "weapon": "Heavy Rifle"
     }
   ]
 }
