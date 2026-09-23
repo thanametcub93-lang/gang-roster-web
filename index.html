@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,700&family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script src="https://www.youtube.com/iframe_api"></script>
   
   <style>
     :root {
@@ -218,6 +219,67 @@
       justify-content: center;
       font-size: 0.68rem;
       cursor: pointer;
+    }
+
+    /* Floating Media Player Card (YouTube / Spotify / SoundCloud) */
+    .floating-media-card {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      width: 350px;
+      background: rgba(16, 20, 31, 0.96);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid var(--border-highlight);
+      border-radius: 18px;
+      padding: 12px 14px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.65), 0 0 25px rgba(225, 29, 72, 0.3);
+      z-index: 1000;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: none;
+    }
+    .floating-media-card.minimized {
+      transform: translateY(calc(100% - 46px));
+      opacity: 0.92;
+    }
+    .floating-media-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--border);
+    }
+    .floating-media-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #cbd5e1;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 260px;
+    }
+    .floating-media-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.85rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      transition: color 0.2s;
+    }
+    .floating-media-btn:hover {
+      color: #fff;
+    }
+    .media-embed-wrapper {
+      border-radius: 12px;
+      overflow: hidden;
+      background: #000;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
     }
 
     .btn-editor {
@@ -855,6 +917,27 @@
   <!-- Audio Element -->
   <audio id="gangAudioPlayer" loop preload="auto"></audio>
 
+  <!-- Floating Media Player Drawer (for YouTube / Spotify / SoundCloud) -->
+  <div class="floating-media-card" id="floatingMediaCard">
+    <div class="floating-media-header">
+      <div class="floating-media-title" id="floatingMediaTitle">
+        <i class="fa-solid fa-music" style="color: var(--primary);"></i> <span id="floatingMediaSongName">เพลงประจำแก๊ง</span>
+      </div>
+      <div style="display: flex; gap: 4px;">
+        <button class="floating-media-btn" onclick="toggleMinimizeMediaCard()" title="ย่อ/ขยาย">
+          <i class="fa-solid fa-minus" id="btnMinimizeIcon"></i>
+        </button>
+        <button class="floating-media-btn" onclick="closeFloatingMediaCard()" title="ปิด">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+    </div>
+    <div id="floatingMediaBody">
+      <!-- Media Player iframe will be loaded here -->
+    </div>
+  </div>
+  <div id="ytHiddenContainer" style="position:fixed;bottom:-9999px;left:-9999px;width:1px;height:1px;opacity:0.01;pointer-events:none;"></div>
+
   <div class="container">
     <!-- Hero Banner -->
     <header class="hero-banner">
@@ -1120,13 +1203,18 @@
       <hr style="border: 0; border-top: 1px dashed rgba(255, 255, 255, 0.1); margin: 1.5rem 0;">
 
       <div style="font-weight: 700; color: #38bdf8; margin-bottom: 1rem; display: flex; align-items: center; gap: 8px;">
-        <i class="fa-solid fa-music"></i> <span>ระบบเพลงประจำแก๊ง (Gang Theme Song)</span>
+        <i class="fa-solid fa-music"></i> <span>ระบบเพลงประจำแก๊ง (YouTube / SoundCloud / Spotify / MP3)</span>
       </div>
 
       <div class="form-group">
-        <label class="form-label">URL ลิงก์ไฟล์เพลงแก๊ง (Direct Audio / MP3 URL)</label>
-        <input type="url" id="setSongUrlInput" class="form-control" placeholder="https://example.com/gang_song.mp3 (ลิงก์ไฟล์เสียง .mp3)">
-        <small style="color: #94a3b8; font-size: 0.78rem; margin-top: 4px; display: block;">ใส่ลิงก์ไฟล์เสียง MP3 หรือไฟล์เสียงที่เปิดฟังได้โดยตรง</small>
+        <label class="form-label">ลิงก์เพลงประจำแก๊ง (URL)</label>
+        <input type="url" id="setSongUrlInput" class="form-control" placeholder="วางลิงก์ YouTube, SoundCloud, Spotify หรือไฟล์ MP3">
+        <div style="margin-top: 6px; display: flex; gap: 12px; font-size: 0.78rem; color: #94a3b8; flex-wrap: wrap;">
+          <span><i class="fa-brands fa-youtube" style="color: #ef4444;"></i> YouTube</span>
+          <span><i class="fa-brands fa-soundcloud" style="color: #f97316;"></i> SoundCloud</span>
+          <span><i class="fa-brands fa-spotify" style="color: #22c55e;"></i> Spotify</span>
+          <span><i class="fa-solid fa-file-audio" style="color: #38bdf8;"></i> ไฟล์ MP3</span>
+        </div>
       </div>
 
       <div class="form-grid-2">
@@ -1635,29 +1723,155 @@
       showToast("⚙️ บันทึกการตั้งค่าแก๊ง & เพลงแก๊งเรียบร้อยแล้ว!");
     }
 
-    // ==================== GANG MUSIC PLAYER ====================
+    // ==================== UNIVERSAL GANG MUSIC PLAYER ====================
+    // Supports: YouTube, Spotify, SoundCloud, Direct MP3
 
     let isMusicPlaying = false;
     let hasAttemptedAutoplay = false;
+    let ytPlayer = null;
+    let isYtApiReady = false;
+    let currentLoadedSongUrl = "";
 
-    function setupGangMusicSource() {
-      const audio = document.getElementById("gangAudioPlayer");
-      if (!audio) return;
+    window.onYouTubeIframeAPIReady = function() {
+      isYtApiReady = true;
+      setupGangMusicSource();
+    };
 
-      const currentSrc = audio.src;
-      const targetSrc = GANG_DATA.song_url || "";
+    function parseMediaUrl(url) {
+      if (!url) return { type: "none" };
+      url = url.trim();
 
-      if (targetSrc && currentSrc !== targetSrc) {
-        audio.src = targetSrc;
-        audio.load();
+      // 1. YouTube
+      const ytMatch = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|shorts)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i);
+      if (ytMatch) {
+        return { type: "youtube", id: ytMatch[1], url: url };
       }
 
-      updateGangMusicDisplay();
+      // 2. Spotify
+      const spMatch = url.match(/open\.spotify\.com\/(track|playlist|album)\/([a-zA-Z0-9]+)/i);
+      if (spMatch) {
+        return { type: "spotify", kind: spMatch[1], id: spMatch[2], url: url };
+      }
+
+      // 3. SoundCloud
+      if (url.toLowerCase().includes("soundcloud.com")) {
+        return { type: "soundcloud", url: url };
+      }
+
+      // 4. Direct Audio
+      return { type: "direct", url: url };
     }
 
-    function updateGangMusicDisplay() {
+    function setupGangMusicSource() {
+      const songUrl = (GANG_DATA.song_url || "").trim();
+      const media = parseMediaUrl(songUrl);
+
+      updateGangMusicDisplay(media);
+
+      if (!songUrl) {
+        stopAllMusic();
+        return;
+      }
+
+      if (currentLoadedSongUrl === songUrl) return;
+      currentLoadedSongUrl = songUrl;
+
+      // Handle Direct Audio
+      const audio = document.getElementById("gangAudioPlayer");
+      if (media.type === "direct") {
+        if (audio && audio.src !== songUrl) {
+          audio.src = songUrl;
+          audio.load();
+        }
+      } else if (audio) {
+        audio.pause();
+        audio.src = "";
+      }
+
+      // Handle YouTube Player
+      if (media.type === "youtube") {
+        initYouTubePlayer(media.id);
+      }
+
+      // Handle Spotify or SoundCloud Embed
+      if (media.type === "spotify" || media.type === "soundcloud") {
+        renderEmbeddedPlayer(media);
+      } else {
+        const floatCard = document.getElementById("floatingMediaCard");
+        if (floatCard && media.type !== "youtube") {
+          floatCard.style.display = "none";
+        }
+      }
+    }
+
+    function initYouTubePlayer(videoId) {
+      if (!isYtApiReady) return;
+      if (ytPlayer && ytPlayer.loadVideoById) {
+        ytPlayer.cueVideoById(videoId);
+        return;
+      }
+
+      try {
+        ytPlayer = new YT.Player("ytHiddenContainer", {
+          height: "200",
+          width: "320",
+          videoId: videoId,
+          playerVars: {
+            autoplay: GANG_DATA.song_autoplay ? 1 : 0,
+            loop: 1,
+            playlist: videoId,
+            controls: 1
+          },
+          events: {
+            onStateChange: (event) => {
+              const widget = document.getElementById("musicWidget");
+              const icon = document.getElementById("musicPlayIcon");
+              if (event.data === YT.PlayerState.PLAYING) {
+                isMusicPlaying = true;
+                widget?.classList.add("playing");
+                if (icon) icon.className = "fa-solid fa-pause";
+              } else if (event.data === YT.PlayerState.PAUSED || event.data === YT.PlayerState.ENDED) {
+                isMusicPlaying = false;
+                widget?.classList.remove("playing");
+                if (icon) icon.className = "fa-solid fa-play";
+              }
+            }
+          }
+        });
+      } catch (e) {
+        console.warn("YouTube player init error:", e);
+      }
+    }
+
+    function renderEmbeddedPlayer(media) {
+      const card = document.getElementById("floatingMediaCard");
+      const body = document.getElementById("floatingMediaBody");
+      const titleSpan = document.getElementById("floatingMediaSongName");
+      if (!card || !body) return;
+
+      titleSpan.textContent = GANG_DATA.song_title || "เพลงประจำแก๊ง SPONGEBOB 577";
+
+      if (media.type === "spotify") {
+        body.innerHTML = `
+          <div class="media-embed-wrapper">
+            <iframe style="border-radius:12px" src="https://open.spotify.com/embed/${media.kind}/${media.id}?utm_source=generator&theme=0" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+          </div>
+        `;
+        card.style.display = "block";
+      } else if (media.type === "soundcloud") {
+        body.innerHTML = `
+          <div class="media-embed-wrapper">
+            <iframe width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=${encodeURIComponent(media.url)}&color=%23e11d48&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false"></iframe>
+          </div>
+        `;
+        card.style.display = "block";
+      }
+    }
+
+    function updateGangMusicDisplay(media) {
       const widget = document.getElementById("musicWidget");
       const title = document.getElementById("musicTitleText");
+      const disc = document.getElementById("musicDisc");
       if (!widget || !title) return;
 
       if (!GANG_DATA.song_url) {
@@ -1667,14 +1881,23 @@
 
       widget.style.display = "flex";
       title.textContent = GANG_DATA.song_title || "เพลงแก๊ง 577";
+
+      // Icon badge based on platform
+      const parsed = media || parseMediaUrl(GANG_DATA.song_url);
+      if (parsed.type === "youtube") {
+        disc.innerHTML = `<i class="fa-brands fa-youtube" style="color: #ef4444;"></i>`;
+      } else if (parsed.type === "spotify") {
+        disc.innerHTML = `<i class="fa-brands fa-spotify" style="color: #22c55e;"></i>`;
+      } else if (parsed.type === "soundcloud") {
+        disc.innerHTML = `<i class="fa-brands fa-soundcloud" style="color: #f97316;"></i>`;
+      } else {
+        disc.innerHTML = `<i class="fa-solid fa-compact-disc"></i>`;
+      }
     }
 
     function toggleGangMusic() {
-      const audio = document.getElementById("gangAudioPlayer");
-      const widget = document.getElementById("musicWidget");
-      const icon = document.getElementById("musicPlayIcon");
-
-      if (!GANG_DATA.song_url) {
+      const songUrl = GANG_DATA.song_url || "";
+      if (!songUrl) {
         if (isEditorActive) {
           openGangSettingsModal();
         } else {
@@ -1683,41 +1906,111 @@
         return;
       }
 
-      if (!audio.src || audio.src !== GANG_DATA.song_url) {
-        audio.src = GANG_DATA.song_url;
+      const media = parseMediaUrl(songUrl);
+      const widget = document.getElementById("musicWidget");
+      const icon = document.getElementById("musicPlayIcon");
+
+      // 1. YouTube
+      if (media.type === "youtube") {
+        if (ytPlayer && ytPlayer.getPlayerState) {
+          const state = ytPlayer.getPlayerState();
+          if (state === YT.PlayerState.PLAYING) {
+            ytPlayer.pauseVideo();
+          } else {
+            ytPlayer.playVideo();
+          }
+        } else {
+          initYouTubePlayer(media.id);
+          showToast("▶️ กำลังเริ่มเล่นเพลงจาก YouTube...");
+        }
+        return;
+      }
+
+      // 2. Spotify / SoundCloud (Open/Toggle Floating Player)
+      if (media.type === "spotify" || media.type === "soundcloud") {
+        const card = document.getElementById("floatingMediaCard");
+        if (card) {
+          if (card.style.display === "none") {
+            renderEmbeddedPlayer(media);
+            card.style.display = "block";
+            card.classList.remove("minimized");
+          } else {
+            card.classList.toggle("minimized");
+          }
+        }
+        return;
+      }
+
+      // 3. Direct Audio (.mp3)
+      const audio = document.getElementById("gangAudioPlayer");
+      if (!audio) return;
+      if (!audio.src || audio.src !== songUrl) {
+        audio.src = songUrl;
       }
 
       if (isMusicPlaying) {
         audio.pause();
         isMusicPlaying = false;
         widget.classList.remove("playing");
-        icon.className = "fa-solid fa-play";
+        if (icon) icon.className = "fa-solid fa-play";
       } else {
         audio.play().then(() => {
           isMusicPlaying = true;
           widget.classList.add("playing");
-          icon.className = "fa-solid fa-pause";
+          if (icon) icon.className = "fa-solid fa-pause";
         }).catch(err => {
-          console.warn("Audio play blocked by browser:", err);
-          showToast("⚠️ ไม่สามารถเล่นเพลงได้ กรุณาตรวจสอบลิงก์เพลง", "warning");
+          console.warn("Direct audio play error:", err);
+          showToast("⚠️ ไม่สามารถเล่นไฟล์เสียงได้ กรุณาตรวจสอบลิงก์", "warning");
         });
       }
     }
 
-    // Enable Autoplay on first user interaction if enabled
+    function stopAllMusic() {
+      const audio = document.getElementById("gangAudioPlayer");
+      if (audio) { audio.pause(); }
+      if (ytPlayer && ytPlayer.pauseVideo) { ytPlayer.pauseVideo(); }
+      isMusicPlaying = false;
+      document.getElementById("musicWidget")?.classList.remove("playing");
+      const icon = document.getElementById("musicPlayIcon");
+      if (icon) icon.className = "fa-solid fa-play";
+    }
+
+    function toggleMinimizeMediaCard() {
+      const card = document.getElementById("floatingMediaCard");
+      const icon = document.getElementById("btnMinimizeIcon");
+      if (!card) return;
+      card.classList.toggle("minimized");
+      if (card.classList.contains("minimized")) {
+        icon.className = "fa-solid fa-expand";
+      } else {
+        icon.className = "fa-solid fa-minus";
+      }
+    }
+
+    function closeFloatingMediaCard() {
+      const card = document.getElementById("floatingMediaCard");
+      if (card) card.style.display = "none";
+    }
+
+    // Autoplay trigger on user interaction
     document.addEventListener("click", () => {
       if (hasAttemptedAutoplay || isMusicPlaying) return;
       if (GANG_DATA && GANG_DATA.song_autoplay && GANG_DATA.song_url) {
         hasAttemptedAutoplay = true;
-        const audio = document.getElementById("gangAudioPlayer");
-        if (audio) {
-          audio.src = GANG_DATA.song_url;
-          audio.play().then(() => {
-            isMusicPlaying = true;
-            document.getElementById("musicWidget")?.classList.add("playing");
-            const icon = document.getElementById("musicPlayIcon");
-            if (icon) icon.className = "fa-solid fa-pause";
-          }).catch(() => {});
+        const media = parseMediaUrl(GANG_DATA.song_url);
+        if (media.type === "youtube" && ytPlayer && ytPlayer.playVideo) {
+          ytPlayer.playVideo();
+        } else if (media.type === "direct") {
+          const audio = document.getElementById("gangAudioPlayer");
+          if (audio) {
+            audio.src = GANG_DATA.song_url;
+            audio.play().then(() => {
+              isMusicPlaying = true;
+              document.getElementById("musicWidget")?.classList.add("playing");
+              const icon = document.getElementById("musicPlayIcon");
+              if (icon) icon.className = "fa-solid fa-pause";
+            }).catch(() => {});
+          }
         }
       }
     }, { once: true });
