@@ -18,14 +18,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_FILE = os.path.join(BASE_DIR, "gang_data.json")
 
 def get_local_ip() -> str:
-    try:
-        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        s.connect(("8.8.8.8", 80))
-        ip = s.getsockname()[0]
-        s.close()
-        return ip
-    except Exception:
-        return "127.0.0.1"
+    return "127.0.0.1"
 
 def load_gang_data():
     if not os.path.exists(DATA_FILE):
@@ -189,19 +182,13 @@ class GangRequestHandler(SimpleHTTPRequestHandler):
 
 if __name__ == "__main__":
     load_gang_data()
-    local_ip = get_local_ip()
     server_address = ("0.0.0.0", PORT)
     httpd = ThreadingHTTPServer(server_address, GangRequestHandler)
-    print("=" * 65)
-    print("⚔️  GANG ROSTER WEB SERVER (ระบบเว็บทำเนียบรายชื่อแก๊ง)")
-    print("=" * 65)
-    print(f"🚀 เซิร์ฟเวอร์เปิดทำงานแล้วที่ Port: {PORT}")
-    print(f"👉 เข้าชมในเครื่องนี้:     http://localhost:{PORT}")
-    print(f"📱 อุปกรณ์ใน Wi-Fi เดียวกัน: http://{local_ip}:{PORT}")
-    print("=" * 65)
-    print("กด Ctrl+C เพื่อหยุดการทำงาน\n")
+    print("=" * 60, flush=True)
+    print(f"🚀 GANG ROSTER WEB SERVER ONLINE ON PORT {PORT}", flush=True)
+    print("=" * 60, flush=True)
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:
-        print("\n[*] ปิดเซิร์ฟเวอร์เรียบร้อยแล้ว")
+        print("\n[*] Server stopped", flush=True)
         httpd.server_close()
