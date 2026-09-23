@@ -323,6 +323,87 @@
       box-shadow: 0 4px 15px rgba(225, 29, 72, 0.2);
     }
 
+    /* Attendance Modal Tabs & Elements */
+    .attendance-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 1.25rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+      flex-wrap: wrap;
+    }
+    .att-tab-btn {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border);
+      color: #94a3b8;
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+    .att-tab-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+    }
+    .att-tab-btn.active {
+      background: rgba(245, 158, 11, 0.15);
+      border-color: rgba(245, 158, 11, 0.5);
+      color: #fbbf24;
+      box-shadow: 0 0 15px rgba(245, 158, 11, 0.2);
+    }
+    .att-status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 0.76rem;
+      font-weight: 700;
+    }
+    .att-status-present { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3); }
+    .att-status-late { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .att-status-leave { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+    .att-status-absent { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+    .rollcall-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      margin-bottom: 8px;
+      transition: 0.2s;
+    }
+    .rollcall-row:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.12);
+    }
+    .radio-status-group {
+      display: flex;
+      gap: 6px;
+    }
+    .radio-status-btn {
+      padding: 5px 10px;
+      font-size: 0.75rem;
+      border-radius: 8px;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.04);
+      color: #94a3b8;
+      font-weight: 600;
+      transition: 0.15s;
+    }
+    .radio-status-btn.selected-present { background: #22c55e !important; color: #000 !important; font-weight: 800 !important; }
+    .radio-status-btn.selected-late { background: #f59e0b !important; color: #000 !important; font-weight: 800 !important; }
+    .radio-status-btn.selected-leave { background: #3b82f6 !important; color: #fff !important; font-weight: 800 !important; }
+    .radio-status-btn.selected-absent { background: #ef4444 !important; color: #fff !important; font-weight: 800 !important; }
+
     .btn-editor:hover {
       background: linear-gradient(135deg, #e11d48, #f59e0b);
       color: #fff;
@@ -1429,6 +1510,10 @@
         </div>
       </div>
 
+      <button class="btn btn-secondary" onclick="openAttendanceModal()" style="border-color: rgba(245, 158, 11, 0.4); color: #fef08a;" title="ระบบเช็คชื่อรวมพล & ดูประวัติ Log">
+        <i class="fa-solid fa-calendar-check" style="color: #f59e0b;"></i> <span>เช็คชื่อรวมพล</span>
+      </button>
+
       <button class="btn btn-editor" id="btnEditorToggle" onclick="handleEditorButtonClick()">
         <i class="fa-solid fa-lock"></i> <span id="btnEditorText">ใส่รหัสปรับแต่ง</span>
       </button>
@@ -1757,11 +1842,182 @@
         </div>
       </div>
 
+      <hr style="border: 0; border-top: 1px dashed rgba(255, 255, 255, 0.1); margin: 1.5rem 0;">
+
+      <div style="font-weight: 700; color: #818cf8; margin-bottom: 0.8rem; display: flex; align-items: center; gap: 8px;">
+        <i class="fa-brands fa-discord"></i> <span>ระบบแจ้งเตือน Discord Webhook (ส่ง Log เช็คชื่อเข้าห้อง Discord อัตโนมัติ)</span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Discord Webhook URL</label>
+        <input type="url" id="setDiscordWebhookInput" class="form-control" placeholder="https://discord.com/api/webhooks/...">
+        <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 5px;">*เมื่อมีการเช็คชื่อ ระบบจะส่งการ์ดสรุปข้อมูลไปยังห้อง Discord ให้ทันที</div>
+      </div>
+
       <div class="modal-footer">
         <button class="btn btn-secondary" onclick="closeModal('settingsModal')">ปิด</button>
         <button class="btn btn-primary" onclick="saveGangSettings()">
           <i class="fa-solid fa-floppy-disk"></i> <span>บันทึกการตั้งค่าแก๊ง</span>
         </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Attendance & Activity Log Modal -->
+  <div class="modal-backdrop" id="attendanceModal">
+    <div class="modal-dialog" style="max-width: 880px; max-height: 90vh; display: flex; flex-direction: column;">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+        <div>
+          <div class="modal-title" style="margin-bottom: 4px;">
+            <i class="fa-solid fa-calendar-check" style="color: #f59e0b;"></i>
+            <span>ระบบเช็คชื่อรวมพล & ประวัติ Log</span>
+          </div>
+          <p class="modal-subtitle" style="margin: 0;">เช็คชื่อเข้าเวร รวมพลวอร์ ประชุมแก๊ง พร้อมบันทึกประวัติกิจกรรมแบบเรียลไทม์</p>
+        </div>
+        <button class="btn btn-secondary" onclick="closeModal('attendanceModal')" style="padding: 6px 12px; font-size: 0.85rem;">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Tab Navigation -->
+      <div class="attendance-tabs">
+        <button class="att-tab-btn active" id="tabBtnSelf" onclick="switchAttendanceTab('self')">
+          <i class="fa-solid fa-user-check"></i> <span>สมาชิกเช็คชื่อเอง</span>
+        </button>
+        <button class="att-tab-btn" id="tabBtnRollCall" onclick="switchAttendanceTab('rollcall')">
+          <i class="fa-solid fa-list-check"></i> <span>หัวหน้าเช็คชื่อทั้งแก๊ง</span>
+        </button>
+        <button class="att-tab-btn" id="tabBtnHistory" onclick="switchAttendanceTab('history')">
+          <i class="fa-solid fa-clock-rotate-left"></i> <span>ประวัติ Log & สถิติ</span>
+          <span class="badge" id="attLogCountBadge" style="margin-left: 6px; background: rgba(245, 158, 11, 0.25); color: #fbbf24; font-size: 0.72rem; padding: 2px 7px; border-radius: 10px;">0</span>
+        </button>
+      </div>
+
+      <!-- Tab Content Area -->
+      <div style="overflow-y: auto; flex: 1; padding-right: 4px;">
+        <!-- TAB 1: Self Check-in -->
+        <div id="attTabContentSelf" class="att-tab-panel">
+          <div style="background: rgba(245, 158, 11, 0.05); border: 1px solid rgba(245, 158, 11, 0.2); border-radius: 14px; padding: 16px; margin-bottom: 1.25rem;">
+            <div style="font-weight: 700; color: #fbbf24; margin-bottom: 6px; font-size: 0.95rem;">
+              <i class="fa-solid fa-circle-info"></i> เช็คชื่อประจำวัน / เข้าเวร
+            </div>
+            <div style="font-size: 0.82rem; color: #cbd5e1;">เลือกชื่อสมาชิกและกิจกรรมที่กำลังเข้าร่วม จากนั้นกดบันทึกเพื่อเก็บเป็นสถิติของแก๊ง</div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">เลือกสมาชิกแก๊ง *</label>
+              <select id="selfCheckinMemberSelect" class="form-control">
+                <!-- Dynamic options -->
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">ประเภทกิจกรรม *</label>
+              <select id="selfCheckinEvent" class="form-control">
+                <option value="⚔️ รวมพลวอร์แก๊ง (Gang War)">⚔️ รวมพลวอร์แก๊ง (Gang War)</option>
+                <option value="📢 ประชุมแก๊งประจำสัปดาห์">📢 ประชุมแก๊งประจำสัปดาห์</option>
+                <option value="🚗 ลาดตระเวน / ตรวจตราพื้นที่">🚗 ลาดตระเวน / ตรวจตราพื้นที่</option>
+                <option value="📦 รวมพลฟาร์มของ / คลังแก๊ง">📦 รวมพลฟาร์มของ / คลังแก๊ง</option>
+                <option value="🔰 ปฐมนิเทศสมาชิกใหม่">🔰 ปฐมนิเทศสมาชิกใหม่</option>
+                <option value="⭐ กิจกรรมพิเศษอื่นๆ">⭐ กิจกรรมพิเศษอื่นๆ</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">สถานะการมา</label>
+              <select id="selfCheckinStatus" class="form-control">
+                <option value="present">🟢 มาตรงเวลา (Present)</option>
+                <option value="late">🟡 มาสาย (Late)</option>
+                <option value="leave">🔵 ลาภารกิจ / ลากิจ (Leave)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">หมายเหตุเพิ่มเติม (ถ้ามี)</label>
+              <input type="text" id="selfCheckinNote" class="form-control" placeholder="เช่น สาย 10 นาที, ลาติดงาน">
+            </div>
+          </div>
+
+          <div style="margin-top: 1.5rem; text-align: right;">
+            <button class="btn btn-primary" id="btnSubmitSelfCheckin" onclick="submitSelfCheckin()" style="padding: 10px 24px; font-size: 0.95rem;">
+              <i class="fa-solid fa-check"></i> <span>บันทึกการเช็คชื่อ</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- TAB 2: Batch Roll Call -->
+        <div id="attTabContentRollCall" class="att-tab-panel" style="display: none;">
+          <div style="display: flex; gap: 12px; margin-bottom: 1rem; align-items: flex-end; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 200px;">
+              <label class="form-label">ชื่องาน / กิจกรรมรวมพล</label>
+              <input type="text" id="batchRollCallEvent" class="form-control" placeholder="เช่น วอร์กับแก๊งคู่แข่ง วันที่ 24 ก.ย." value="⚔️ รวมพลวอร์แก๊ง">
+            </div>
+            <div style="flex: 1; min-width: 160px;">
+              <label class="form-label">ผู้เช็คชื่อ (หัวหน้า / ผู้ตรวจ)</label>
+              <input type="text" id="batchRollCallLeader" class="form-control" value="หัวหน้าแก๊ง (Leader)">
+            </div>
+            <div style="display: flex; gap: 6px;">
+              <button type="button" class="btn btn-secondary" onclick="setAllRollCall('present')" style="font-size: 0.78rem; padding: 8px 12px;" title="ปรับทุกคนเป็นมา">
+                🟢 ติ๊กมาทุกคน
+              </button>
+              <button type="button" class="btn btn-secondary" onclick="setAllRollCall('absent')" style="font-size: 0.78rem; padding: 8px 12px;" title="ปรับทุกคนเป็นขาด">
+                🔴 ติ๊กขาดทุกคน
+              </button>
+            </div>
+          </div>
+
+          <div id="rollCallListContainer" style="max-height: 400px; overflow-y: auto; padding-right: 4px; margin-bottom: 1rem;">
+            <!-- Dynamic members list -->
+          </div>
+
+          <div style="text-align: right; border-top: 1px solid var(--border); padding-top: 1rem;">
+            <button class="btn btn-primary" id="btnSubmitBatchRollCall" onclick="submitBatchRollCall()" style="padding: 10px 24px; font-size: 0.95rem;">
+              <i class="fa-solid fa-floppy-disk"></i> <span>บันทึกประวัติกิจกรรมนี้ทั้งหมด</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- TAB 3: History & Stats -->
+        <div id="attTabContentHistory" class="att-tab-panel" style="display: none;">
+          <!-- Summary Stats -->
+          <div id="attendanceSummaryStats"></div>
+
+          <!-- Filter & Actions -->
+          <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 1rem; flex-wrap: wrap;">
+            <div style="position: relative; flex: 1; max-width: 320px;">
+              <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 0.8rem;"></i>
+              <input type="text" id="attSearchInput" class="form-control" placeholder="ค้นหาตามชื่อ, ยศ หรือกิจกรรม..." style="padding-left: 34px; font-size: 0.85rem;" oninput="renderAttendanceLogs(this.value)">
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn btn-secondary" onclick="fetchAttendanceLogs()" style="font-size: 0.8rem; padding: 6px 12px;" title="รีเฟรชข้อมูล">
+                <i class="fa-solid fa-rotate"></i> รีเฟรช
+              </button>
+              <button class="btn btn-secondary" id="btnClearAllLogs" onclick="clearAllAttendanceLogs()" style="font-size: 0.8rem; padding: 6px 12px; color: #f87171; border-color: rgba(239, 68, 68, 0.3);" title="ล้างประวัติทั้งหมด">
+                <i class="fa-solid fa-trash-can"></i> ล้างทั้งหมด
+              </button>
+            </div>
+          </div>
+
+          <!-- Log Table -->
+          <div style="overflow-x: auto; background: rgba(0, 0, 0, 0.3); border: 1px solid var(--border); border-radius: 12px;">
+            <table style="width: 100%; border-collapse: collapse; text-align: left;">
+              <thead>
+                <tr style="border-bottom: 1px solid var(--border); font-size: 0.78rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em;">
+                  <th style="padding: 10px;">วันที่-เวลา</th>
+                  <th style="padding: 10px;">สมาชิก</th>
+                  <th style="padding: 10px;">กิจกรรม</th>
+                  <th style="padding: 10px;">สถานะ</th>
+                  <th style="padding: 10px;">หมายเหตุ</th>
+                  <th style="padding: 10px; text-align: right;">จัดการ</th>
+                </tr>
+              </thead>
+              <tbody id="attendanceLogTbody">
+                <!-- Dynamic log rows -->
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -2341,6 +2597,7 @@
       document.getElementById("setSongUrlInput").value = GANG_DATA.song_url || "";
       document.getElementById("setSongTitleInput").value = GANG_DATA.song_title || "";
       document.getElementById("setSongAutoplayInput").checked = !!GANG_DATA.song_autoplay;
+      document.getElementById("setDiscordWebhookInput").value = GANG_DATA.discord_webhook || "";
       document.getElementById("changeOldPassInput").value = "";
       document.getElementById("changeNewPassInput").value = "";
 
@@ -2356,12 +2613,379 @@
       GANG_DATA.song_url = document.getElementById("setSongUrlInput").value.trim();
       GANG_DATA.song_title = document.getElementById("setSongTitleInput").value.trim() || "เพลงประจำแก๊ง";
       GANG_DATA.song_autoplay = document.getElementById("setSongAutoplayInput").checked;
+      GANG_DATA.discord_webhook = document.getElementById("setDiscordWebhookInput").value.trim();
 
       closeModal("settingsModal");
       await syncGangDataToServer();
       renderAll();
       setupGangMusicSource();
-      showToast("⚙️ บันทึกการตั้งค่าแก๊ง & เพลงแก๊งเรียบร้อยแล้ว!");
+      showToast("⚙️ บันทึกการตั้งค่าแก๊ง & Webhook เรียบร้อยแล้ว!");
+    }
+
+    // ==================== ATTENDANCE & LOG SYSTEM ====================
+    let ATTENDANCE_LOGS = [];
+    let currentAttendanceTab = 'self';
+    let rollCallState = {};
+
+    async function openAttendanceModal() {
+      openModal("attendanceModal");
+      populateSelfCheckinMembers();
+      renderRollCallList();
+      await fetchAttendanceLogs();
+      switchAttendanceTab(currentAttendanceTab || 'self');
+    }
+
+    function switchAttendanceTab(tab) {
+      currentAttendanceTab = tab;
+      document.querySelectorAll(".att-tab-btn").forEach(btn => btn.classList.remove("active"));
+      document.querySelectorAll(".att-tab-panel").forEach(p => p.style.display = "none");
+
+      if (tab === 'self') {
+        const btn = document.getElementById("tabBtnSelf");
+        if (btn) btn.classList.add("active");
+        const panel = document.getElementById("attTabContentSelf");
+        if (panel) panel.style.display = "block";
+      } else if (tab === 'rollcall') {
+        const btn = document.getElementById("tabBtnRollCall");
+        if (btn) btn.classList.add("active");
+        const panel = document.getElementById("attTabContentRollCall");
+        if (panel) panel.style.display = "block";
+        renderRollCallList();
+      } else if (tab === 'history') {
+        const btn = document.getElementById("tabBtnHistory");
+        if (btn) btn.classList.add("active");
+        const panel = document.getElementById("attTabContentHistory");
+        if (panel) panel.style.display = "block";
+        renderAttendanceLogs();
+      }
+    }
+
+    function populateSelfCheckinMembers() {
+      const select = document.getElementById("selfCheckinMemberSelect");
+      if (!select) return;
+      const members = GANG_DATA.members || [];
+      let html = '<option value="">-- เลือกสมาชิกแก๊ง --</option>';
+      members.forEach(m => {
+        const dName = `${m.nickname ? m.nickname + ' (' + m.name + ')' : m.name} - ${m.rank}`;
+        html += `<option value="${escapeHtml(m.id)}">${escapeHtml(dName)}</option>`;
+      });
+      select.innerHTML = html;
+    }
+
+    async function submitSelfCheckin() {
+      const memberSelect = document.getElementById("selfCheckinMemberSelect");
+      const eventInput = document.getElementById("selfCheckinEvent");
+      const statusSelect = document.getElementById("selfCheckinStatus");
+      const noteInput = document.getElementById("selfCheckinNote");
+
+      const memberId = memberSelect ? memberSelect.value : "";
+      if (!memberId) {
+        showToast("⚠️ กรุณาเลือกสมาชิกที่จะทำการเช็คชื่อ");
+        return;
+      }
+
+      const m = (GANG_DATA.members || []).find(x => String(x.id) === String(memberId));
+      if (!m) {
+        showToast("⚠️ ไม่พบข้อมูลสมาชิก");
+        return;
+      }
+
+      const payload = {
+        type: "single",
+        member_id: m.id,
+        member_name: m.name,
+        nickname: m.nickname || "",
+        rank: m.rank,
+        event_type: eventInput ? eventInput.value.trim() || "รวมพลทั่วไป" : "รวมพลทั่วไป",
+        status: statusSelect ? statusSelect.value : "present",
+        note: noteInput ? noteInput.value.trim() : "",
+        checked_by: m.nickname || m.name
+      };
+
+      const btn = document.getElementById("btnSubmitSelfCheckin");
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> บันทึก...`;
+      }
+
+      try {
+        const resp = await fetch("/api/gang/attendance/checkin", {
+          method: "POST",
+          headers: { "Content-Type": "application/json; charset=utf-8" },
+          body: JSON.stringify(payload)
+        });
+        const res = await resp.json();
+        if (res.success) {
+          showToast(`✅ ${res.message}`);
+          if (noteInput) noteInput.value = "";
+          ATTENDANCE_LOGS = res.logs || [];
+          updateAttendanceCountBadge();
+          switchAttendanceTab('history');
+        } else {
+          showToast(`⚠️ ${res.error || "เกิดข้อผิดพลาดในการบันทึก"}`);
+        }
+      } catch (e) {
+        console.error("Checkin error:", e);
+        showToast("⚠️ ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้");
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = `<i class="fa-solid fa-check"></i> บันทึกการเช็คชื่อ`;
+        }
+      }
+    }
+
+    function renderRollCallList() {
+      const container = document.getElementById("rollCallListContainer");
+      if (!container) return;
+      const members = GANG_DATA.members || [];
+      if (!members.length) {
+        container.innerHTML = `<div style="text-align:center; padding: 2rem; color: #94a3b8;">ยังไม่มีสมาชิกในทำเนียบแก๊ง</div>`;
+        return;
+      }
+
+      let html = "";
+      members.forEach(m => {
+        if (!rollCallState[m.id]) rollCallState[m.id] = "present";
+        const curStatus = rollCallState[m.id];
+        html += `
+          <div class="rollcall-row">
+            <div style="display:flex; align-items:center; gap: 10px;">
+              <img src="${escapeHtml(m.avatar || 'https://cdn.discordapp.com/embed/avatars/0.png')}" style="width: 36px; height: 36px; border-radius: 8px; object-fit: cover; border: 1px solid var(--border);" onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'">
+              <div>
+                <div style="font-weight: 700; font-size: 0.9rem; color: #f1f5f9;">${escapeHtml(m.name)} ${m.nickname ? '<span style="color:var(--text-muted); font-size: 0.8rem;">(' + escapeHtml(m.nickname) + ')</span>' : ''}</div>
+                <div style="font-size: 0.75rem; color: #cbd5e1;">${escapeHtml(m.rank)}</div>
+              </div>
+            </div>
+            <div class="radio-status-group">
+              <button type="button" class="radio-status-btn ${curStatus === 'present' ? 'selected-present' : ''}" onclick="setMemberRollCall('${m.id}', 'present')">🟢 มา</button>
+              <button type="button" class="radio-status-btn ${curStatus === 'late' ? 'selected-late' : ''}" onclick="setMemberRollCall('${m.id}', 'late')">🟡 สาย</button>
+              <button type="button" class="radio-status-btn ${curStatus === 'leave' ? 'selected-leave' : ''}" onclick="setMemberRollCall('${m.id}', 'leave')">🔵 ลา</button>
+              <button type="button" class="radio-status-btn ${curStatus === 'absent' ? 'selected-absent' : ''}" onclick="setMemberRollCall('${m.id}', 'absent')">🔴 ขาด</button>
+            </div>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    }
+
+    function setMemberRollCall(memberId, status) {
+      rollCallState[memberId] = status;
+      renderRollCallList();
+    }
+
+    function setAllRollCall(status) {
+      (GANG_DATA.members || []).forEach(m => {
+        rollCallState[m.id] = status;
+      });
+      renderRollCallList();
+      showToast(`ปรับสถานะทุกคนเป็น "${status === 'present' ? 'มา' : 'ขาด'}" เรียบร้อยแล้ว`);
+    }
+
+    async function submitBatchRollCall() {
+      const eventName = (document.getElementById("batchRollCallEvent").value || "").trim() || "รวมพลแก๊ง";
+      const checkedBy = (document.getElementById("batchRollCallLeader").value || "").trim() || "หัวหน้าแก๊ง";
+      const members = GANG_DATA.members || [];
+      if (!members.length) {
+        showToast("⚠️ ไม่มีสมาชิกที่จะเช็คชื่อ");
+        return;
+      }
+
+      const records = members.map(m => ({
+        member_id: m.id,
+        member_name: m.name,
+        nickname: m.nickname || "",
+        rank: m.rank,
+        status: rollCallState[m.id] || "present",
+        note: ""
+      }));
+
+      const btn = document.getElementById("btnSubmitBatchRollCall");
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> กำลังบันทึกประวัติ...`;
+      }
+
+      try {
+        const resp = await fetch("/api/gang/attendance/checkin", {
+          method: "POST",
+          headers: { "Content-Type": "application/json; charset=utf-8" },
+          body: JSON.stringify({
+            type: "batch",
+            event_type: eventName,
+            checked_by: checkedBy,
+            records: records
+          })
+        });
+        const res = await resp.json();
+        if (res.success) {
+          showToast(`✅ ${res.message}`);
+          ATTENDANCE_LOGS = res.logs || [];
+          updateAttendanceCountBadge();
+          switchAttendanceTab('history');
+        } else {
+          showToast(`⚠️ ${res.error || "บันทึกล้มเหลว"}`);
+        }
+      } catch (e) {
+        console.error("Batch rollcall error:", e);
+        showToast("⚠️ ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้");
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> บันทึกประวัติกิจกรรมนี้ทั้งหมด`;
+        }
+      }
+    }
+
+    async function fetchAttendanceLogs() {
+      try {
+        const resp = await fetch("/api/gang/attendance");
+        const res = await resp.json();
+        if (res.success) {
+          ATTENDANCE_LOGS = res.logs || [];
+          updateAttendanceCountBadge();
+          renderAttendanceLogs();
+        }
+      } catch (e) {
+        console.error("Fetch attendance logs error:", e);
+      }
+    }
+
+    function updateAttendanceCountBadge() {
+      const b = document.getElementById("attLogCountBadge");
+      if (b) b.textContent = ATTENDANCE_LOGS.length;
+    }
+
+    function renderAttendanceLogs(query = "") {
+      const tbody = document.getElementById("attendanceLogTbody");
+      const summaryBox = document.getElementById("attendanceSummaryStats");
+      if (!tbody) return;
+
+      const q = (query || "").trim().toLowerCase();
+      const filtered = ATTENDANCE_LOGS.filter(l => {
+        if (!q) return true;
+        return (l.member_name || "").toLowerCase().includes(q) ||
+               (l.nickname || "").toLowerCase().includes(q) ||
+               (l.event_type || "").toLowerCase().includes(q) ||
+               (l.rank || "").toLowerCase().includes(q) ||
+               (l.timestamp || "").toLowerCase().includes(q);
+      });
+
+      // Update Summary Stats
+      if (summaryBox) {
+        const total = ATTENDANCE_LOGS.length;
+        const pCount = ATTENDANCE_LOGS.filter(l => l.status === 'present').length;
+        const lCount = ATTENDANCE_LOGS.filter(l => l.status === 'late').length;
+        const lvCount = ATTENDANCE_LOGS.filter(l => l.status === 'leave').length;
+        const aCount = ATTENDANCE_LOGS.filter(l => l.status === 'absent').length;
+
+        summaryBox.innerHTML = `
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 1rem;">
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 12px; padding: 10px; text-align: center;">
+              <div style="font-size: 0.75rem; color: #94a3b8;">รวมบันทึกทั้งหมด</div>
+              <div style="font-size: 1.25rem; font-weight: 800; color: #f1f5f9;">${total} ครั้ง</div>
+            </div>
+            <div style="background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.25); border-radius: 12px; padding: 10px; text-align: center;">
+              <div style="font-size: 0.75rem; color: #4ade80;">🟢 มาตรงเวลา</div>
+              <div style="font-size: 1.25rem; font-weight: 800; color: #4ade80;">${pCount}</div>
+            </div>
+            <div style="background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.25); border-radius: 12px; padding: 10px; text-align: center;">
+              <div style="font-size: 0.75rem; color: #fbbf24;">🟡 มาสาย</div>
+              <div style="font-size: 1.25rem; font-weight: 800; color: #fbbf24;">${lCount}</div>
+            </div>
+            <div style="background: rgba(59,130,246,0.08); border: 1px solid rgba(59,130,246,0.25); border-radius: 12px; padding: 10px; text-align: center;">
+              <div style="font-size: 0.75rem; color: #60a5fa;">🔵 ลาภารกิจ</div>
+              <div style="font-size: 1.25rem; font-weight: 800; color: #60a5fa;">${lvCount}</div>
+            </div>
+            <div style="background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.25); border-radius: 12px; padding: 10px; text-align: center;">
+              <div style="font-size: 0.75rem; color: #f87171;">🔴 ขาด</div>
+              <div style="font-size: 1.25rem; font-weight: 800; color: #f87171;">${aCount}</div>
+            </div>
+          </div>
+        `;
+      }
+
+      if (!filtered.length) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 2rem; color:#94a3b8;">ไม่พบประวัติการเช็คชื่อ</td></tr>`;
+        return;
+      }
+
+      const statusLabels = {
+        present: '<span class="att-status-pill att-status-present"><i class="fa-solid fa-circle-check"></i> มาตรงเวลา</span>',
+        late: '<span class="att-status-pill att-status-late"><i class="fa-solid fa-clock"></i> มาสาย</span>',
+        leave: '<span class="att-status-pill att-status-leave"><i class="fa-solid fa-calendar-xmark"></i> ลา</span>',
+        absent: '<span class="att-status-pill att-status-absent"><i class="fa-solid fa-circle-xmark"></i> ขาด</span>'
+      };
+
+      let html = "";
+      filtered.forEach(item => {
+        html += `
+          <tr style="border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 0.84rem;">
+            <td style="padding: 10px; color: #94a3b8; white-space: nowrap;">${escapeHtml(item.timestamp || '-')}</td>
+            <td style="padding: 10px;">
+              <div style="font-weight: 700; color: #f8fafc;">${escapeHtml(item.member_name || '-')} ${item.nickname ? '<span style="color:#94a3b8; font-weight:normal;">(' + escapeHtml(item.nickname) + ')</span>' : ''}</div>
+              <div style="font-size: 0.72rem; color: #cbd5e1;">${escapeHtml(item.rank || '-')}</div>
+            </td>
+            <td style="padding: 10px; color: #e2e8f0; font-weight: 600;">${escapeHtml(item.event_type || '-')}</td>
+            <td style="padding: 10px;">${statusLabels[item.status] || item.status}</td>
+            <td style="padding: 10px; color: #94a3b8; font-size: 0.78rem;">${escapeHtml(item.note || '-')}</td>
+            <td style="padding: 10px; text-align: right;">
+              ${isEditorActive ? `<button class="btn" onclick="deleteSingleAttendanceLog('${item.id}')" style="background:none; border:none; color:#ef4444; cursor:pointer; padding:2px 6px;" title="ลบรายการนี้"><i class="fa-solid fa-trash-can"></i></button>` : ''}
+            </td>
+          </tr>
+        `;
+      });
+      tbody.innerHTML = html;
+    }
+
+    async function deleteSingleAttendanceLog(logId) {
+      if (!confirm("คุณต้องการลบประวัติการเช็คชื่อนี้ใช่หรือไม่?")) return;
+      try {
+        const resp = await fetch("/api/gang/attendance/delete", {
+          method: "POST",
+          headers: { "Content-Type": "application/json; charset=utf-8" },
+          body: JSON.stringify({
+            passcode: editorPasscode || "gang123",
+            log_id: logId
+          })
+        });
+        const res = await resp.json();
+        if (res.success) {
+          showToast("🗑️ ลบประวัติเรียบร้อยแล้ว");
+          ATTENDANCE_LOGS = res.logs || [];
+          updateAttendanceCountBadge();
+          renderAttendanceLogs();
+        } else {
+          showToast(`⚠️ ${res.error}`);
+        }
+      } catch (e) {
+        showToast("⚠️ ไม่สามารถลบได้");
+      }
+    }
+
+    async function clearAllAttendanceLogs() {
+      if (!confirm("⚠️ คุณแน่ใจหรือไม่ที่จะล้างประวัติการเช็คชื่อทั้งหมด?")) return;
+      try {
+        const resp = await fetch("/api/gang/attendance/delete", {
+          method: "POST",
+          headers: { "Content-Type": "application/json; charset=utf-8" },
+          body: JSON.stringify({
+            passcode: editorPasscode || "gang123",
+            log_id: "all"
+          })
+        });
+        const res = await resp.json();
+        if (res.success) {
+          showToast("🗑️ ล้างประวัติทั้งหมดเรียบร้อยแล้ว");
+          ATTENDANCE_LOGS = [];
+          updateAttendanceCountBadge();
+          renderAttendanceLogs();
+        } else {
+          showToast(`⚠️ ${res.error}`);
+        }
+      } catch (e) {
+        showToast("⚠️ ไม่สามารถล้างประวัติได้");
+      }
     }
 
     // ==================== UNIVERSAL GANG MUSIC PLAYER ====================

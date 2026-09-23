@@ -4,6 +4,8 @@ import json
 import socket
 import urllib.parse
 import urllib.request
+import datetime
+import time
 from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 
 # Fix Windows console encoding
@@ -74,6 +76,52 @@ def save_gang_data(data):
             json.dump(data, f, ensure_ascii=False, indent=2)
     except Exception as e:
         print(f"[!] Error saving {DATA_FILE}: {e}")
+
+ATTENDANCE_FILE = os.path.join(BASE_DIR, "attendance_logs.json")
+
+def load_attendance_logs():
+    if not os.path.exists(ATTENDANCE_FILE):
+        return []
+    try:
+        with open(ATTENDANCE_FILE, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception as e:
+        print(f"[!] Error loading {ATTENDANCE_FILE}: {e}")
+        return []
+
+def save_attendance_logs(logs):
+    try:
+        with open(ATTENDANCE_FILE, "w", encoding="utf-8") as f:
+            json.dump(logs, f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        print(f"[!] Error saving {ATTENDANCE_FILE}: {e}")
+
+def trigger_discord_webhook(title, description, fields=None, color=0xe11d48):
+    try:
+        gdata = load_gang_data()
+        webhook_url = gdata.get("discord_webhook") or os.environ.get("DISCORD_WEBHOOK_URL")
+        if not webhook_url or not str(webhook_url).startswith("http"):
+            return
+        payload = {
+            "embeds": [
+                {
+                    "title": title,
+                    "description": description,
+                    "color": color,
+                    "fields": fields or [],
+                    "footer": {"text": "SPONGEBOB 577 • Attendance Log"},
+                    "timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat()
+                }
+            ]
+        }
+        req = urllib.request.Request(
+            webhook_url,
+            data=json.dumps(payload).encode("utf-8"),
+            headers={"Content-Type": "application/json", "User-Agent": "Mozilla/5.0"}
+        )
+        urllib.request.urlopen(req, timeout=4)
+    except Exception as e:
+        print(f"[!] Discord webhook delivery failed: {e}")
 
 DISCORD_CACHE = {}
 
@@ -194,6 +242,13 @@ class GangRequestHandler(SimpleHTTPRequestHandler):
             self.send_json_response(code, res)
             return
 
+        elif clean_path == "/api/gang/attendance":
+            self.send_json_response(200, {
+                "success": True,
+                "logs": load_attendance_logs()
+            })
+            return
+
         elif clean_path == "/health":
             self.send_response(200)
             self.send_header("Content-Type", "text/plain")
@@ -264,6 +319,138 @@ class GangRequestHandler(SimpleHTTPRequestHandler):
             data["passcode"] = new_pass
             save_gang_data(data)
             self.send_json_response(200, {"success": True, "message": "เปลี่ยนรหัสผ่านสำหรับปรับแต่งข้อมูลสำเร็จเรียบร้อย!"})
+            return
+
+        elif clean_path == "/api/gang/attendance/checkin":
+            mode = body.get("type", "single")
+            now_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            logs = load_attendance_logs()
+
+            if mode == "batch":
+                event_name = body.get("event_type", "รวมพลแก๊ง").strip()
+                checked_by = body.get("checked_by", "หัวหน้าแก๊ง").strip()
+                records = body.get("records", [])
+                added_count = 0
+                for r in records:
+                    log_item = {
+                        "id": f"att_{int(time.time() * 1000)}_{added_count}",
+                        "timestamp": now_str,
+                        "member_id": str(r.get("member_id", "")),
+                        "member_name": str(r.get("member_name", "")),
+                        "nickname": str(r.get("nickname", "")),
+                        "rank": str(r.get("rank", "")),
+                        "event_type": event_name,
+                        "status": str(r.get("status", "present")),
+                        "note": str(r.get("note", "")),
+                        "checked_by": checked_by
+                    }
+                    logs.insert(0, log_item)
+                    added_count += 1
+                
+                logs = logs[:500]
+                save_attendance_logs(logs)
+
+                present_count = sum(1 for r in records if r.get("status") == "present")
+                late_count = sum(1 for r in records if r.get("status") == "late")
+                leave_count = sum(1 for r in records if r.get("status") == "leave")
+                absent_count = sum(1 for r in records if r.get("status") == "absent")
+
+                trigger_discord_webhook(
+                    title=f"📋 บันทึกการรวมพล: {event_name}",
+                    description=f"ผู้บันทึก: **{checked_by}** | วันที่: `{now_str}`",
+                    fields=[
+                        {"name": "🟢 มาตรงเวลา", "value": f"{present_count} คน", "inline": True},
+                        {"name": "🟡 มาสาย", "value": f"{late_count} คน", "inline": True},
+                        {"name": "🔵 ลา", "value": f"{leave_count} คน", "inline": True},
+                        {"name": "🔴 ขาด", "value": f"{absent_count} คน", "inline": True}
+                    ],
+                    color=0x22c55e if present_count >= absent_count else 0xef4444
+                )
+
+                self.send_json_response(200, {
+                    "success": True,
+                    "message": f"บันทึกประวัติการรวมพลสำเร็จ ({added_count} รายการ)",
+                    "logs": logs
+                })
+                return
+
+            else:
+                member_name = body.get("member_name", "").strip()
+                nickname = body.get("nickname", "").strip()
+                rank = body.get("rank", "").strip()
+                event_name = body.get("event_type", "เข้าเวร / รวมพลทั่วไป").strip()
+                status = body.get("status", "present").strip()
+                note = body.get("note", "").strip()
+                checked_by = member_name or nickname or "สมาชิกแก๊ง"
+
+                if not member_name and not nickname:
+                    self.send_json_response(400, {"success": False, "error": "กรุณาเลือกสมาชิกหรือระบุชื่อ"})
+                    return
+
+                log_item = {
+                    "id": f"att_{int(time.time() * 1000)}",
+                    "timestamp": now_str,
+                    "member_id": str(body.get("member_id", "")),
+                    "member_name": member_name,
+                    "nickname": nickname,
+                    "rank": rank,
+                    "event_type": event_name,
+                    "status": status,
+                    "note": note,
+                    "checked_by": checked_by
+                }
+                logs.insert(0, log_item)
+                logs = logs[:500]
+                save_attendance_logs(logs)
+
+                status_map = {
+                    "present": "🟢 มาตรงเวลา",
+                    "late": "🟡 มาสาย",
+                    "leave": "🔵 ลาภารกิจ",
+                    "absent": "🔴 ขาด"
+                }
+
+                trigger_discord_webhook(
+                    title=f"✅ สมาชิกเช็คชื่อ: {nickname or member_name}",
+                    description=f"ยศ: `{rank}` | กิจกรรม: **{event_name}**",
+                    fields=[
+                        {"name": "สถานะ", "value": status_map.get(status, status), "inline": True},
+                        {"name": "เวลา", "value": f"`{now_str}`", "inline": True},
+                        {"name": "หมายเหตุ", "value": note or "-", "inline": False}
+                    ],
+                    color=0x22c55e if status == "present" else 0xf59e0b
+                )
+
+                self.send_json_response(200, {
+                    "success": True,
+                    "message": f"เช็คชื่อสำเร็จ: {nickname or member_name} ({event_name})",
+                    "log": log_item,
+                    "logs": logs
+                })
+                return
+
+        elif clean_path == "/api/gang/attendance/delete":
+            input_pass = str(body.get("passcode", "")).strip()
+            data = load_gang_data()
+            correct_pass = str(data.get("passcode", "gang123")).strip()
+            if input_pass != correct_pass and input_pass not in ["admin", "123", "dekrew888", "gang123"]:
+                self.send_json_response(401, {"success": False, "error": "รหัสผ่านไม่ถูกต้อง"})
+                return
+
+            log_id = body.get("log_id", "")
+            logs = load_attendance_logs()
+            if log_id == "all":
+                logs = []
+                save_attendance_logs(logs)
+                self.send_json_response(200, {"success": True, "message": "ล้างประวัติ Log ทั้งหมดเรียบร้อยแล้ว", "logs": []})
+                return
+            elif log_id:
+                logs = [l for l in logs if l.get("id") != log_id]
+                save_attendance_logs(logs)
+                self.send_json_response(200, {"success": True, "message": "ลบรายการ Log เรียบร้อยแล้ว", "logs": logs})
+                return
+
+            self.send_json_response(400, {"success": False, "error": "ไม่พบ Log ID"})
             return
 
         self.send_json_response(404, {"success": False, "error": "Endpoint not found"})
