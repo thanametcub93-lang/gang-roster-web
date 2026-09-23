@@ -1800,20 +1800,39 @@
       currentVolume = Math.max(0, Math.min(100, parseInt(vol, 10)));
       localStorage.setItem("gang_music_volume", currentVolume);
 
-      // 1. Direct Audio
+      // 1. Direct Audio (.mp3)
       const audio = document.getElementById("gangAudioPlayer");
       if (audio) {
         audio.volume = currentVolume / 100;
+        audio.muted = (currentVolume === 0);
       }
 
-      // 2. YouTube
-      if (ytPlayer && ytPlayer.setVolume) {
+      // 2. YouTube Iframe (postMessage control)
+      const ytIframe = document.getElementById("ytIframePlayer");
+      if (ytIframe && ytIframe.contentWindow) {
         try {
-          ytPlayer.setVolume(currentVolume);
           if (currentVolume === 0) {
-            ytPlayer.mute();
-          } else if (ytPlayer.isMuted && ytPlayer.isMuted()) {
-            ytPlayer.unMute();
+            ytIframe.contentWindow.postMessage(JSON.stringify({
+              event: "command",
+              func: "mute",
+              args: []
+            }), "*");
+            ytIframe.contentWindow.postMessage(JSON.stringify({
+              event: "command",
+              func: "setVolume",
+              args: [0]
+            }), "*");
+          } else {
+            ytIframe.contentWindow.postMessage(JSON.stringify({
+              event: "command",
+              func: "unMute",
+              args: []
+            }), "*");
+            ytIframe.contentWindow.postMessage(JSON.stringify({
+              event: "command",
+              func: "setVolume",
+              args: [currentVolume]
+            }), "*");
           }
         } catch (e) {}
       }
@@ -1977,9 +1996,10 @@
       titleSpan.textContent = GANG_DATA.song_title || "Lana Del Rey - Cinnamon Girl";
 
       if (media.type === "youtube") {
+        const originParam = window.location.origin ? `&origin=${encodeURIComponent(window.location.origin)}` : '';
         body.innerHTML = `
           <div class="media-embed-wrapper" style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:12px;">
-            <iframe id="ytIframePlayer" src="https://www.youtube.com/embed/${media.id}?autoplay=1&enablejsapi=1&loop=1&playlist=${media.id}" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <iframe id="ytIframePlayer" src="https://www.youtube.com/embed/${media.id}?autoplay=1&enablejsapi=1&loop=1&playlist=${media.id}${originParam}" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
           </div>
         `;
         card.style.display = "block";
@@ -1987,6 +2007,8 @@
         document.getElementById("musicWidget")?.classList.add("playing");
         const icon = document.getElementById("musicPlayIcon");
         if (icon) icon.className = "fa-solid fa-pause";
+        // Apply current volume to the newly loaded iframe
+        setTimeout(() => applyMusicVolume(currentVolume), 600);
       } else if (media.type === "spotify") {
         body.innerHTML = `
           <div class="media-embed-wrapper">
@@ -2057,6 +2079,27 @@
       // 1. YouTube / Spotify / SoundCloud (Open/Toggle Floating Player)
       if (media.type === "youtube" || media.type === "spotify" || media.type === "soundcloud") {
         const card = document.getElementById("floatingMediaCard");
+        const ytIframe = document.getElementById("ytIframePlayer");
+
+        // If YouTube is already loaded and user clicks play/pause
+        if (media.type === "youtube" && ytIframe && ytIframe.contentWindow) {
+          if (isMusicPlaying) {
+            ytIframe.contentWindow.postMessage(JSON.stringify({ event: "command", func: "pauseVideo", args: [] }), "*");
+            isMusicPlaying = false;
+            widget.classList.remove("playing");
+            if (icon) icon.className = "fa-solid fa-play";
+            showToast("⏸️ พักเพลงชั่วคราว");
+            return;
+          } else {
+            ytIframe.contentWindow.postMessage(JSON.stringify({ event: "command", func: "playVideo", args: [] }), "*");
+            isMusicPlaying = true;
+            widget.classList.add("playing");
+            if (icon) icon.className = "fa-solid fa-pause";
+            showToast("▶️ เล่นเพลงต่อ");
+            return;
+          }
+        }
+
         if (card) {
           const isCurrentlyHidden = card.style.display === "none" || !card.style.display;
           if (isCurrentlyHidden) {
