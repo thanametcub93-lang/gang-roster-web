@@ -5,16 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ทำเนียบสมาชิกแก๊ง • GANG ROSTER</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,700&family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Kanit:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,700&family=Outfit:wght@400;600;700;800;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <script src="https://www.youtube.com/iframe_api"></script>
   
   <style>
     :root {
-      --bg-dark: #07090e;
-      --bg-card: rgba(16, 20, 31, 0.75);
-      --bg-card-hover: rgba(22, 28, 44, 0.95);
+      --bg-dark: #000000;
+      --bg-card: rgba(18, 18, 20, 0.85);
+      --bg-card-hover: rgba(28, 28, 32, 0.96);
       --primary: #e11d48;
       --primary-glow: rgba(225, 29, 72, 0.45);
       --gold: #f59e0b;
@@ -32,33 +31,19 @@
       padding: 0;
     }
 
-    body {
-      background-color: var(--bg-dark);
-      background-image: 
-        radial-gradient(circle at 15% 15%, rgba(225, 29, 72, 0.16) 0%, transparent 40%),
-        radial-gradient(circle at 85% 20%, rgba(245, 158, 11, 0.14) 0%, transparent 45%),
-        radial-gradient(circle at 50% 80%, rgba(6, 182, 212, 0.08) 0%, transparent 50%),
-        linear-gradient(rgba(7, 9, 14, 0.92), rgba(7, 9, 14, 0.97)),
-        repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255, 255, 255, 0.01) 2px, rgba(255, 255, 255, 0.01) 4px);
-      background-attachment: fixed;
+    html, body {
+      background-color: #000000;
       color: var(--text-main);
       font-family: 'Kanit', 'Outfit', sans-serif;
       min-height: 100vh;
       overflow-x: hidden;
-      padding-bottom: 70px;
+      margin: 0;
+      padding: 0;
     }
 
     /* Ambient animated noise grid */
     .bg-mesh {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 0;
-      background: radial-gradient(circle at 50% -20%, rgba(225, 29, 72, 0.25), transparent 70%);
-      opacity: 0.8;
+      display: none;
     }
 
     /* Top Navbar */
@@ -86,12 +71,18 @@
     }
 
     .nav-logo {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
-      object-fit: cover;
-      border: 2px solid var(--primary);
-      box-shadow: 0 0 15px var(--primary-glow);
+      width: 64px;
+      height: 64px;
+      object-fit: contain;
+      border: none !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      background: transparent;
+      filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.7));
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .nav-brand:hover .nav-logo {
+      transform: scale(1.08);
     }
 
     .nav-title {
@@ -221,34 +212,25 @@
       cursor: pointer;
     }
 
-    /* Floating Media Player Card (YouTube / Spotify / SoundCloud) */
+    /* Hidden Background Media Player (Plays audio invisibly, no popup window) */
     .floating-media-card {
       position: fixed;
-      bottom: 24px;
-      right: 24px;
-      width: 350px;
-      background: rgba(16, 20, 31, 0.96);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-      border: 1px solid var(--border-highlight);
-      border-radius: 18px;
-      padding: 12px 14px;
-      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.65), 0 0 25px rgba(225, 29, 72, 0.3);
-      z-index: 1000;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      display: none;
-    }
-    .floating-media-card.minimized {
-      transform: translateY(calc(100% - 46px));
-      opacity: 0.92;
+      bottom: -9999px;
+      right: -9999px;
+      width: 1px;
+      height: 1px;
+      opacity: 0.001;
+      pointer-events: none;
+      z-index: -9999;
+      overflow: hidden;
+      border: none !important;
+      box-shadow: none !important;
+      padding: 0 !important;
+      background: transparent !important;
+      clip-path: inset(100%);
     }
     .floating-media-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-      padding-bottom: 6px;
-      border-bottom: 1px solid var(--border);
+      display: none !important;
     }
     .floating-media-title {
       font-size: 0.82rem;
@@ -370,57 +352,117 @@
     }
 
     /* Hero Banner */
+    .hero-banner-container {
+      max-width: 1380px;
+      margin: 1.25rem auto 0 auto;
+      width: 100%;
+      padding: 0 1rem;
+      box-sizing: border-box;
+    }
+
     .hero-banner {
-      margin-top: 1.5rem;
-      border-radius: 24px;
+      width: 100%;
+      aspect-ratio: 18 / 9;
+      max-height: 480px;
+      min-height: 260px;
+      border-radius: 16px;
       position: relative;
       overflow: hidden;
-      border: 1px solid var(--border);
-      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6);
-      background: #111420;
+      border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.95), 0 0 35px rgba(0, 0, 0, 0.85);
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .banner-img {
       width: 100%;
-      height: 290px;
-      object-fit: cover;
+      height: 100%;
+      object-fit: contain;
+      object-position: center center;
+      background: #000;
       display: block;
-      filter: brightness(0.65) contrast(1.15);
-      transition: transform 0.5s ease;
+      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .hero-banner:hover .banner-img {
+      transform: scale(1.015);
     }
 
-    .hero-overlay {
+    /* ===================== CORNER ACCENTS ===================== */
+    .corner {
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      z-index: 10;
+      pointer-events: none;
+    }
+    .corner::before, .corner::after {
+      content: '';
+      position: absolute;
+      background: rgba(220, 220, 220, 0.65);
+      box-shadow: 0 0 6px rgba(255, 255, 255, 0.5);
+    }
+    .corner::before { width: 100%; height: 2px; top: 0; }
+    .corner::after  { width: 2px; height: 100%; top: 0; }
+
+    .corner-tl { top: 8px; left: 8px; }
+    .corner-tl::after { left: 0; }
+
+    .corner-tr { top: 8px; right: 8px; transform: scaleX(-1); }
+    .corner-tr::after { left: 0; }
+
+    .corner-bl { bottom: 8px; left: 8px; transform: scaleY(-1); }
+    .corner-bl::after { left: 0; }
+
+    .corner-br { bottom: 8px; right: 8px; transform: scale(-1); }
+    .corner-br::after { left: 0; }
+
+    /* Bottom pulsing accent line */
+    .banner-line {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(220,220,220,0.65), transparent);
+      animation: linePulse 3s ease-in-out infinite;
+      z-index: 8;
+      pointer-events: none;
+    }
+    @keyframes linePulse {
+      0%, 100% { opacity: 0.3; transform: scaleX(0.85); }
+      50%       { opacity: 1;   transform: scaleX(1); }
+    }
+
+    /* Metallic shimmer sweep */
+    .banner-shimmer {
       position: absolute;
       inset: 0;
-      background: linear-gradient(0deg, #07090e 6%, rgba(7, 9, 14, 0.75) 50%, rgba(7, 9, 14, 0.3) 100%);
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      padding: 2.2rem 2.5rem;
+      background: linear-gradient(
+        105deg,
+        transparent 35%,
+        rgba(255, 255, 255, 0.14) 50%,
+        transparent 65%
+      );
+      background-size: 250% 100%;
+      animation: bannerShimmer 4s ease-in-out infinite;
+      pointer-events: none;
+      z-index: 5;
+    }
+    @keyframes bannerShimmer {
+      0%   { background-position: -200% center; }
+      100% { background-position: 200% center; }
     }
 
-    .hero-content {
+    /* Hero stats row beneath banner */
+    .hero-stats-row {
       display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      gap: 20px;
+      justify-content: center;
+      gap: 12px;
+      margin: 1rem auto 0.5rem auto;
+      max-width: 800px;
       flex-wrap: wrap;
-    }
-
-    .gang-title-box {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-    }
-
-    .hero-gang-logo {
-      width: 92px;
-      height: 92px;
-      border-radius: 22px;
-      object-fit: cover;
-      border: 3px solid var(--primary);
-      box-shadow: 0 0 25px var(--primary-glow);
-      background: #000;
     }
 
     .gang-main-title {
@@ -605,10 +647,21 @@
       padding: 1.4rem;
       position: relative;
       overflow: hidden;
-      transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
       display: flex;
       flex-direction: column;
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+      animation: cardFadeUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
+      transition: background 0.35s ease, border-color 0.35s ease, transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.35s ease;
+    }
+    @keyframes cardFadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(28px) scale(0.97);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
     }
 
     .member-card:hover {
@@ -927,15 +980,423 @@
       .search-box { max-width: 100%; }
       .form-grid-2 { grid-template-columns: 1fr; }
     }
+
+    /* ===================== LANDING PAGE (SCROLLABLE WEBPAGE) ===================== */
+    #landingPage {
+      width: 100%;
+      min-height: 185vh;
+      background: #000;
+      position: relative;
+      color: #fff;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow-x: hidden;
+      box-sizing: border-box;
+    }
+
+    #landingParticles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 0;
+    }
+    .sp {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(200,200,200,0.35);
+      animation: spFloat linear infinite;
+    }
+    @keyframes spFloat {
+      0%   { transform: translateY(110vh) translateX(0); opacity: 0; }
+      8%   { opacity: 1; }
+      92%  { opacity: 0.3; }
+      100% { transform: translateY(-10vh) translateX(var(--dx)); opacity: 0; }
+    }
+
+    .landing-content {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 1340px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Screen 1: เต็มหน้าจอแรก 100vh มีแต่ Banner และปุ่มลูกศรเลื่อนลง */
+    .landing-hero-screen {
+      width: 100%;
+      min-height: 98vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 22px;
+      padding: 30px 16px;
+      box-sizing: border-box;
+    }
+
+    /* Screen 2: ส่วนด้านล่าง ต้องเลื่อนหน้าเว็บลงมาจริงๆ ถึงจะเจอ */
+    .landing-scroll-target {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 30px;
+      padding: 8vh 16px 30vh 16px;
+      box-sizing: border-box;
+    }
+
+    /* ── 1. Big HD Banner at Top (ขนาดใหญ่เด่นชัด Widescreen) ── */
+    .landing-banner-wrap {
+      width: 100%;
+      max-width: 1260px;
+      aspect-ratio: 16 / 9;
+      max-height: 560px;
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 24px 65px rgba(0, 0, 0, 0.95), 0 0 40px rgba(255, 255, 255, 0.06);
+      background: #000;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transform: translateY(35px) scale(0.97);
+      filter: blur(8px);
+      animation: bannerStaggerIn 1.1s cubic-bezier(0.16, 1, 0.3, 1) 0.15s forwards;
+      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .landing-banner-wrap:hover {
+      transform: scale(1.01);
+    }
+    @keyframes bannerStaggerIn {
+      0% {
+        opacity: 0;
+        transform: translateY(35px) scale(0.97);
+        filter: blur(8px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0px);
+      }
+    }
+
+    .landing-banner-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: center center;
+      background: #000;
+      display: block;
+    }
+
+    /* ── 2. Tagline & Header ── */
+    .landing-header {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    .landing-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(34px, 5.5vw, 54px);
+      letter-spacing: 14px;
+      line-height: 1;
+      background: linear-gradient(180deg, #ffffff 0%, #cccccc 50%, #777777 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin: 0;
+      opacity: 0;
+      transform: translateY(24px);
+      animation: titleStaggerIn 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.65s forwards;
+    }
+    @keyframes titleStaggerIn {
+      0% {
+        opacity: 0;
+        transform: translateY(24px);
+        letter-spacing: 14px;
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+        letter-spacing: 8px;
+      }
+    }
+    .landing-subtitle {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 13px;
+      letter-spacing: 7px;
+      color: #888;
+      font-weight: 700;
+      text-transform: uppercase;
+      opacity: 0;
+      transform: translateY(18px);
+      animation: subtitleStaggerIn 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.95s forwards;
+    }
+    @keyframes subtitleStaggerIn {
+      0% {
+        opacity: 0;
+        transform: translateY(18px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ── 3. Scroll Down Guide ── */
+    .landing-scroll-guide {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      margin-top: 10px;
+      color: #aaa;
+      opacity: 0;
+      transform: translateY(15px);
+      animation: guideStaggerIn 0.9s cubic-bezier(0.16, 1, 0.3, 1) 1.25s forwards;
+    }
+    @keyframes guideStaggerIn {
+      0% {
+        opacity: 0;
+        transform: translateY(15px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .scroll-arrow-anim {
+      font-size: 22px;
+      color: #ffffff;
+      animation: arrowBounce 1.5s ease-in-out infinite;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+    }
+    @keyframes arrowBounce {
+      0%, 100% { transform: translateY(0); opacity: 0.3; }
+      50%       { transform: translateY(6px); opacity: 1; }
+    }
+    .scroll-guide-txt {
+      font-family: 'Kanit', 'Rajdhani', sans-serif;
+      font-size: 13px;
+      letter-spacing: 2px;
+      color: #888;
+      text-transform: uppercase;
+    }
+
+    /* ── 4. Gang Emblem & Info (เมื่อเลื่อนหน้าเว็บลงมา) ── */
+    .landing-emblem-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      margin-top: 40px;
+      text-align: center;
+      max-width: 580px;
+    }
+    .landing-emblem-wrap {
+      position: relative;
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .landing-emblem-img {
+      width: 68px;
+      height: 68px;
+      object-fit: contain;
+      position: relative;
+      z-index: 2;
+      filter: drop-shadow(0 0 16px rgba(255,255,255,0.25));
+      animation: logoFloat 3.5s ease-in-out infinite;
+    }
+    .motto-badge {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 5px;
+      padding: 6px 18px;
+      border-radius: 30px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #ddd;
+    }
+    .motto-desc {
+      font-size: 14px;
+      color: #888;
+      line-height: 1.6;
+    }
+
+    /* ── 5. Bottom Loader Box (เมื่อเลื่อนหน้าเว็บลงมาถึง จะเริ่มดาวน์โหลด) ── */
+    .bottom-loader-box {
+      width: 100%;
+      max-width: 340px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      margin-top: 45px;
+      margin-bottom: 90px;
+      text-align: center;
+    }
+    .loader-track {
+      width: 100%;
+      height: 2.5px;
+      background: rgba(255, 255, 255, 0.18);
+      border-radius: 2px;
+      overflow: hidden;
+      position: relative;
+    }
+    .loader-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #888888, #ffffff, #dddddd);
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.95);
+      transition: width 0.03s linear;
+    }
+    .loader-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(36px, 6vw, 44px);
+      letter-spacing: 9px;
+      line-height: 1;
+      background: linear-gradient(180deg, #ffffff 0%, #d8d8d8 50%, #888888 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin: 0;
+      text-align: center;
+    }
+    .loader-sub {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 12px;
+      color: #888888;
+      text-transform: uppercase;
+      text-align: center;
+      margin-left: 12px;
+    }
+
+    /* Main Roster Container */
+    #mainRosterApp {
+      display: none;
+      min-height: 100vh;
+      background: #000000;
+      padding-bottom: 80px;
+      position: relative;
+      z-index: 1;
+    }
+
+    #mainRosterApp .navbar {
+      animation: navSlideDown 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.05s both;
+    }
+    @keyframes navSlideDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    #mainRosterApp .hero-banner-container {
+      animation: heroBannerIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.18s both;
+    }
+    @keyframes heroBannerIn {
+      from { opacity: 0; transform: translateY(30px) scale(0.98); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    #mainRosterApp .quick-stats-row {
+      animation: statsIn 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.32s both;
+    }
+    @keyframes statsIn {
+      from { opacity: 0; transform: translateY(22px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    #mainRosterApp .filter-bar {
+      animation: filterIn 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.45s both;
+    }
+    @keyframes filterIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
   </style>
 </head>
 <body>
+
+  <!-- ===== HERO LANDING PAGE (SCROLLABLE WEBPAGE) ===== -->
+  <div id="landingPage">
+    <div id="landingParticles"></div>
+
+    <div class="landing-content">
+      <!-- ── SECTION 1: HERO SCREEN (หน้าแรก เต็มจอ 100vh) ── -->
+      <div class="landing-hero-screen">
+        <!-- 1. Big HD Banner at Top (ใหญ่เด่นชัด พอดีสายตา 860px) -->
+        <div class="landing-banner-wrap">
+          <div class="corner corner-tl"></div>
+          <div class="corner corner-tr"></div>
+          <div class="corner corner-bl"></div>
+          <div class="corner corner-br"></div>
+          <img src="/gang_banner.jpg" alt="SPONGEBOB 577 NEW GEN" class="landing-banner-img">
+          <div class="banner-shimmer"></div>
+          <div class="banner-line"></div>
+        </div>
+
+        <!-- 2. Gang Tagline & Title -->
+        <div class="landing-header">
+          <h1 class="landing-title">SPONGEBOB 577</h1>
+          <div class="landing-subtitle">N E W &nbsp; G E N &nbsp;&bull;&nbsp; OFFICIAL FIVEM GANG</div>
+        </div>
+
+        <!-- 3. Scroll Down Guide -->
+        <div class="landing-scroll-guide">
+          <i class="fa-solid fa-angles-down scroll-arrow-anim"></i>
+          <span class="scroll-guide-txt">เลื่อนหน้าเว็บลงด้านล่าง</span>
+        </div>
+      </div>
+
+      <!-- ── SECTION 2: SCROLL DOWN TARGET (ต้องเลื่อนหน้าเว็บลงมาจริงๆ ถึงจะเจอ) ── -->
+      <div class="landing-scroll-target">
+        <!-- 4. Gang Emblem & Info (ปรากฏเมื่อเลื่อนหน้าเว็บลงมา) -->
+        <div class="landing-emblem-section">
+          <div class="landing-emblem-wrap">
+            <div class="logo-ring"></div>
+            <div class="logo-ring logo-ring-2"></div>
+            <div class="logo-glow"></div>
+            <img class="landing-emblem-img" src="/gang_logo.png" alt="SPONGEBOB" onerror="this.style.opacity='0'">
+          </div>
+          <div class="motto-badge">RESPECT &bull; LOYALTY &bull; BROTHERHOOD</div>
+          <p class="motto-desc">ทำเนียบรายชื่อสมาชิกแก๊งอย่างเป็นทางการ อัปเดตสถานะและข้อมูลสมาชิกแบบเรียลไทม์</p>
+        </div>
+
+        <!-- 5. Bottom Loading (สไตล์รูปที่ 2: เส้นโหลดเงินบน + SPONGEBOB 577 + NEW GEN) -->
+        <div class="bottom-loader-box" id="bottomLoaderBox">
+          <div class="loader-track">
+            <div class="loader-fill" id="bottomLoaderFill"></div>
+          </div>
+          <div class="loader-title">SPONGEBOB 577</div>
+          <div class="loader-sub">N E W &nbsp; G E N</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== MAIN ROSTER APPLICATION ===== -->
+  <div id="mainRosterApp">
+
   <div class="bg-mesh"></div>
 
   <!-- Navbar -->
   <nav class="navbar">
-    <a href="/" class="nav-brand">
-      <img src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Gang Logo" class="nav-logo" id="navLogo">
+    <a href="javascript:void(0)" onclick="returnToLanding()" class="nav-brand" title="กลับหน้าแรก / แบนเนอร์">
+      <img src="/gang_logo.png" alt="Gang Logo" class="nav-logo" id="navLogo">
       <div class="nav-title">
         <span id="navGangName">SPONGEBOB</span>
         <span class="gang-tag-pill" id="navGangTag">577</span>
@@ -996,60 +1457,55 @@
       <!-- Media Player iframe will be loaded here -->
     </div>
   </div>
-  <div id="ytHiddenContainer" style="position:fixed;bottom:-9999px;left:-9999px;width:1px;height:1px;opacity:0.01;pointer-events:none;"></div>
+
 
   <div class="container">
-    <!-- Hero Banner -->
-    <header class="hero-banner">
-      <img src="https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=1600&auto=format&fit=crop&q=80" alt="Gang Cover" class="banner-img" id="heroBannerImg">
-      <div class="hero-overlay">
-        <div class="hero-content">
-          <div class="gang-title-box">
-            <img src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Gang Logo" class="hero-gang-logo" id="heroLogoImg">
-            <div>
-              <h1 class="gang-main-title" id="heroGangTitle">SPONGEBOB</h1>
-              <p class="gang-slogan" id="heroSlogan">
-                <i class="fa-solid fa-quote-left" style="color: var(--primary); font-size: 0.85rem;"></i>
-                <span id="heroSloganText">NEW GEN</span>
-              </p>
-            </div>
-          </div>
+    <!-- Hero Banner with Tech Brackets, Shimmer & Accent Line -->
+    <div class="hero-banner-container">
+      <header class="hero-banner">
+        <div class="corner corner-tl"></div>
+        <div class="corner corner-tr"></div>
+        <div class="corner corner-bl"></div>
+        <div class="corner corner-br"></div>
+        <img src="/gang_banner.jpg" alt="SPONGEBOB 577" class="banner-img" id="heroBannerImg"
+             onerror="this.src='/gang_banner.jpg'">
+        <div class="banner-shimmer"></div>
+        <div class="banner-line"></div>
+      </header>
+    </div>
 
-          <!-- Stats -->
-          <div class="stats-bar">
-            <div class="stat-badge">
-              <div class="stat-icon" style="background: rgba(225, 29, 72, 0.15); color: #f43f5e;">
-                <i class="fa-solid fa-users"></i>
-              </div>
-              <div>
-                <div class="stat-num" id="statTotalMembers">0</div>
-                <div class="stat-label">สมาชิกทั้งหมด</div>
-              </div>
-            </div>
-
-            <div class="stat-badge">
-              <div class="stat-icon" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">
-                <i class="fa-solid fa-shield-halved"></i>
-              </div>
-              <div>
-                <div class="stat-num" id="statActiveMembers">0</div>
-                <div class="stat-label">ประจำการ (Active)</div>
-              </div>
-            </div>
-
-            <div class="stat-badge">
-              <div class="stat-icon" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b;">
-                <i class="fa-solid fa-crown"></i>
-              </div>
-              <div>
-                <div class="stat-num" id="statHighTier">0</div>
-                <div class="stat-label">ผู้บริหาร / หัวหน้า</div>
-              </div>
-            </div>
-          </div>
+    <!-- Stats Bar beneath banner -->
+    <div class="hero-stats-row">
+      <div class="stat-badge">
+        <div class="stat-icon" style="background: rgba(225, 29, 72, 0.15); color: #f43f5e;">
+          <i class="fa-solid fa-users"></i>
+        </div>
+        <div>
+          <div class="stat-num" id="statTotalMembers">0</div>
+          <div class="stat-label">สมาชิกทั้งหมด</div>
         </div>
       </div>
-    </header>
+
+      <div class="stat-badge">
+        <div class="stat-icon" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">
+          <i class="fa-solid fa-shield-halved"></i>
+        </div>
+        <div>
+          <div class="stat-num" id="statActiveMembers">0</div>
+          <div class="stat-label">ประจำการ (Active)</div>
+        </div>
+      </div>
+
+      <div class="stat-badge">
+        <div class="stat-icon" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b;">
+          <i class="fa-solid fa-crown"></i>
+        </div>
+        <div>
+          <div class="stat-num" id="statHighTier">0</div>
+          <div class="stat-label">ผู้บริหาร / หัวหน้า</div>
+        </div>
+      </div>
+    </div>
 
     <!-- Editor Control Strip (Appears when Editor Mode is active) -->
     <div class="editor-strip" id="editorStrip">
@@ -1164,19 +1620,32 @@
         </div>
       </div>
 
-      <div class="form-group">
-        <label class="form-label">URL รูปโปรไฟล์ (Avatar URL)</label>
-        <input type="url" id="mAvatarInput" class="form-control" placeholder="https://cdn.discordapp.com/avatars/...">
+      <!-- Discord ID Auto-Fetch Section -->
+      <div class="form-group" style="background: rgba(88, 101, 242, 0.08); border: 1px solid rgba(88, 101, 242, 0.3); border-radius: 14px; padding: 14px;">
+        <label class="form-label" style="color: #a5b4fc; display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+          <span><i class="fa-brands fa-discord" style="color: #6366f1; margin-right: 6px;"></i> Discord ID (ดึงรูปและชื่ออัตโนมัติ)</span>
+          <span style="font-size: 0.72rem; color: #818cf8; font-weight: normal;">*ใส่ ID แล้วกดดึงได้ทันที</span>
+        </label>
+        <div style="display: flex; gap: 8px;">
+          <input type="text" id="mDiscordIdInput" class="form-control" placeholder="เช่น 155149108183695360" oninput="handleDiscordIdInput(this.value)">
+          <button type="button" class="btn" id="btnFetchDiscord" onclick="fetchDiscordUserManual()" style="background: #5865F2; color: #fff; border: none; border-radius: 10px; padding: 0 16px; font-weight: 700; display: flex; align-items: center; gap: 6px; white-space: nowrap; cursor: pointer; transition: 0.2s;">
+            <i class="fa-brands fa-discord"></i> <span>ดึงข้อมูล</span>
+          </button>
+        </div>
+        <div id="discordFetchStatus" style="font-size: 0.8rem; margin-top: 8px; display: none;"></div>
       </div>
 
       <div class="form-grid-2">
         <div class="form-group">
-          <label class="form-label">เบอร์โทรศัพท์ในเกม (IC Phone)</label>
-          <input type="text" id="mPhoneInput" class="form-control" placeholder="เช่น 089-999-9999">
+          <label class="form-label">URL รูปโปรไฟล์ (Avatar URL)</label>
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <img id="mAvatarPreview" src="https://cdn.discordapp.com/embed/avatars/0.png" style="width: 44px; height: 44px; border-radius: 10px; object-fit: cover; border: 1px solid var(--border); flex-shrink: 0;" onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'">
+            <input type="url" id="mAvatarInput" class="form-control" placeholder="https://cdn.discordapp.com/avatars/..." oninput="document.getElementById('mAvatarPreview').src = this.value || 'https://cdn.discordapp.com/embed/avatars/0.png'">
+          </div>
         </div>
         <div class="form-group">
-          <label class="form-label">Discord ID</label>
-          <input type="text" id="mDiscordIdInput" class="form-control" placeholder="เช่น 1499880829055144107">
+          <label class="form-label">เบอร์โทรศัพท์ในเกม (IC Phone)</label>
+          <input type="text" id="mPhoneInput" class="form-control" placeholder="เช่น 089-999-9999">
         </div>
       </div>
 
@@ -1302,6 +1771,7 @@
     <i class="fa-solid fa-circle-check" style="color: #10b981;"></i>
     <span id="toastMsg">บันทึกข้อมูลเรียบร้อยแล้ว</span>
   </div>
+  </div> <!-- End mainRosterApp -->
 
   <!-- Application Logic -->
   <script>
@@ -1386,18 +1856,25 @@
       const name = GANG_DATA.gang_name || "SPONGEBOB";
       const tag = GANG_DATA.gang_tag || "577";
       const slogan = GANG_DATA.slogan || "NEW GEN";
-      const logo = GANG_DATA.logo_url || "https://cdn.discordapp.com/embed/avatars/0.png";
-      const banner = GANG_DATA.banner_url || "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=1600&auto=format&fit=crop&q=80";
+      const logo = GANG_DATA.logo_url || "/gang_logo.png";
+      const banner = GANG_DATA.banner_url || "/gang_banner.jpg";
 
       document.title = `${name} [${tag}] • ทำเนียบรายชื่อแก๊ง`;
-      document.getElementById("navGangName").textContent = name;
-      document.getElementById("navGangTag").textContent = tag;
-      document.getElementById("navLogo").src = logo;
+      const navName = document.getElementById("navGangName");
+      if (navName) navName.textContent = name;
+      const navTag = document.getElementById("navGangTag");
+      if (navTag) navTag.textContent = tag;
+      const navLogo = document.getElementById("navLogo");
+      if (navLogo) navLogo.src = logo;
 
-      document.getElementById("heroGangTitle").textContent = name;
-      document.getElementById("heroSloganText").textContent = slogan;
-      document.getElementById("heroLogoImg").src = logo;
-      document.getElementById("heroBannerImg").src = banner;
+      const elTitle = document.getElementById("heroGangTitle");
+      if (elTitle) elTitle.textContent = name;
+      const elSlogan = document.getElementById("heroSloganText");
+      if (elSlogan) elSlogan.textContent = slogan;
+      const elLogo = document.getElementById("heroLogoImg");
+      if (elLogo) elLogo.src = logo;
+      const elBanner = document.getElementById("heroBannerImg");
+      if (elBanner) elBanner.src = banner;
 
       updateGangMusicDisplay();
     }
@@ -1445,12 +1922,13 @@
       }
 
       let cardsHtml = "";
-      members.forEach((m) => {
+      members.forEach((m, idx) => {
         const statusClass = m.status === 'online' ? 'status-online' : (m.status === 'busy' ? 'status-busy' : 'status-offline');
         const avatarUrl = m.avatar || "https://cdn.discordapp.com/embed/avatars/0.png";
+        const animDelay = (Math.min(idx * 0.045, 0.75) + 0.55).toFixed(2);
 
         cardsHtml += `
-          <div class="member-card" id="member_card_${m.id}">
+          <div class="member-card" id="member_card_${m.id}" style="animation-delay: ${animDelay}s;">
             <div class="member-header">
               <div class="avatar-wrapper">
                 <img src="${escapeHtml(avatarUrl)}" alt="${escapeHtml(m.name)}" class="member-avatar" onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'">
@@ -1632,6 +2110,11 @@
       document.getElementById("mNoteInput").value = "";
       document.getElementById("mStatusInput").value = "online";
 
+      const preview = document.getElementById("mAvatarPreview");
+      if (preview) preview.src = "https://cdn.discordapp.com/embed/avatars/0.png";
+      const statusEl = document.getElementById("discordFetchStatus");
+      if (statusEl) statusEl.style.display = "none";
+
       populateRoleSelect();
       openModal("memberModal");
     }
@@ -1652,8 +2135,105 @@
       document.getElementById("mNoteInput").value = m.note || "";
       document.getElementById("mStatusInput").value = m.status || "online";
 
+      const preview = document.getElementById("mAvatarPreview");
+      if (preview) preview.src = m.avatar || "https://cdn.discordapp.com/embed/avatars/0.png";
+      const statusEl = document.getElementById("discordFetchStatus");
+      if (statusEl) statusEl.style.display = "none";
+
       populateRoleSelect(m.rank);
       openModal("memberModal");
+    }
+
+    // ==================== DISCORD ID AUTO-FETCH ====================
+    let discordLookupTimer = null;
+
+    function handleDiscordIdInput(val) {
+      clearTimeout(discordLookupTimer);
+      const cleanVal = (val || "").trim();
+      const statusEl = document.getElementById("discordFetchStatus");
+      if (!cleanVal || cleanVal.length < 15 || !/^\d+$/.test(cleanVal)) {
+        if (statusEl) statusEl.style.display = "none";
+        return;
+      }
+      discordLookupTimer = setTimeout(() => {
+        fetchDiscordUser(cleanVal, false);
+      }, 600);
+    }
+
+    function fetchDiscordUserManual() {
+      const val = (document.getElementById("mDiscordIdInput").value || "").trim();
+      if (!val) {
+        showToast("⚠️ กรุณากรอก Discord ID ก่อนกดดึงข้อมูล");
+        document.getElementById("mDiscordIdInput").focus();
+        return;
+      }
+      fetchDiscordUser(val, true);
+    }
+
+    async function fetchDiscordUser(discordId, isManual = false) {
+      const btn = document.getElementById("btnFetchDiscord");
+      const statusEl = document.getElementById("discordFetchStatus");
+      const avatarInput = document.getElementById("mAvatarInput");
+      const avatarPreview = document.getElementById("mAvatarPreview");
+      const nameInput = document.getElementById("mNameInput");
+      const nicknameInput = document.getElementById("mNicknameInput");
+
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>กำลังดึง...</span>`;
+      }
+      if (statusEl) {
+        statusEl.style.display = "block";
+        statusEl.style.color = "#a5b4fc";
+        statusEl.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> กำลังดึงข้อมูลจาก Discord (${discordId})...`;
+      }
+
+      try {
+        const resp = await fetch(`/api/discord/user?id=${encodeURIComponent(discordId)}`);
+        const data = await resp.json();
+
+        if (data.success) {
+          if (avatarInput) avatarInput.value = data.avatar || "";
+          if (avatarPreview) avatarPreview.src = data.avatar || "https://cdn.discordapp.com/embed/avatars/0.png";
+
+          // If IC Name is empty, auto-populate with Discord Display Name
+          if (nameInput && !nameInput.value.trim()) {
+            nameInput.value = data.display_name || data.username || "";
+          }
+          // If Nickname is empty, auto-populate with username
+          if (nicknameInput && !nicknameInput.value.trim()) {
+            nicknameInput.value = data.username || "";
+          }
+
+          if (statusEl) {
+            statusEl.style.color = "#34d399";
+            statusEl.innerHTML = `<i class="fa-solid fa-circle-check"></i> ดึงสำเร็จ: <b>${escapeHtml(data.display_name)}</b> (@${escapeHtml(data.username)})`;
+          }
+          showToast(`✅ ดึงรูปโปรไฟล์ Discord สำเร็จ: ${data.display_name}`);
+        } else {
+          if (statusEl) {
+            statusEl.style.color = "#f87171";
+            statusEl.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> ${escapeHtml(data.error || "ไม่พบข้อมูลใน Discord")}`;
+          }
+          if (isManual) {
+            showToast(`⚠️ ${data.error || "ไม่สามารถดึงข้อมูลจาก Discord ได้"}`);
+          }
+        }
+      } catch (err) {
+        console.error("Discord fetch error:", err);
+        if (statusEl) {
+          statusEl.style.color = "#f87171";
+          statusEl.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> ไม่สามารถเชื่อมต่อกับระบบดึงข้อมูล Discord ได้`;
+        }
+        if (isManual) {
+          showToast("⚠️ ไม่สามารถเชื่อมต่อกับระบบดึงข้อมูล Discord ได้");
+        }
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = `<i class="fa-brands fa-discord"></i> <span>ดึงข้อมูล</span>`;
+        }
+      }
     }
 
     function populateRoleSelect(selectedRole = "") {
@@ -1789,8 +2369,6 @@
 
     let isMusicPlaying = false;
     let hasAttemptedAutoplay = false;
-    let ytPlayer = null;
-    let isYtApiReady = false;
     let currentLoadedSongUrl = "";
     let currentVolume = parseInt(localStorage.getItem("gang_music_volume") || "70", 10);
     let previousVolume = currentVolume;
@@ -1812,27 +2390,11 @@
       if (ytIframe && ytIframe.contentWindow) {
         try {
           if (currentVolume === 0) {
-            ytIframe.contentWindow.postMessage(JSON.stringify({
-              event: "command",
-              func: "mute",
-              args: []
-            }), "*");
-            ytIframe.contentWindow.postMessage(JSON.stringify({
-              event: "command",
-              func: "setVolume",
-              args: [0]
-            }), "*");
+            ytIframe.contentWindow.postMessage(JSON.stringify({ event: "command", func: "mute", args: [] }), "*");
+            ytIframe.contentWindow.postMessage(JSON.stringify({ event: "command", func: "setVolume", args: [0] }), "*");
           } else {
-            ytIframe.contentWindow.postMessage(JSON.stringify({
-              event: "command",
-              func: "unMute",
-              args: []
-            }), "*");
-            ytIframe.contentWindow.postMessage(JSON.stringify({
-              event: "command",
-              func: "setVolume",
-              args: [currentVolume]
-            }), "*");
+            ytIframe.contentWindow.postMessage(JSON.stringify({ event: "command", func: "unMute", args: [] }), "*");
+            ytIframe.contentWindow.postMessage(JSON.stringify({ event: "command", func: "setVolume", args: [currentVolume] }), "*");
           }
         } catch (e) {}
       }
@@ -1868,18 +2430,13 @@
         previousVolume = currentVolume;
         isMuted = true;
         applyMusicVolume(0);
-        showToast("🔇 ปิดเสียงเพลง", "info");
+        showToast("🔇 ปิดเสียงเพลง");
       } else {
         isMuted = false;
-        applyMusicVolume(previousVolume || 70);
-        showToast("🔊 เปิดเสียงเพลง (" + (previousVolume || 70) + "%)", "info");
+        applyMusicVolume(previousVolume > 0 ? previousVolume : 70);
+        showToast("🔊 เปิดเสียงเพลง (" + (previousVolume || 70) + "%)");
       }
     }
-
-    window.onYouTubeIframeAPIReady = function() {
-      isYtApiReady = true;
-      setupGangMusicSource();
-    };
 
     function parseMediaUrl(url) {
       if (!url) return { type: "none" };
@@ -1917,75 +2474,30 @@
         return;
       }
 
-      if (currentLoadedSongUrl === songUrl) return;
-      currentLoadedSongUrl = songUrl;
+      // Reset everything when song URL changes
+      if (currentLoadedSongUrl !== songUrl) {
+        currentLoadedSongUrl = songUrl;
+        isMusicPlaying = false;
+        hasAttemptedAutoplay = false;
 
-      // Handle Direct Audio
-      const audio = document.getElementById("gangAudioPlayer");
-      if (media.type === "direct") {
-        if (audio && audio.src !== songUrl) {
-          audio.src = songUrl;
-          audio.load();
-        }
-      } else if (audio) {
-        audio.pause();
-        audio.src = "";
-      }
-
-      // Handle YouTube Player
-      if (media.type === "youtube") {
-        initYouTubePlayer(media.id);
-      }
-
-      // Handle Spotify or SoundCloud Embed
-      if (media.type === "spotify" || media.type === "soundcloud") {
-        renderEmbeddedPlayer(media);
-      } else {
+        // Close old floating player and stop audio
+        const audio = document.getElementById("gangAudioPlayer");
         const floatCard = document.getElementById("floatingMediaCard");
-        if (floatCard && media.type !== "youtube") {
-          floatCard.style.display = "none";
-        }
+        if (audio) { audio.pause(); audio.src = ""; }
+        if (floatCard) { floatCard.style.display = "none"; document.getElementById("floatingMediaBody").innerHTML = ""; }
+        // Update widget state
+        document.getElementById("musicWidget")?.classList.remove("playing");
+        const playIcon = document.getElementById("musicPlayIcon");
+        if (playIcon) playIcon.className = "fa-solid fa-play";
+      }
+
+      // Pre-load direct audio
+      if (media.type === "direct") {
+        const audio = document.getElementById("gangAudioPlayer");
+        if (audio) { audio.src = songUrl; audio.volume = currentVolume / 100; audio.load(); }
       }
     }
 
-    function initYouTubePlayer(videoId) {
-      if (!isYtApiReady) return;
-      if (ytPlayer && ytPlayer.loadVideoById) {
-        ytPlayer.cueVideoById(videoId);
-        return;
-      }
-
-      try {
-        ytPlayer = new YT.Player("ytHiddenContainer", {
-          height: "200",
-          width: "320",
-          videoId: videoId,
-          playerVars: {
-            autoplay: GANG_DATA.song_autoplay ? 1 : 0,
-            loop: 1,
-            playlist: videoId,
-            controls: 1
-          },
-          events: {
-            onStateChange: (event) => {
-              const widget = document.getElementById("musicWidget");
-              const icon = document.getElementById("musicPlayIcon");
-              if (event.data === YT.PlayerState.PLAYING) {
-                isMusicPlaying = true;
-                widget?.classList.add("playing");
-                if (icon) icon.className = "fa-solid fa-pause";
-              } else if (event.data === YT.PlayerState.PAUSED || event.data === YT.PlayerState.ENDED) {
-                isMusicPlaying = false;
-                widget?.classList.remove("playing");
-                if (icon) icon.className = "fa-solid fa-play";
-              }
-            }
-          }
-        });
-      } catch (e) {
-        console.warn("YouTube player init error:", e);
-      }
-    }
 
     function renderEmbeddedPlayer(media) {
       const card = document.getElementById("floatingMediaCard");
@@ -2067,7 +2579,7 @@
         if (isEditorActive) {
           openGangSettingsModal();
         } else {
-          showToast("🎵 ยังไม่ได้ใส่ลิงก์เพลงแก๊ง (เข้าโหมดปรับแต่งเพื่อใส่เพลง)", "warning");
+          showToast("🎵 ยังไม่ได้ใส่ลิงก์เพลงแก๊ง (เข้าโหมดปรับแต่งเพื่อใส่เพลง)");
         }
         return;
       }
@@ -2075,13 +2587,21 @@
       const media = parseMediaUrl(songUrl);
       const widget = document.getElementById("musicWidget");
       const icon = document.getElementById("musicPlayIcon");
+      const card = document.getElementById("floatingMediaCard");
 
-      // 1. YouTube / Spotify / SoundCloud (Open/Toggle Floating Player)
+      // ===== YouTube / Spotify / SoundCloud =====
       if (media.type === "youtube" || media.type === "spotify" || media.type === "soundcloud") {
-        const card = document.getElementById("floatingMediaCard");
         const ytIframe = document.getElementById("ytIframePlayer");
+        const hasIframe = ytIframe || (document.getElementById("floatingMediaBody")?.innerHTML.trim() !== "");
 
-        // If YouTube is already loaded and user clicks play/pause
+        if (!hasIframe) {
+          // First open: render the player
+          renderEmbeddedPlayer(media);
+          showToast("▶️ กำลังเล่นเพลง: " + (GANG_DATA.song_title || "เพลงแก๊ง"));
+          return;
+        }
+
+        // Toggle play/pause for YouTube via postMessage
         if (media.type === "youtube" && ytIframe && ytIframe.contentWindow) {
           if (isMusicPlaying) {
             ytIframe.contentWindow.postMessage(JSON.stringify({ event: "command", func: "pauseVideo", args: [] }), "*");
@@ -2089,38 +2609,37 @@
             widget.classList.remove("playing");
             if (icon) icon.className = "fa-solid fa-play";
             showToast("⏸️ พักเพลงชั่วคราว");
-            return;
           } else {
             ytIframe.contentWindow.postMessage(JSON.stringify({ event: "command", func: "playVideo", args: [] }), "*");
             isMusicPlaying = true;
             widget.classList.add("playing");
             if (icon) icon.className = "fa-solid fa-pause";
             showToast("▶️ เล่นเพลงต่อ");
-            return;
           }
+          return;
         }
 
-        if (card) {
-          const isCurrentlyHidden = card.style.display === "none" || !card.style.display;
-          if (isCurrentlyHidden) {
-            renderEmbeddedPlayer(media);
-            card.style.display = "block";
-            card.classList.remove("minimized");
-            showToast("▶️ กำลังเล่นเพลง: " + (GANG_DATA.song_title || "Lana Del Rey"));
-          } else {
-            card.classList.toggle("minimized");
-            const isMin = card.classList.contains("minimized");
-            showToast(isMin ? "🔽 ย่อหน้าต่างเพลงแก๊ง" : "🔼 ขยายหน้าต่างเพลงแก๊ง");
-          }
+        // Spotify/SoundCloud: toggle on/off
+        if (isMusicPlaying) {
+          document.getElementById("floatingMediaBody").innerHTML = "";
+          isMusicPlaying = false;
+          widget.classList.remove("playing");
+          if (icon) icon.className = "fa-solid fa-play";
+          showToast("⏸️ หยุดเล่นเพลง");
+        } else {
+          renderEmbeddedPlayer(media);
+          showToast("▶️ กำลังเล่นเพลง: " + (GANG_DATA.song_title || "เพลงแก๊ง"));
         }
         return;
       }
 
-      // 2. Direct Audio (.mp3)
+      // ===== Direct Audio (.mp3 / direct URL) =====
       const audio = document.getElementById("gangAudioPlayer");
       if (!audio) return;
-      if (!audio.src || audio.src !== songUrl) {
+
+      if (!audio.src || audio.getAttribute("src") !== songUrl) {
         audio.src = songUrl;
+        audio.volume = currentVolume / 100;
       }
 
       if (isMusicPlaying) {
@@ -2135,7 +2654,7 @@
           if (icon) icon.className = "fa-solid fa-pause";
         }).catch(err => {
           console.warn("Direct audio play error:", err);
-          showToast("⚠️ ไม่สามารถเล่นไฟล์เสียงได้ กรุณาตรวจสอบลิงก์", "warning");
+          showToast("⚠️ ไม่สามารถเล่นไฟล์เสียงได้ กรุณาตรวจสอบลิงก์");
         });
       }
     }
@@ -2167,28 +2686,32 @@
       if (card) card.style.display = "none";
     }
 
-    // Autoplay trigger on user interaction
-    document.addEventListener("click", () => {
-      if (hasAttemptedAutoplay || isMusicPlaying) return;
-      if (GANG_DATA && GANG_DATA.song_autoplay && GANG_DATA.song_url) {
-        hasAttemptedAutoplay = true;
-        const media = parseMediaUrl(GANG_DATA.song_url);
-        if (media.type === "youtube" && ytPlayer && ytPlayer.playVideo) {
-          ytPlayer.playVideo();
-        } else if (media.type === "direct") {
-          const audio = document.getElementById("gangAudioPlayer");
-          if (audio) {
+    // Autoplay trigger on first user interaction (required by browser autoplay policy)
+    document.addEventListener("click", function autoplayOnce() {
+      document.removeEventListener("click", autoplayOnce);
+      if (isMusicPlaying || !GANG_DATA.song_autoplay || !GANG_DATA.song_url) return;
+      hasAttemptedAutoplay = true;
+      const media = parseMediaUrl(GANG_DATA.song_url);
+
+      if (media.type === "direct") {
+        const audio = document.getElementById("gangAudioPlayer");
+        if (audio) {
+          if (!audio.src || audio.getAttribute("src") !== GANG_DATA.song_url) {
             audio.src = GANG_DATA.song_url;
-            audio.play().then(() => {
-              isMusicPlaying = true;
-              document.getElementById("musicWidget")?.classList.add("playing");
-              const icon = document.getElementById("musicPlayIcon");
-              if (icon) icon.className = "fa-solid fa-pause";
-            }).catch(() => {});
+            audio.volume = currentVolume / 100;
           }
+          audio.play().then(() => {
+            isMusicPlaying = true;
+            document.getElementById("musicWidget")?.classList.add("playing");
+            const icon = document.getElementById("musicPlayIcon");
+            if (icon) icon.className = "fa-solid fa-pause";
+          }).catch(() => {});
         }
+      } else if (media.type === "youtube" || media.type === "spotify" || media.type === "soundcloud") {
+        // Auto-open the floating player for embedded sources
+        renderEmbeddedPlayer(media);
       }
-    }, { once: true });
+    });
 
     async function submitChangePasscode() {
       const oldPass = document.getElementById("changeOldPassInput").value.trim();
@@ -2358,6 +2881,99 @@
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
     }
+
+    /* ===== SCROLLABLE LANDING PAGE & LOADING FLOW ===== */
+    (function() {
+      const landing = document.getElementById('landingPage');
+      if (!landing) return;
+      const rosterApp = document.getElementById('mainRosterApp');
+      const loaderBox = document.getElementById('bottomLoaderBox');
+      const loaderFill = document.getElementById('bottomLoaderFill');
+      const particleBox = document.getElementById('landingParticles');
+
+      // Spawn floating particles
+      if (particleBox) {
+        for (let i = 0; i < 40; i++) {
+          const p = document.createElement('div');
+          p.className = 'sp';
+          const size = Math.random() * 2.5 + 1;
+          p.style.cssText = `
+            left: ${Math.random() * 100}%;
+            bottom: -8px;
+            width: ${size}px;
+            height: ${size}px;
+            --dx: ${(Math.random() - 0.5) * 120}px;
+            animation-duration: ${Math.random() * 7 + 5}s;
+            animation-delay: ${Math.random() * 5}s;
+            opacity: ${Math.random() * 0.4 + 0.15};
+          `;
+          particleBox.appendChild(p);
+        }
+      }
+
+      let hasStartedLoading = false;
+      let hasFinished = false;
+
+      function startBottomLoading() {
+        if (hasStartedLoading || hasFinished) return;
+        // ป้องกันไม่ให้โหลดอัตโนมัติ: ต้องมีการเลื่อนหน้าเว็บลงมาจริงๆ
+        if (window.scrollY < 200) return;
+        hasStartedLoading = true;
+
+        let progress = 0;
+        const startTime = performance.now();
+        const duration = 650; // Fast & snappy (0.65s), no waiting around!
+
+        function updateProgress(currentTime) {
+          const elapsed = currentTime - startTime;
+          progress = Math.min(100, Math.round((elapsed / duration) * 100));
+
+          if (loaderFill) loaderFill.style.width = progress + '%';
+
+          if (progress < 100) {
+            requestAnimationFrame(updateProgress);
+          } else {
+            // Finished loading! Immediately show gang roster
+            setTimeout(function() {
+              hasFinished = true;
+              if (landing) landing.style.display = 'none';
+              if (rosterApp) rosterApp.style.display = 'block';
+              if (typeof renderRoster === 'function') renderRoster();
+              if (typeof renderStats === 'function') renderStats();
+              window.scrollTo({ top: 0, behavior: 'instant' });
+            }, 100);
+          }
+        }
+
+        requestAnimationFrame(updateProgress);
+      }
+
+      function checkVisibility() {
+        if (hasStartedLoading || hasFinished || !loaderBox) return;
+        // ต้องเลื่อนหน้าเว็บลงมาเกิน 250px และกล่องโหลดปรากฏในจอจริงๆ เท่านั้น!
+        if (window.scrollY < 250) return;
+
+        const rect = loaderBox.getBoundingClientRect();
+        if (rect.top <= window.innerHeight - 30) {
+          startBottomLoading();
+        }
+      }
+
+      // ตรวจจับเมื่อผู้ใช้เลื่อนหน้าเว็บลงมาด้านล่างเท่านั้น (ไม่โหลดเองตอนเปิดเว็บ)
+      window.addEventListener('scroll', checkVisibility, { passive: true });
+
+      // Click on brand in navbar to return to landing page
+      window.returnToLanding = function() {
+        if (landing) landing.style.display = 'flex';
+        if (rosterApp) rosterApp.style.display = 'none';
+        hasFinished = false;
+        hasStartedLoading = false;
+        if (loaderFill) loaderFill.style.width = '0%';
+        window.scrollTo({ top: 0, behavior: 'instant' });
+      };
+    })();
+
   </script>
+
 </body>
 </html>

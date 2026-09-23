@@ -3,6 +3,7 @@ import sys
 import json
 import socket
 import urllib.parse
+import urllib.request
 from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 
 # Fix Windows console encoding
@@ -74,6 +75,82 @@ def save_gang_data(data):
     except Exception as e:
         print(f"[!] Error saving {DATA_FILE}: {e}")
 
+DISCORD_CACHE = {}
+
+def format_discord_user(data):
+    uid = str(data.get("id"))
+    username = data.get("username", "")
+    global_name = data.get("global_name") or username
+    avatar_hash = data.get("avatar")
+
+    if avatar_hash:
+        ext = "gif" if avatar_hash.startswith("a_") else "png"
+        avatar_url = f"https://cdn.discordapp.com/avatars/{uid}/{avatar_hash}.{ext}?size=512"
+    else:
+        try:
+            idx = (int(uid) >> 22) % 6
+        except Exception:
+            idx = 0
+        avatar_url = f"https://cdn.discordapp.com/embed/avatars/{idx}.png"
+
+    return {
+        "id": uid,
+        "username": username,
+        "global_name": global_name,
+        "display_name": global_name or username,
+        "avatar": avatar_url
+    }
+
+def fetch_discord_user(user_id, bot_token=None):
+    user_id = str(user_id).strip()
+    if not user_id.isdigit():
+        return {"success": False, "error": "Discord ID ต้องประกอบด้วยตัวเลขเท่านั้น"}
+
+    if user_id in DISCORD_CACHE:
+        return {"success": True, "cached": True, **DISCORD_CACHE[user_id]}
+
+    # Check bot token from gang_data or environment
+    if not bot_token:
+        try:
+            gdata = load_gang_data()
+            bot_token = gdata.get("discord_bot_token") or os.environ.get("DISCORD_BOT_TOKEN")
+        except Exception:
+            pass
+
+    # 1. Try Discord Official API if bot token available
+    if bot_token:
+        try:
+            req = urllib.request.Request(
+                f"https://discord.com/api/v10/users/{user_id}",
+                headers={"Authorization": f"Bot {bot_token}", "User-Agent": "GangRoster/1.0"}
+            )
+            with urllib.request.urlopen(req, timeout=5) as resp:
+                d = json.loads(resp.read().decode("utf-8"))
+                res = format_discord_user(d)
+                DISCORD_CACHE[user_id] = res
+                return {"success": True, **res}
+        except Exception as e:
+            print(f"[!] Official Bot API lookup failed for {user_id}: {e}")
+
+    # 2. Try japi.rest free proxy
+    try:
+        req = urllib.request.Request(
+            f"https://japi.rest/discord/v1/user/{user_id}",
+            headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
+        )
+        with urllib.request.urlopen(req, timeout=6) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+            if "data" in data and "id" in data["data"]:
+                res = format_discord_user(data["data"])
+                DISCORD_CACHE[user_id] = res
+                return {"success": True, **res}
+            elif "data" in data and "message" in data["data"]:
+                return {"success": False, "error": f"ไม่พบข้อมูลผู้ใช้ใน Discord ({data['data']['message']})"}
+    except Exception as e:
+        print(f"[!] japi lookup failed for {user_id}: {e}")
+
+    return {"success": False, "error": "ไม่สามารถดึงข้อมูล Discord ได้ กรุณาตรวจสอบ Discord ID หรือลองใหม่อีกครั้ง"}
+
 class GangRequestHandler(SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=BASE_DIR, **kwargs)
@@ -104,6 +181,17 @@ class GangRequestHandler(SimpleHTTPRequestHandler):
             sanitized = dict(data)
             sanitized.pop("passcode", None)
             self.wfile.write(json.dumps({"success": True, "data": sanitized}, ensure_ascii=False).encode("utf-8"))
+            return
+
+        elif clean_path == "/api/discord/user":
+            query = urllib.parse.parse_qs(parsed.query)
+            user_id = query.get("id", [""])[0].strip()
+            if not user_id:
+                self.send_json_response(400, {"success": False, "error": "กรุณาระบุ Discord ID ในพารามิเตอร์ ?id="})
+                return
+            res = fetch_discord_user(user_id)
+            code = 200 if res.get("success") else 400
+            self.send_json_response(code, res)
             return
 
         elif clean_path == "/health":
