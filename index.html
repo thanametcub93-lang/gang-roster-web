@@ -282,6 +282,58 @@
       box-shadow: 0 4px 15px rgba(0,0,0,0.4);
     }
 
+    /* Music Volume Controller */
+    .music-volume-box {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-left: 2px;
+      padding-left: 8px;
+      border-left: 1px solid rgba(255, 255, 255, 0.14);
+    }
+    .music-vol-btn {
+      background: none;
+      border: none;
+      color: #94a3b8;
+      cursor: pointer;
+      font-size: 0.85rem;
+      padding: 2px;
+      display: flex;
+      align-items: center;
+      transition: color 0.2s;
+    }
+    .music-vol-btn:hover {
+      color: #fff;
+    }
+    .music-vol-slider {
+      width: 75px;
+      height: 4px;
+      -webkit-appearance: none;
+      appearance: none;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+      outline: none;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .music-vol-slider:hover {
+      background: rgba(255, 255, 255, 0.35);
+    }
+    .music-vol-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--primary);
+      box-shadow: 0 0 8px var(--primary-glow);
+      cursor: pointer;
+      transition: transform 0.15s;
+    }
+    .music-vol-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.25);
+    }
+
     .btn-editor {
       background: linear-gradient(135deg, rgba(225, 29, 72, 0.2), rgba(245, 158, 11, 0.15));
       border: 1px solid rgba(225, 29, 72, 0.4);
@@ -892,20 +944,28 @@
     
     <div class="nav-actions">
       <!-- Gang Music Player Widget -->
-      <div class="music-widget" id="musicWidget" title="เปิด/ปิด เพลงประจำแก๊ง" onclick="toggleGangMusic()">
-        <div class="music-disc" id="musicDisc">
+      <div class="music-widget" id="musicWidget" title="เพลงประจำแก๊ง">
+        <div class="music-disc" id="musicDisc" onclick="toggleGangMusic()">
           <i class="fa-solid fa-compact-disc"></i>
         </div>
-        <div class="music-wave" id="musicWave">
+        <div class="music-wave" id="musicWave" onclick="toggleGangMusic()">
           <span class="wave-bar"></span>
           <span class="wave-bar"></span>
           <span class="wave-bar"></span>
           <span class="wave-bar"></span>
         </div>
-        <span class="music-title" id="musicTitleText">เพลงแก๊ง</span>
-        <button class="music-btn" id="musicPlayBtn" type="button" aria-label="Play/Pause">
+        <span class="music-title" id="musicTitleText" onclick="toggleGangMusic()">เพลงแก๊ง</span>
+        <button class="music-btn" id="musicPlayBtn" type="button" aria-label="Play/Pause" onclick="toggleGangMusic()">
           <i class="fa-solid fa-play" id="musicPlayIcon"></i>
         </button>
+
+        <!-- Volume Controller -->
+        <div class="music-volume-box" onclick="event.stopPropagation()">
+          <button class="music-vol-btn" id="musicMuteBtn" type="button" onclick="toggleMuteGangMusic()" title="ปิด/เปิดเสียง">
+            <i class="fa-solid fa-volume-high" id="musicVolIcon"></i>
+          </button>
+          <input type="range" id="musicVolumeSlider" class="music-vol-slider" min="0" max="100" value="70" oninput="changeGangMusicVolume(this.value)" title="ปรับระดับความดังเสียง">
+        </div>
       </div>
 
       <button class="btn btn-editor" id="btnEditorToggle" onclick="handleEditorButtonClick()">
@@ -1294,6 +1354,7 @@
     document.addEventListener("DOMContentLoaded", () => {
       renderAll();
       fetchGangData();
+      applyMusicVolume(currentVolume);
       if (currentPasscode) {
         verifySavedPasscode();
       }
@@ -1731,6 +1792,70 @@
     let ytPlayer = null;
     let isYtApiReady = false;
     let currentLoadedSongUrl = "";
+    let currentVolume = parseInt(localStorage.getItem("gang_music_volume") || "70", 10);
+    let previousVolume = currentVolume;
+    let isMuted = false;
+
+    function applyMusicVolume(vol) {
+      currentVolume = Math.max(0, Math.min(100, parseInt(vol, 10)));
+      localStorage.setItem("gang_music_volume", currentVolume);
+
+      // 1. Direct Audio
+      const audio = document.getElementById("gangAudioPlayer");
+      if (audio) {
+        audio.volume = currentVolume / 100;
+      }
+
+      // 2. YouTube
+      if (ytPlayer && ytPlayer.setVolume) {
+        try {
+          ytPlayer.setVolume(currentVolume);
+          if (currentVolume === 0) {
+            ytPlayer.mute();
+          } else if (ytPlayer.isMuted && ytPlayer.isMuted()) {
+            ytPlayer.unMute();
+          }
+        } catch (e) {}
+      }
+
+      // Update Slider and Icon
+      const slider = document.getElementById("musicVolumeSlider");
+      if (slider && parseInt(slider.value, 10) !== currentVolume) {
+        slider.value = currentVolume;
+      }
+
+      const icon = document.getElementById("musicVolIcon");
+      if (icon) {
+        if (currentVolume === 0) {
+          icon.className = "fa-solid fa-volume-xmark";
+          icon.style.color = "#ef4444";
+        } else if (currentVolume < 40) {
+          icon.className = "fa-solid fa-volume-low";
+          icon.style.color = "#94a3b8";
+        } else {
+          icon.className = "fa-solid fa-volume-high";
+          icon.style.color = "#cbd5e1";
+        }
+      }
+    }
+
+    function changeGangMusicVolume(val) {
+      isMuted = false;
+      applyMusicVolume(val);
+    }
+
+    function toggleMuteGangMusic() {
+      if (currentVolume > 0) {
+        previousVolume = currentVolume;
+        isMuted = true;
+        applyMusicVolume(0);
+        showToast("🔇 ปิดเสียงเพลง", "info");
+      } else {
+        isMuted = false;
+        applyMusicVolume(previousVolume || 70);
+        showToast("🔊 เปิดเสียงเพลง (" + (previousVolume || 70) + "%)", "info");
+      }
+    }
 
     window.onYouTubeIframeAPIReady = function() {
       isYtApiReady = true;
