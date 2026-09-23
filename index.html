@@ -374,12 +374,34 @@
       font-size: 1rem;
     }
 
+    /* Custom Sleek Dark Scrollbar for entire site */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #07090e;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(225, 29, 72, 0.35);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(225, 29, 72, 0.7);
+    }
+
     .role-pills {
       display: flex;
       gap: 8px;
-      overflow-x: auto;
-      padding-bottom: 4px;
+      flex-wrap: wrap;
       max-width: 100%;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    .role-pills::-webkit-scrollbar {
+      display: none;
+      width: 0;
+      height: 0;
     }
 
     .role-pill {
