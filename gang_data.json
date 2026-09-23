@@ -1,0 +1,58 @@
+{
+  "gang_name": "RONIN CLAN",
+  "gang_tag": "RONIN",
+  "slogan": "เกียรติยศ ศักดิ์ศรี และความจงรักภักดี",
+  "announcement": "ยินดีต้อนรับสู่ทำเนียบสมาชิกแก๊งอย่างเป็นทางการ",
+  "logo_url": "https://cdn.discordapp.com/embed/avatars/0.png",
+  "banner_url": "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=1600&auto=format&fit=crop&q=80",
+  "theme_color": "#e11d48",
+  "passcode": "gang123",
+  "roles": [
+    {
+      "name": "👑 หัวหน้าแก๊ง (Leader)",
+      "color": "#f59e0b",
+      "priority": 1
+    },
+    {
+      "name": "⚔️ รองหัวหน้า (Co-Leader)",
+      "color": "#ef4444",
+      "priority": 2
+    },
+    {
+      "name": "🛡️ เสนาธิการ (Officer)",
+      "color": "#a855f7",
+      "priority": 3
+    },
+    {
+      "name": "🔫 มือปืนประจำแก๊ง (Shooter)",
+      "color": "#3b82f6",
+      "priority": 4
+    },
+    {
+      "name": "🚗 พลขับ / จัดการยานพาหนะ (Driver)",
+      "color": "#10b981",
+      "priority": 5
+    },
+    {
+      "name": "🔰 สมาชิกทดลองงาน (Trainee)",
+      "color": "#64748b",
+      "priority": 6
+    }
+  ],
+  "members": [
+    {
+      "id": "1",
+      "name": "Kuro Ronin",
+      "nickname": "คุโระ",
+      "rank": "👑 หัวหน้าแก๊ง (Leader)",
+      "phone": "089-999-9999",
+      "discord_id": "1499880829055144107",
+      "avatar": "https://cdn.discordapp.com/embed/avatars/0.png",
+      "role_desc": "ผู้บัญชาการสูงสุด",
+      "status": "online",
+      "joined_date": "2026-01-01",
+      "weapon": "Heavy Rifle & Katana",
+      "note": "ผู้ก่อตั้งแก๊ง"
+    }
+  ]
+}

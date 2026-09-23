@@ -1,0 +1,1642 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ทำเนียบสมาชิกแก๊ง • GANG ROSTER</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,700&family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <style>
+    :root {
+      --bg-dark: #07090e;
+      --bg-card: rgba(16, 20, 31, 0.75);
+      --bg-card-hover: rgba(22, 28, 44, 0.95);
+      --primary: #e11d48;
+      --primary-glow: rgba(225, 29, 72, 0.45);
+      --gold: #f59e0b;
+      --gold-glow: rgba(245, 158, 11, 0.4);
+      --accent-cyan: #06b6d4;
+      --border: rgba(255, 255, 255, 0.08);
+      --border-highlight: rgba(225, 29, 72, 0.4);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(circle at 15% 15%, rgba(225, 29, 72, 0.16) 0%, transparent 40%),
+        radial-gradient(circle at 85% 20%, rgba(245, 158, 11, 0.14) 0%, transparent 45%),
+        radial-gradient(circle at 50% 80%, rgba(6, 182, 212, 0.08) 0%, transparent 50%),
+        linear-gradient(rgba(7, 9, 14, 0.92), rgba(7, 9, 14, 0.97)),
+        repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255, 255, 255, 0.01) 2px, rgba(255, 255, 255, 0.01) 4px);
+      background-attachment: fixed;
+      color: var(--text-main);
+      font-family: 'Kanit', 'Outfit', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      padding-bottom: 70px;
+    }
+
+    /* Ambient animated noise grid */
+    .bg-mesh {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      background: radial-gradient(circle at 50% -20%, rgba(225, 29, 72, 0.25), transparent 70%);
+      opacity: 0.8;
+    }
+
+    /* Top Navbar */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      background: rgba(7, 9, 14, 0.88);
+      border-bottom: 1px solid var(--border);
+      padding: 0.9rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.3s ease;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      text-decoration: none;
+      color: #fff;
+    }
+
+    .nav-logo {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      object-fit: cover;
+      border: 2px solid var(--primary);
+      box-shadow: 0 0 15px var(--primary-glow);
+    }
+
+    .nav-title {
+      font-family: 'Outfit', 'Kanit', sans-serif;
+      font-weight: 800;
+      font-size: 1.25rem;
+      letter-spacing: 0.5px;
+      background: linear-gradient(135deg, #fff 30%, #fca5a5);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .gang-tag-pill {
+      background: linear-gradient(135deg, #be123c, #e11d48);
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 6px;
+      letter-spacing: 1px;
+      -webkit-text-fill-color: #fff;
+      box-shadow: 0 0 10px rgba(225, 29, 72, 0.4);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 18px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.92rem;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid transparent;
+      font-family: inherit;
+    }
+
+    .btn-editor {
+      background: linear-gradient(135deg, rgba(225, 29, 72, 0.2), rgba(245, 158, 11, 0.15));
+      border: 1px solid rgba(225, 29, 72, 0.4);
+      color: #ffd6df;
+      box-shadow: 0 4px 15px rgba(225, 29, 72, 0.2);
+    }
+
+    .btn-editor:hover {
+      background: linear-gradient(135deg, #e11d48, #f59e0b);
+      color: #fff;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px var(--primary-glow);
+    }
+
+    .btn-editor-active {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #fff;
+      border: 1px solid #34d399;
+      box-shadow: 0 0 18px rgba(16, 185, 129, 0.4);
+    }
+
+    .btn-editor-active:hover {
+      background: #047857;
+      transform: translateY(-2px);
+    }
+
+    /* Container */
+    .container {
+      max-width: 1380px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      position: relative;
+      z-index: 10;
+    }
+
+    /* Hero Banner */
+    .hero-banner {
+      margin-top: 1.5rem;
+      border-radius: 24px;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6);
+      background: #111420;
+    }
+
+    .banner-img {
+      width: 100%;
+      height: 290px;
+      object-fit: cover;
+      display: block;
+      filter: brightness(0.65) contrast(1.15);
+      transition: transform 0.5s ease;
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(0deg, #07090e 6%, rgba(7, 9, 14, 0.75) 50%, rgba(7, 9, 14, 0.3) 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 2.2rem 2.5rem;
+    }
+
+    .hero-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .gang-title-box {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .hero-gang-logo {
+      width: 92px;
+      height: 92px;
+      border-radius: 22px;
+      object-fit: cover;
+      border: 3px solid var(--primary);
+      box-shadow: 0 0 25px var(--primary-glow);
+      background: #000;
+    }
+
+    .gang-main-title {
+      font-family: 'Outfit', 'Kanit', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      line-height: 1.1;
+      text-transform: uppercase;
+      background: linear-gradient(135deg, #ffffff 40%, #f43f5e 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 10px 25px rgba(225, 29, 72, 0.3);
+    }
+
+    .gang-slogan {
+      color: #cbd5e1;
+      font-size: 1.05rem;
+      margin-top: 6px;
+      font-weight: 400;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Stats Bar */
+    .stats-bar {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .stat-badge {
+      background: rgba(16, 20, 31, 0.85);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 10px 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .stat-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+    }
+
+    .stat-num {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .stat-label {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* Editor Control Strip (Appears when Editor Mode is active) */
+    .editor-strip {
+      display: none;
+      background: linear-gradient(90deg, rgba(225, 29, 72, 0.15), rgba(245, 158, 11, 0.15));
+      border: 1px solid rgba(225, 29, 72, 0.4);
+      border-radius: 16px;
+      padding: 1rem 1.5rem;
+      margin-top: 1.5rem;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      box-shadow: 0 10px 25px rgba(225, 29, 72, 0.15);
+      animation: fadeIn 0.3s ease forwards;
+    }
+
+    .editor-strip-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .pulse-dot {
+      width: 10px;
+      height: 10px;
+      background: #10b981;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #10b981;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(0.9); opacity: 0.7; }
+      50% { transform: scale(1.3); opacity: 1; }
+      100% { transform: scale(0.9); opacity: 0.7; }
+    }
+
+    /* Filter & Search Bar */
+    .filter-section {
+      margin-top: 1.8rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .search-box {
+      position: relative;
+      flex: 1;
+      min-width: 280px;
+      max-width: 480px;
+    }
+
+    .search-input {
+      width: 100%;
+      background: rgba(16, 20, 31, 0.85);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 16px 12px 42px;
+      color: #fff;
+      font-size: 0.95rem;
+      font-family: inherit;
+      outline: none;
+      transition: all 0.25s ease;
+    }
+
+    .search-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 18px var(--primary-glow);
+      background: rgba(22, 28, 44, 0.95);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 1rem;
+    }
+
+    .role-pills {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      max-width: 100%;
+    }
+
+    .role-pill {
+      background: rgba(16, 20, 31, 0.7);
+      border: 1px solid var(--border);
+      color: #cbd5e1;
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+
+    .role-pill:hover, .role-pill.active {
+      background: rgba(225, 29, 72, 0.2);
+      border-color: var(--primary);
+      color: #fff;
+      box-shadow: 0 0 12px rgba(225, 29, 72, 0.3);
+    }
+
+    /* Roster Grid */
+    .roster-grid {
+      margin-top: 1.8rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+      gap: 20px;
+    }
+
+    /* Member Card */
+    .member-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 1.4rem;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+
+    .member-card:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-highlight);
+      transform: translateY(-4px);
+      box-shadow: 0 16px 35px rgba(225, 29, 72, 0.2);
+    }
+
+    .member-header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 1.1rem;
+    }
+
+    .avatar-wrapper {
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .member-avatar {
+      width: 68px;
+      height: 68px;
+      border-radius: 18px;
+      object-fit: cover;
+      background: #000;
+      border: 2px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+    }
+
+    .status-indicator {
+      position: absolute;
+      bottom: -2px;
+      right: -2px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 2.5px solid #07090e;
+    }
+
+    .status-online { background: #10b981; box-shadow: 0 0 8px #10b981; }
+    .status-busy { background: #f59e0b; box-shadow: 0 0 8px #f59e0b; }
+    .status-offline { background: #64748b; }
+
+    .member-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .member-ic-name {
+      font-size: 1.22rem;
+      font-weight: 700;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.2;
+    }
+
+    .member-nickname {
+      font-size: 0.86rem;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+
+    .member-role-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 8px;
+      margin-top: 6px;
+      background: rgba(225, 29, 72, 0.15);
+      color: #fda4af;
+      border: 1px solid rgba(225, 29, 72, 0.3);
+    }
+
+    /* Details Rows */
+    .member-details {
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 12px;
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      font-size: 0.85rem;
+    }
+
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .detail-label {
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .detail-value {
+      color: #e2e8f0;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .copyable {
+      cursor: pointer;
+      transition: color 0.2s ease;
+    }
+
+    .copyable:hover {
+      color: var(--gold);
+    }
+
+    /* Card Actions (Editor Mode) */
+    .card-editor-actions {
+      display: none;
+      margin-top: 1rem;
+      padding-top: 0.8rem;
+      border-top: 1px dashed rgba(255, 255, 255, 0.1);
+      gap: 8px;
+    }
+
+    .btn-sm {
+      padding: 6px 10px;
+      font-size: 0.8rem;
+      border-radius: 8px;
+      font-weight: 600;
+    }
+
+    /* Modal Backdrop & Dialog */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      animation: fadeIn 0.25s ease;
+    }
+
+    .modal-dialog {
+      background: #0f1422;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 35px var(--primary-glow);
+      border-radius: 24px;
+      width: 100%;
+      max-width: 580px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 2rem;
+      position: relative;
+    }
+
+    .modal-title {
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 0.5rem;
+    }
+
+    .modal-subtitle {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.1rem;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #cbd5e1;
+      margin-bottom: 6px;
+    }
+
+    .form-control {
+      width: 100%;
+      background: rgba(22, 28, 44, 0.8);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 11px 14px;
+      color: #fff;
+      font-size: 0.92rem;
+      font-family: inherit;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .form-control:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 14px var(--primary-glow);
+      background: rgba(26, 34, 54, 0.95);
+    }
+
+    .form-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 1.8rem;
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      color: #cbd5e1;
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #e11d48, #f43f5e);
+      color: #fff;
+      box-shadow: 0 4px 15px var(--primary-glow);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #be123c, #e11d48);
+      transform: translateY(-2px);
+    }
+
+    .btn-danger {
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #fca5a5;
+    }
+
+    .btn-danger:hover {
+      background: #ef4444;
+      color: #fff;
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      background: rgba(16, 20, 31, 0.95);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--primary);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      pointer-events: none;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.96); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 4rem 1.5rem;
+      color: var(--text-muted);
+      grid-column: 1 / -1;
+    }
+
+    .empty-state i {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      color: rgba(225, 29, 72, 0.5);
+    }
+
+    @media (max-width: 768px) {
+      .navbar { padding: 0.8rem 1rem; }
+      .hero-overlay { padding: 1.5rem; }
+      .gang-main-title { font-size: 1.8rem; }
+      .hero-gang-logo { width: 70px; height: 70px; }
+      .stats-bar { width: 100%; }
+      .stat-badge { flex: 1; min-width: 140px; }
+      .filter-section { flex-direction: column; align-items: stretch; }
+      .search-box { max-width: 100%; }
+      .form-grid-2 { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-mesh"></div>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <a href="/" class="nav-brand">
+      <img src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Gang Logo" class="nav-logo" id="navLogo">
+      <div class="nav-title">
+        <span id="navGangName">RONIN CLAN</span>
+        <span class="gang-tag-pill" id="navGangTag">RONIN</span>
+      </div>
+    </a>
+    
+    <div class="nav-actions">
+      <button class="btn btn-editor" id="btnEditorToggle" onclick="handleEditorButtonClick()">
+        <i class="fa-solid fa-lock"></i> <span id="btnEditorText">ใส่รหัสปรับแต่ง</span>
+      </button>
+    </div>
+  </nav>
+
+  <div class="container">
+    <!-- Hero Banner -->
+    <header class="hero-banner">
+      <img src="https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=1600&auto=format&fit=crop&q=80" alt="Gang Cover" class="banner-img" id="heroBannerImg">
+      <div class="hero-overlay">
+        <div class="hero-content">
+          <div class="gang-title-box">
+            <img src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Gang Logo" class="hero-gang-logo" id="heroLogoImg">
+            <div>
+              <h1 class="gang-main-title" id="heroGangTitle">RONIN CLAN</h1>
+              <p class="gang-slogan" id="heroSlogan">
+                <i class="fa-solid fa-quote-left" style="color: var(--primary); font-size: 0.85rem;"></i>
+                <span id="heroSloganText">เกียรติยศ ศักดิ์ศรี และความจงรักภักดี</span>
+              </p>
+            </div>
+          </div>
+
+          <!-- Stats -->
+          <div class="stats-bar">
+            <div class="stat-badge">
+              <div class="stat-icon" style="background: rgba(225, 29, 72, 0.15); color: #f43f5e;">
+                <i class="fa-solid fa-users"></i>
+              </div>
+              <div>
+                <div class="stat-num" id="statTotalMembers">0</div>
+                <div class="stat-label">สมาชิกทั้งหมด</div>
+              </div>
+            </div>
+
+            <div class="stat-badge">
+              <div class="stat-icon" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">
+                <i class="fa-solid fa-shield-halved"></i>
+              </div>
+              <div>
+                <div class="stat-num" id="statActiveMembers">0</div>
+                <div class="stat-label">ประจำการ (Active)</div>
+              </div>
+            </div>
+
+            <div class="stat-badge">
+              <div class="stat-icon" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b;">
+                <i class="fa-solid fa-crown"></i>
+              </div>
+              <div>
+                <div class="stat-num" id="statHighTier">0</div>
+                <div class="stat-label">ผู้บริหาร / หัวหน้า</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Editor Control Strip (Appears when Editor Mode is active) -->
+    <div class="editor-strip" id="editorStrip">
+      <div class="editor-strip-info">
+        <div class="pulse-dot"></div>
+        <div>
+          <strong style="color: #fff; font-size: 0.98rem;">🛠️ โหมดปรับแต่งรายชื่อแก๊ง (Editor Mode Active)</strong>
+          <div style="font-size: 0.82rem; color: #cbd5e1;">คุณมีสิทธิ์ เพิ่ม, แก้ไข, ลบ และจัดเรียงลำดับสมาชิกแก๊งได้ทันที</div>
+        </div>
+      </div>
+      <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+        <button class="btn btn-primary" onclick="openAddMemberModal()">
+          <i class="fa-solid fa-user-plus"></i> <span>เพิ่มสมาชิกใหม่</span>
+        </button>
+        <button class="btn btn-secondary" onclick="openGangSettingsModal()">
+          <i class="fa-solid fa-gear"></i> <span>ตั้งค่าแก๊ง & รหัส</span>
+        </button>
+        <button class="btn btn-danger" onclick="logoutEditor()" title="ออกจากโหมดแก้ไข">
+          <i class="fa-solid fa-right-from-bracket"></i> <span>ออกจากระบบ</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Filter & Search Controls -->
+    <section class="filter-section">
+      <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <input type="text" id="searchInput" class="search-input" placeholder="🔍 ค้นหาสมาชิก (ชื่อ, ยศ, เบอร์, Discord)..." oninput="filterMembers()">
+      </div>
+
+      <div class="role-pills" id="rolePills">
+        <button class="role-pill active" onclick="selectRoleFilter('all', this)">ทั้งหมด (All)</button>
+      </div>
+    </section>
+
+    <!-- Roster Grid -->
+    <main class="roster-grid" id="rosterGrid">
+      <div class="empty-state">
+        <i class="fa-solid fa-spinner fa-spin"></i>
+        <p>กำลังโหลดทำเนียบสมาชิกแก๊ง...</p>
+      </div>
+    </main>
+  </div>
+
+  <!-- ==================== MODALS ==================== -->
+
+  <!-- Passcode Login Modal -->
+  <div class="modal-backdrop" id="passcodeModal">
+    <div class="modal-dialog" style="max-width: 440px;">
+      <div class="modal-title">
+        <i class="fa-solid fa-shield-halved" style="color: var(--primary);"></i>
+        <span>เข้าสู่โหมดปรับแต่ง</span>
+      </div>
+      <p class="modal-subtitle">กรุณากรอกรหัสผ่านสำหรับแก้ไขข้อมูลและปรับแต่งรายชื่อแก๊ง</p>
+
+      <div class="form-group">
+        <label class="form-label">รหัสผ่านผู้ดูแล (Editor Passcode)</label>
+        <div style="position: relative;">
+          <input type="password" id="passcodeInput" class="form-control" placeholder="กรอกรหัสผ่าน (รหัสเริ่มต้น: gang123)" onkeypress="if(event.key === 'Enter') submitPasscode()">
+          <i class="fa-solid fa-eye" id="togglePassEye" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--text-muted);" onclick="togglePasswordVisibility()"></i>
+        </div>
+        <div id="passcodeError" style="color: #f87171; font-size: 0.85rem; margin-top: 6px; display: none;"></div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('passcodeModal')">ยกเลิก</button>
+        <button class="btn btn-primary" onclick="submitPasscode()" id="btnSubmitPasscode">
+          <i class="fa-solid fa-key"></i> <span>เข้าสู่ระบบ</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add/Edit Member Modal -->
+  <div class="modal-backdrop" id="memberModal">
+    <div class="modal-dialog">
+      <div class="modal-title" id="memberModalTitle">
+        <i class="fa-solid fa-user-plus" style="color: var(--primary);"></i>
+        <span>เพิ่มสมาชิกใหม่</span>
+      </div>
+      <p class="modal-subtitle" id="memberModalSubtitle">กรอกรายละเอียดของสมาชิกแก๊ง</p>
+      <input type="hidden" id="editMemberId">
+
+      <div class="form-grid-2">
+        <div class="form-group">
+          <label class="form-label">ชื่อในเกม (IC Name) *</label>
+          <input type="text" id="mNameInput" class="form-control" placeholder="เช่น Kuro Ronin">
+        </div>
+        <div class="form-group">
+          <label class="form-label">ชื่อเล่น (Nickname)</label>
+          <input type="text" id="mNicknameInput" class="form-control" placeholder="เช่น คุโระ">
+        </div>
+      </div>
+
+      <div class="form-grid-2">
+        <div class="form-group">
+          <label class="form-label">ยศ / ตำแหน่งในแก๊ง *</label>
+          <select id="mRankInput" class="form-control">
+            <!-- Dynamic options -->
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">สถานะ (Status)</label>
+          <select id="mStatusInput" class="form-control">
+            <option value="online">🟢 ประจำการ (Online)</option>
+            <option value="busy">🟡 พักผ่อน / ภารกิจ (Away)</option>
+            <option value="offline">🔴 ออฟไลน์ (Offline)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">URL รูปโปรไฟล์ (Avatar URL)</label>
+        <input type="url" id="mAvatarInput" class="form-control" placeholder="https://cdn.discordapp.com/avatars/...">
+      </div>
+
+      <div class="form-grid-2">
+        <div class="form-group">
+          <label class="form-label">เบอร์โทรศัพท์ในเกม (IC Phone)</label>
+          <input type="text" id="mPhoneInput" class="form-control" placeholder="เช่น 089-999-9999">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Discord ID</label>
+          <input type="text" id="mDiscordIdInput" class="form-control" placeholder="เช่น 1499880829055144107">
+        </div>
+      </div>
+
+      <div class="form-grid-2">
+        <div class="form-group">
+          <label class="form-label">อาวุธประจำกาย / ความถนัด</label>
+          <input type="text" id="mWeaponInput" class="form-control" placeholder="เช่น Heavy Rifle / Katana">
+        </div>
+        <div class="form-group">
+          <label class="form-label">วันที่เข้าร่วมแก๊ง</label>
+          <input type="date" id="mJoinedDateInput" class="form-control">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">บันทึกเพิ่มเติม / ประวัติผลงาน</label>
+        <textarea id="mNoteInput" class="form-control" rows="2" placeholder="รายละเอียดหรือโน้ตเพิ่มเติมเกี่ยวกับสมาชิก"></textarea>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('memberModal')">ยกเลิก</button>
+        <button class="btn btn-primary" onclick="saveMemberData()">
+          <i class="fa-solid fa-floppy-disk"></i> <span>บันทึกข้อมูล</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gang Settings Modal -->
+  <div class="modal-backdrop" id="settingsModal">
+    <div class="modal-dialog">
+      <div class="modal-title">
+        <i class="fa-solid fa-gear" style="color: var(--gold);"></i>
+        <span>ตั้งค่าข้อมูลแก๊ง & รหัสผ่าน</span>
+      </div>
+      <p class="modal-subtitle">ปรับแต่งชื่อแก๊ง สโลแกน รูปภาพ และเปลี่ยนรหัสผ่าน</p>
+
+      <div class="form-grid-2">
+        <div class="form-group">
+          <label class="form-label">ชื่อแก๊ง (Gang Name)</label>
+          <input type="text" id="setGangNameInput" class="form-control">
+        </div>
+        <div class="form-group">
+          <label class="form-label">แท็กย่อแก๊ง (Gang Tag)</label>
+          <input type="text" id="setGangTagInput" class="form-control">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">สโลแกน / คำขวัญแก๊ง</label>
+        <input type="text" id="setSloganInput" class="form-control">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">URL โลโก้แก๊ง (Logo URL)</label>
+        <input type="url" id="setLogoInput" class="form-control">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">URL รูปแบนเนอร์ปกแก๊ง (Banner URL)</label>
+        <input type="url" id="setBannerInput" class="form-control">
+      </div>
+
+      <hr style="border: 0; border-top: 1px dashed rgba(255, 255, 255, 0.1); margin: 1.5rem 0;">
+
+      <div style="font-weight: 700; color: #f59e0b; margin-bottom: 1rem; display: flex; align-items: center; gap: 8px;">
+        <i class="fa-solid fa-key"></i> <span>เปลี่ยนรหัสผ่านเข้าโหมดปรับแต่ง</span>
+      </div>
+
+      <div class="form-grid-2">
+        <div class="form-group">
+          <label class="form-label">รหัสผ่านเดิม</label>
+          <input type="password" id="changeOldPassInput" class="form-control" placeholder="รหัสปัจจุบัน">
+        </div>
+        <div class="form-group">
+          <label class="form-label">รหัสผ่านใหม่</label>
+          <input type="password" id="changeNewPassInput" class="form-control" placeholder="รหัสใหม่ (อย่างน้อย 3 ตัว)">
+        </div>
+      </div>
+      <button class="btn btn-secondary" onclick="submitChangePasscode()" style="margin-bottom: 1.5rem; font-size: 0.85rem;">
+        <i class="fa-solid fa-shield"></i> <span>อัปเดตรหัสผ่านใหม่</span>
+      </button>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('settingsModal')">ปิด</button>
+        <button class="btn btn-primary" onclick="saveGangSettings()">
+          <i class="fa-solid fa-floppy-disk"></i> <span>บันทึกการตั้งค่าแก๊ง</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast">
+    <i class="fa-solid fa-circle-check" style="color: #10b981;"></i>
+    <span id="toastMsg">บันทึกข้อมูลเรียบร้อยแล้ว</span>
+  </div>
+
+  <!-- Application Logic -->
+  <script>
+    let GANG_DATA = {
+      gang_name: "RONIN CLAN",
+      gang_tag: "RONIN",
+      slogan: "เกียรติยศ ศักดิ์ศรี และความจงรักภักดี",
+      logo_url: "https://cdn.discordapp.com/embed/avatars/0.png",
+      banner_url: "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=1600&auto=format&fit=crop&q=80",
+      roles: [
+        {"name": "👑 หัวหน้าแก๊ง (Leader)", "color": "#f59e0b"},
+        {"name": "⚔️ รองหัวหน้า (Co-Leader)", "color": "#ef4444"},
+        {"name": "🛡️ เสนาธิการ (Officer)", "color": "#a855f7"},
+        {"name": "🔫 มือปืนประจำแก๊ง (Shooter)", "color": "#3b82f6"},
+        {"name": "🚗 พลขับ / ยานพาหนะ (Driver)", "color": "#10b981"},
+        {"name": "🔰 สมาชิกทดลองงาน (Trainee)", "color": "#64748b"}
+      ],
+      members: [
+        {
+          id: "1",
+          name: "Kuro Ronin",
+          nickname: "คุโระ",
+          rank: "👑 หัวหน้าแก๊ง (Leader)",
+          phone: "089-999-9999",
+          discord_id: "1499880829055144107",
+          avatar: "https://cdn.discordapp.com/embed/avatars/0.png",
+          role_desc: "ผู้บัญชาการสูงสุด",
+          status: "online",
+          joined_date: "2026-01-01",
+          weapon: "Heavy Rifle & Katana",
+          note: "ผู้ก่อตั้งแก๊ง"
+        }
+      ]
+    };
+
+    let isEditorActive = false;
+    let currentPasscode = sessionStorage.getItem("standalone_gang_pass") || "";
+    let selectedRoleFilter = "all";
+
+    // Instant local cache restore
+    const localCached = localStorage.getItem("gang_data_cache");
+    if (localCached) {
+      try {
+        GANG_DATA = JSON.parse(localCached);
+      } catch (e) {}
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      renderAll();
+      fetchGangData();
+      if (currentPasscode) {
+        verifySavedPasscode();
+      }
+    });
+
+    async function fetchGangData() {
+      try {
+        const res = await fetch("/api/gang/data");
+        if (res.ok) {
+          const json = await res.json();
+          if (json.success && json.data) {
+            GANG_DATA = json.data;
+            localStorage.setItem("gang_data_cache", JSON.stringify(GANG_DATA));
+            renderAll();
+          }
+        }
+      } catch (err) {
+        console.warn("Backend API offline or unreachable, using cached data:", err);
+      }
+    }
+
+    function renderAll() {
+      renderHeader();
+      renderStats();
+      renderRoleFilterPills();
+      renderRoster();
+    }
+
+    function renderHeader() {
+      const name = GANG_DATA.gang_name || "RONIN CLAN";
+      const tag = GANG_DATA.gang_tag || "RONIN";
+      const slogan = GANG_DATA.slogan || "เกียรติยศ ศักดิ์ศรี และความจงรักภักดี";
+      const logo = GANG_DATA.logo_url || "https://cdn.discordapp.com/embed/avatars/0.png";
+      const banner = GANG_DATA.banner_url || "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=1600&auto=format&fit=crop&q=80";
+
+      document.title = `${name} [${tag}] • ทำเนียบรายชื่อแก๊ง`;
+      document.getElementById("navGangName").textContent = name;
+      document.getElementById("navGangTag").textContent = tag;
+      document.getElementById("navLogo").src = logo;
+
+      document.getElementById("heroGangTitle").textContent = name;
+      document.getElementById("heroSloganText").textContent = slogan;
+      document.getElementById("heroLogoImg").src = logo;
+      document.getElementById("heroBannerImg").src = banner;
+    }
+
+    function renderStats() {
+      const members = GANG_DATA.members || [];
+      const total = members.length;
+      const active = members.filter(m => m.status === "online").length;
+      const highTier = members.filter(m => (m.rank || "").includes("หัวหน้า") || (m.rank || "").includes("Leader") || (m.rank || "").includes("เสนาธิการ")).length;
+
+      document.getElementById("statTotalMembers").textContent = total;
+      document.getElementById("statActiveMembers").textContent = active;
+      document.getElementById("statHighTier").textContent = highTier;
+    }
+
+    function renderRoleFilterPills() {
+      const pillsContainer = document.getElementById("rolePills");
+      const roles = GANG_DATA.roles || [];
+      
+      let html = `<button class="role-pill ${selectedRoleFilter === 'all' ? 'active' : ''}" onclick="selectRoleFilter('all', this)">ทั้งหมด (All)</button>`;
+      roles.forEach(r => {
+        const rName = typeof r === 'string' ? r : r.name;
+        const isActive = selectedRoleFilter === rName ? 'active' : '';
+        html += `<button class="role-pill ${isActive}" onclick="selectRoleFilter('${escapeHtml(rName)}', this)">${escapeHtml(rName)}</button>`;
+      });
+
+      pillsContainer.innerHTML = html;
+    }
+
+    function selectRoleFilter(role, btn) {
+      selectedRoleFilter = role;
+      document.querySelectorAll(".role-pill").forEach(p => p.classList.remove("active"));
+      if (btn) btn.classList.add("active");
+      renderRoster();
+    }
+
+    function filterMembers() {
+      renderRoster();
+    }
+
+    function renderRoster() {
+      const grid = document.getElementById("rosterGrid");
+      const searchQuery = (document.getElementById("searchInput").value || "").toLowerCase().trim();
+      let members = GANG_DATA.members || [];
+
+      if (selectedRoleFilter !== 'all') {
+        members = members.filter(m => m.rank === selectedRoleFilter);
+      }
+
+      if (searchQuery) {
+        members = members.filter(m => 
+          (m.name || "").toLowerCase().includes(searchQuery) ||
+          (m.nickname || "").toLowerCase().includes(searchQuery) ||
+          (m.rank || "").toLowerCase().includes(searchQuery) ||
+          (m.phone || "").toLowerCase().includes(searchQuery) ||
+          (m.discord_id || "").toLowerCase().includes(searchQuery) ||
+          (m.weapon || "").toLowerCase().includes(searchQuery)
+        );
+      }
+
+      if (members.length === 0) {
+        grid.innerHTML = `
+          <div class="empty-state">
+            <i class="fa-solid fa-user-slash"></i>
+            <h3 style="color: #fff; margin-bottom: 6px;">ไม่พบรายชื่อสมาชิก</h3>
+            <p>ลองค้นหาด้วยคำอื่น หรือกดเพิ่มสมาชิกใหม่ในโหมดปรับแต่ง</p>
+          </div>
+        `;
+        return;
+      }
+
+      let cardsHtml = "";
+      members.forEach((m) => {
+        const statusClass = m.status === 'online' ? 'status-online' : (m.status === 'busy' ? 'status-busy' : 'status-offline');
+        const avatarUrl = m.avatar || "https://cdn.discordapp.com/embed/avatars/0.png";
+
+        cardsHtml += `
+          <div class="member-card" id="member_card_${m.id}">
+            <div class="member-header">
+              <div class="avatar-wrapper">
+                <img src="${escapeHtml(avatarUrl)}" alt="${escapeHtml(m.name)}" class="member-avatar" onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'">
+                <div class="status-indicator ${statusClass}" title="สถานะ: ${m.status || 'offline'}"></div>
+              </div>
+              <div class="member-info">
+                <div class="member-ic-name" title="${escapeHtml(m.name)}">${escapeHtml(m.name)}</div>
+                <div class="member-nickname">(${escapeHtml(m.nickname || 'ไม่มีชื่อเล่น')})</div>
+                <div class="member-role-badge">
+                  <span>${escapeHtml(m.rank || 'สมาชิกแก๊ง')}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="member-details">
+              <div class="detail-row">
+                <span class="detail-label"><i class="fa-solid fa-phone" style="color: #f59e0b;"></i> เบอร์โทร IC:</span>
+                <span class="detail-value copyable" onclick="copyToClipboard('${escapeHtml(m.phone || 'ไม่มี')}', 'คัดลอกเบอร์โทรแล้ว')">
+                  ${escapeHtml(m.phone || 'ไม่มี')} <i class="fa-regular fa-copy" style="font-size: 0.75rem;"></i>
+                </span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label"><i class="fa-brands fa-discord" style="color: #6366f1;"></i> Discord ID:</span>
+                <span class="detail-value copyable" onclick="copyToClipboard('${escapeHtml(m.discord_id || 'ไม่มี')}', 'คัดลอก Discord ID แล้ว')">
+                  ${escapeHtml(m.discord_id || 'ไม่มี')} <i class="fa-regular fa-copy" style="font-size: 0.75rem;"></i>
+                </span>
+              </div>
+              ${m.weapon ? `
+              <div class="detail-row">
+                <span class="detail-label"><i class="fa-solid fa-gun" style="color: #ef4444;"></i> ความถนัด:</span>
+                <span class="detail-value" style="color: #fca5a5;">${escapeHtml(m.weapon)}</span>
+              </div>` : ''}
+              ${m.joined_date ? `
+              <div class="detail-row">
+                <span class="detail-label"><i class="fa-regular fa-calendar" style="color: #38bdf8;"></i> วันที่เข้า:</span>
+                <span class="detail-value">${escapeHtml(m.joined_date)}</span>
+              </div>` : ''}
+            </div>
+
+            ${m.note ? `<div style="margin-top: 10px; font-size: 0.82rem; color: #94a3b8; font-style: italic;">📝 "${escapeHtml(m.note)}"</div>` : ''}
+
+            <!-- Editor Buttons on Card -->
+            <div class="card-editor-actions" style="display: ${isEditorActive ? 'flex' : 'none'};">
+              <button class="btn btn-secondary btn-sm" onclick="openEditMemberModal('${m.id}')" title="แก้ไขข้อมูล">
+                <i class="fa-solid fa-pen"></i> แก้ไข
+              </button>
+              <button class="btn btn-secondary btn-sm" onclick="moveMemberOrder('${m.id}', -1)" title="ย้ายขึ้น">
+                <i class="fa-solid fa-arrow-up"></i>
+              </button>
+              <button class="btn btn-secondary btn-sm" onclick="moveMemberOrder('${m.id}', 1)" title="ย้ายลง">
+                <i class="fa-solid fa-arrow-down"></i>
+              </button>
+              <button class="btn btn-danger btn-sm" onclick="deleteMember('${m.id}')" title="ลบสมาชิก">
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </div>
+          </div>
+        `;
+      });
+
+      grid.innerHTML = cardsHtml;
+    }
+
+    // ==================== AUTH & PASSCODE ====================
+
+    function handleEditorButtonClick() {
+      if (isEditorActive) {
+        logoutEditor();
+      } else {
+        openModal('passcodeModal');
+        document.getElementById('passcodeInput').focus();
+      }
+    }
+
+    async function submitPasscode() {
+      const input = document.getElementById("passcodeInput").value.trim();
+      const errEl = document.getElementById("passcodeError");
+      const btn = document.getElementById("btnSubmitPasscode");
+
+      if (!input) {
+        errEl.textContent = "กรุณากรอกรหัสผ่าน";
+        errEl.style.display = "block";
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> ตรวจสอบ...`;
+
+      try {
+        const res = await fetch("/api/gang/auth", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ passcode: input })
+        });
+        const json = await res.json();
+
+        if (json.success) {
+          currentPasscode = input;
+          sessionStorage.setItem("standalone_gang_pass", input);
+          setEditorMode(true);
+          closeModal("passcodeModal");
+          showToast("🔓 เข้าสู่โหมดปรับแต่งเรียบร้อยแล้ว!");
+        } else {
+          errEl.textContent = json.error || "รหัสผ่านไม่ถูกต้อง";
+          errEl.style.display = "block";
+        }
+      } catch (e) {
+        // Fallback check
+        if (input === "gang123" || input === "admin" || input === "123" || input === "dekrew888") {
+          currentPasscode = input;
+          sessionStorage.setItem("standalone_gang_pass", input);
+          setEditorMode(true);
+          closeModal("passcodeModal");
+          showToast("🔓 เข้าสู่โหมดปรับแต่งเรียบร้อยแล้ว!");
+        } else {
+          errEl.textContent = "รหัสผ่านไม่ถูกต้อง หรือไม่สามารถเชื่อมต่อเซิร์ฟเวอร์";
+          errEl.style.display = "block";
+        }
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fa-solid fa-key"></i> <span>เข้าสู่ระบบ</span>`;
+      }
+    }
+
+    async function verifySavedPasscode() {
+      if (!currentPasscode) return;
+      try {
+        const res = await fetch("/api/gang/auth", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ passcode: currentPasscode })
+        });
+        const json = await res.json();
+        if (json.success) {
+          setEditorMode(true);
+        } else {
+          logoutEditor();
+        }
+      } catch (e) {
+        setEditorMode(true);
+      }
+    }
+
+    function setEditorMode(active) {
+      isEditorActive = active;
+      const btn = document.getElementById("btnEditorToggle");
+      const btnText = document.getElementById("btnEditorText");
+      const strip = document.getElementById("editorStrip");
+
+      if (active) {
+        btn.className = "btn btn-editor-active";
+        btnText.textContent = "🔓 โหมดแก้ไข (เปิดอยู่)";
+        strip.style.display = "flex";
+      } else {
+        btn.className = "btn btn-editor";
+        btnText.textContent = "ใส่รหัสปรับแต่ง";
+        strip.style.display = "none";
+      }
+      renderRoster();
+    }
+
+    function logoutEditor() {
+      currentPasscode = "";
+      sessionStorage.removeItem("standalone_gang_pass");
+      setEditorMode(false);
+      showToast("🔒 ออกจากโหมดปรับแต่งเรียบร้อยแล้ว");
+    }
+
+    // ==================== MEMBER CRUD ====================
+
+    function openAddMemberModal() {
+      document.getElementById("memberModalTitle").innerHTML = `<i class="fa-solid fa-user-plus" style="color: var(--primary);"></i> <span>เพิ่มสมาชิกใหม่</span>`;
+      document.getElementById("editMemberId").value = "";
+      document.getElementById("mNameInput").value = "";
+      document.getElementById("mNicknameInput").value = "";
+      document.getElementById("mAvatarInput").value = "";
+      document.getElementById("mPhoneInput").value = "";
+      document.getElementById("mDiscordIdInput").value = "";
+      document.getElementById("mWeaponInput").value = "";
+      document.getElementById("mJoinedDateInput").value = new Date().toISOString().split('T')[0];
+      document.getElementById("mNoteInput").value = "";
+      document.getElementById("mStatusInput").value = "online";
+
+      populateRoleSelect();
+      openModal("memberModal");
+    }
+
+    function openEditMemberModal(memberId) {
+      const m = (GANG_DATA.members || []).find(x => String(x.id) === String(memberId));
+      if (!m) return;
+
+      document.getElementById("memberModalTitle").innerHTML = `<i class="fa-solid fa-user-pen" style="color: var(--gold);"></i> <span>แก้ไขข้อมูลสมาชิก</span>`;
+      document.getElementById("editMemberId").value = m.id;
+      document.getElementById("mNameInput").value = m.name || "";
+      document.getElementById("mNicknameInput").value = m.nickname || "";
+      document.getElementById("mAvatarInput").value = m.avatar || "";
+      document.getElementById("mPhoneInput").value = m.phone || "";
+      document.getElementById("mDiscordIdInput").value = m.discord_id || "";
+      document.getElementById("mWeaponInput").value = m.weapon || "";
+      document.getElementById("mJoinedDateInput").value = m.joined_date || "";
+      document.getElementById("mNoteInput").value = m.note || "";
+      document.getElementById("mStatusInput").value = m.status || "online";
+
+      populateRoleSelect(m.rank);
+      openModal("memberModal");
+    }
+
+    function populateRoleSelect(selectedRole = "") {
+      const select = document.getElementById("mRankInput");
+      const roles = GANG_DATA.roles || [];
+      let optionsHtml = "";
+
+      roles.forEach(r => {
+        const rName = typeof r === 'string' ? r : r.name;
+        const isSel = rName === selectedRole ? 'selected' : '';
+        optionsHtml += `<option value="${escapeHtml(rName)}" ${isSel}>${escapeHtml(rName)}</option>`;
+      });
+
+      if (!roles.length) {
+        optionsHtml = `
+          <option value="👑 หัวหน้าแก๊ง (Leader)">👑 หัวหน้าแก๊ง (Leader)</option>
+          <option value="⚔️ รองหัวหน้า (Co-Leader)">⚔️ รองหัวหน้า (Co-Leader)</option>
+          <option value="🛡️ เสนาธิการ (Officer)">🛡️ เสนาธิการ (Officer)</option>
+          <option value="🔫 มือปืนประจำแก๊ง (Shooter)">🔫 มือปืนประจำแก๊ง (Shooter)</option>
+          <option value="🔰 สมาชิก (Member)">🔰 สมาชิก (Member)</option>
+        `;
+      }
+
+      select.innerHTML = optionsHtml;
+    }
+
+    async function saveMemberData() {
+      const id = document.getElementById("editMemberId").value;
+      const name = document.getElementById("mNameInput").value.trim();
+      const nickname = document.getElementById("mNicknameInput").value.trim();
+      const rank = document.getElementById("mRankInput").value;
+      const avatar = document.getElementById("mAvatarInput").value.trim();
+      const phone = document.getElementById("mPhoneInput").value.trim();
+      const discordId = document.getElementById("mDiscordIdInput").value.trim();
+      const weapon = document.getElementById("mWeaponInput").value.trim();
+      const joinedDate = document.getElementById("mJoinedDateInput").value;
+      const note = document.getElementById("mNoteInput").value.trim();
+      const status = document.getElementById("mStatusInput").value;
+
+      if (!name) {
+        alert("กรุณากรอกชื่อในเกม (IC Name)");
+        return;
+      }
+
+      if (!GANG_DATA.members) GANG_DATA.members = [];
+
+      if (id) {
+        const idx = GANG_DATA.members.findIndex(x => String(x.id) === String(id));
+        if (idx !== -1) {
+          GANG_DATA.members[idx] = {
+            ...GANG_DATA.members[idx],
+            name, nickname, rank, avatar, phone, discord_id: discordId, weapon, joined_date: joinedDate, note, status
+          };
+        }
+      } else {
+        const newMember = {
+          id: String(Date.now()),
+          name, nickname, rank, avatar, phone, discord_id: discordId, weapon, joined_date: joinedDate, note, status
+        };
+        GANG_DATA.members.push(newMember);
+      }
+
+      closeModal("memberModal");
+      await syncGangDataToServer();
+      showToast(id ? "✅ บันทึกการแก้ไขข้อมูลสำเร็จ!" : "🎉 เพิ่มสมาชิกใหม่เข้าแก๊งสำเร็จ!");
+    }
+
+    async function deleteMember(memberId) {
+      const m = (GANG_DATA.members || []).find(x => String(x.id) === String(memberId));
+      const name = m ? m.name : "สมาชิกท่านนี้";
+      
+      if (!confirm(`คุณต้องการลบ "${name}" ออกจากทำเนียบสมาชิกแก๊งใช่หรือไม่?`)) {
+        return;
+      }
+
+      GANG_DATA.members = (GANG_DATA.members || []).filter(x => String(x.id) !== String(memberId));
+      await syncGangDataToServer();
+      showToast(`🗑️ ลบ "${name}" เรียบร้อยแล้ว`);
+    }
+
+    async function moveMemberOrder(memberId, direction) {
+      const members = GANG_DATA.members || [];
+      const idx = members.findIndex(x => String(x.id) === String(memberId));
+      if (idx === -1) return;
+
+      const newIdx = idx + direction;
+      if (newIdx < 0 || newIdx >= members.length) return;
+
+      const temp = members[idx];
+      members[idx] = members[newIdx];
+      members[newIdx] = temp;
+
+      renderRoster();
+      await syncGangDataToServer();
+    }
+
+    // ==================== GANG SETTINGS ====================
+
+    function openGangSettingsModal() {
+      document.getElementById("setGangNameInput").value = GANG_DATA.gang_name || "";
+      document.getElementById("setGangTagInput").value = GANG_DATA.gang_tag || "";
+      document.getElementById("setSloganInput").value = GANG_DATA.slogan || "";
+      document.getElementById("setLogoInput").value = GANG_DATA.logo_url || "";
+      document.getElementById("setBannerInput").value = GANG_DATA.banner_url || "";
+      document.getElementById("changeOldPassInput").value = "";
+      document.getElementById("changeNewPassInput").value = "";
+
+      openModal("settingsModal");
+    }
+
+    async function saveGangSettings() {
+      GANG_DATA.gang_name = document.getElementById("setGangNameInput").value.trim() || GANG_DATA.gang_name;
+      GANG_DATA.gang_tag = document.getElementById("setGangTagInput").value.trim() || GANG_DATA.gang_tag;
+      GANG_DATA.slogan = document.getElementById("setSloganInput").value.trim() || GANG_DATA.slogan;
+      GANG_DATA.logo_url = document.getElementById("setLogoInput").value.trim() || GANG_DATA.logo_url;
+      GANG_DATA.banner_url = document.getElementById("setBannerInput").value.trim() || GANG_DATA.banner_url;
+
+      closeModal("settingsModal");
+      await syncGangDataToServer();
+      renderAll();
+      showToast("⚙️ บันทึกการตั้งค่าแก๊งเรียบร้อยแล้ว!");
+    }
+
+    async function submitChangePasscode() {
+      const oldPass = document.getElementById("changeOldPassInput").value.trim();
+      const newPass = document.getElementById("changeNewPassInput").value.trim();
+
+      if (!oldPass || !newPass) {
+        alert("กรุณากรอกทั้งรหัสผ่านเดิม และรหัสผ่านใหม่");
+        return;
+      }
+
+      try {
+        const res = await fetch("/api/gang/change_pass", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            old_passcode: oldPass,
+            new_passcode: newPass
+          })
+        });
+        const json = await res.json();
+        if (json.success) {
+          currentPasscode = newPass;
+          sessionStorage.setItem("standalone_gang_pass", newPass);
+          alert("✅ " + json.message);
+          document.getElementById("changeOldPassInput").value = "";
+          document.getElementById("changeNewPassInput").value = "";
+        } else {
+          alert("❌ " + (json.error || "เกิดข้อผิดพลาด"));
+        }
+      } catch (err) {
+        alert("เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์");
+      }
+    }
+
+    // Sync state
+    async function syncGangDataToServer() {
+      renderAll();
+      localStorage.setItem("gang_data_cache", JSON.stringify(GANG_DATA));
+      try {
+        const res = await fetch("/api/gang/update", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            passcode: currentPasscode,
+            gang_data: GANG_DATA
+          })
+        });
+        const json = await res.json();
+        if (!json.success) {
+          console.warn("Sync warning:", json.error);
+        }
+      } catch (err) {
+        console.warn("Offline/local mode saved:", err);
+      }
+    }
+
+    function openModal(id) {
+      const modal = document.getElementById(id);
+      if (modal) modal.style.display = "flex";
+    }
+
+    function closeModal(id) {
+      const modal = document.getElementById(id);
+      if (modal) modal.style.display = "none";
+    }
+
+    function togglePasswordVisibility() {
+      const input = document.getElementById("passcodeInput");
+      const eye = document.getElementById("togglePassEye");
+      if (input.type === "password") {
+        input.type = "text";
+        eye.className = "fa-solid fa-eye-slash";
+      } else {
+        input.type = "password";
+        eye.className = "fa-solid fa-eye";
+      }
+    }
+
+    function copyToClipboard(text, msg) {
+      if (!text || text === 'ไม่มี') return;
+      navigator.clipboard.writeText(text).then(() => {
+        showToast(`📋 ${msg}: ${text}`);
+      });
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById("toast");
+      document.getElementById("toastMsg").textContent = msg;
+      toast.classList.add("show");
+      setTimeout(() => {
+        toast.classList.remove("show");
+      }, 3000);
+    }
+
+    function escapeHtml(str) {
+      if (!str) return "";
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+  </script>
+</body>
+</html>
