@@ -391,45 +391,6 @@
       background: rgba(225, 29, 72, 0.7);
     }
 
-    .role-pills {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      justify-content: center;
-      margin-top: 1.2rem;
-      max-width: 100%;
-      overflow: hidden;
-      scrollbar-width: none !important;
-      -ms-overflow-style: none !important;
-    }
-    .role-pills::-webkit-scrollbar {
-      display: none !important;
-      width: 0 !important;
-      height: 0 !important;
-    }
-
-    .role-pill {
-      background: rgba(16, 20, 31, 0.75);
-      border: 1px solid var(--border);
-      color: #cbd5e1;
-      padding: 8px 16px;
-      border-radius: 12px;
-      font-size: 0.88rem;
-      font-weight: 600;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    }
-
-    .role-pill:hover, .role-pill.active {
-      background: linear-gradient(135deg, rgba(225, 29, 72, 0.25), rgba(245, 158, 11, 0.15));
-      border-color: var(--primary);
-      color: #fff;
-      box-shadow: 0 0 16px rgba(225, 29, 72, 0.35);
-      transform: translateY(-2px);
-    }
-
     /* Roster Grid */
     .roster-grid {
       margin-top: 1.8rem;
@@ -867,15 +828,11 @@
       </div>
     </div>
 
-    <!-- Filter & Search Controls -->
-    <section class="filter-section" style="flex-direction: column; align-items: center;">
+    <!-- Search Control -->
+    <section class="filter-section" style="justify-content: center;">
       <div class="search-box">
         <i class="fa-solid fa-magnifying-glass search-icon"></i>
         <input type="text" id="searchInput" class="search-input" placeholder="🔍 ค้นหาสมาชิก (ชื่อ, ยศ, เบอร์, Discord)..." oninput="filterMembers()">
-      </div>
-
-      <div class="role-pills" id="rolePills">
-        <button class="role-pill active" onclick="selectRoleFilter('all', this)">ทั้งหมด (All)</button>
       </div>
     </section>
 
@@ -1139,7 +1096,6 @@
     function renderAll() {
       renderHeader();
       renderStats();
-      renderRoleFilterPills();
       renderRoster();
     }
 
@@ -1172,28 +1128,6 @@
       document.getElementById("statHighTier").textContent = highTier;
     }
 
-    function renderRoleFilterPills() {
-      const pillsContainer = document.getElementById("rolePills");
-      if (!pillsContainer) return;
-      const roles = GANG_DATA.roles || [];
-      
-      let html = `<button class="role-pill ${selectedRoleFilter === 'all' ? 'active' : ''}" onclick="selectRoleFilter('all', this)">ทั้งหมด (All)</button>`;
-      roles.forEach(r => {
-        const rName = typeof r === 'string' ? r : r.name;
-        const isActive = selectedRoleFilter === rName ? 'active' : '';
-        html += `<button class="role-pill ${isActive}" onclick="selectRoleFilter('${escapeHtml(rName)}', this)">${escapeHtml(rName)}</button>`;
-      });
-
-      pillsContainer.innerHTML = html;
-    }
-
-    function selectRoleFilter(role, btn) {
-      selectedRoleFilter = role;
-      document.querySelectorAll(".role-pill").forEach(p => p.classList.remove("active"));
-      if (btn) btn.classList.add("active");
-      renderRoster();
-    }
-
     function filterMembers() {
       renderRoster();
     }
@@ -1202,10 +1136,6 @@
       const grid = document.getElementById("rosterGrid");
       const searchQuery = (document.getElementById("searchInput").value || "").toLowerCase().trim();
       let members = GANG_DATA.members || [];
-
-      if (selectedRoleFilter !== 'all') {
-        members = members.filter(m => m.rank === selectedRoleFilter);
-      }
 
       if (searchQuery) {
         members = members.filter(m => 
