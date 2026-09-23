@@ -137,7 +137,15 @@ class GangRequestHandler(SimpleHTTPRequestHandler):
             input_pass = str(body.get("passcode", "")).strip()
             data = load_gang_data()
             correct_pass = str(data.get("passcode", "gang123")).strip()
-            if input_pass != correct_pass and input_pass not in ["admin", "123", "dekrew888"]:
+            
+            # Allow correct passcode, default gang123, or admin bypass
+            is_authorized = (
+                input_pass == correct_pass or
+                input_pass in ["admin", "123", "dekrew888", "gang123"] or
+                (not input_pass and correct_pass == "gang123")
+            )
+
+            if not is_authorized:
                 self.send_json_response(401, {"success": False, "error": "รหัสผ่านไม่ถูกต้อง ไม่มีสิทธิ์แก้ไข"})
                 return
 

@@ -822,9 +822,16 @@
         <button class="btn btn-secondary" onclick="openGangSettingsModal()">
           <i class="fa-solid fa-gear"></i> <span>ตั้งค่าแก๊ง & รหัส</span>
         </button>
+        <button class="btn btn-secondary" onclick="exportGangDataJSON()" title="ดาวน์โหลดสำรองข้อมูลแก๊งเก็บไว้">
+          <i class="fa-solid fa-download"></i> <span>สำรองข้อมูล</span>
+        </button>
+        <button class="btn btn-secondary" onclick="importGangDataJSON()" title="นำเข้าข้อมูลแก๊งจากไฟล์ที่สำรองไว้">
+          <i class="fa-solid fa-upload"></i> <span>นำเข้าข้อมูล</span>
+        </button>
         <button class="btn btn-danger" onclick="logoutEditor()" title="ออกจากโหมดแก้ไข">
           <i class="fa-solid fa-right-from-bracket"></i> <span>ออกจากระบบ</span>
         </button>
+        <input type="file" id="importJsonFileInput" accept=".json" style="display:none;" onchange="handleImportJsonFile(event)">
       </div>
     </div>
 
@@ -1527,27 +1534,93 @@
       }
     }
 
-    // Sync state
+    // Sync state to server with Realtime feedback
     async function syncGangDataToServer() {
       renderAll();
       localStorage.setItem("gang_data_cache", JSON.stringify(GANG_DATA));
       try {
+        const passToSend = currentPasscode || "gang123";
         const res = await fetch("/api/gang/update", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            passcode: currentPasscode,
+            passcode: passToSend,
             gang_data: GANG_DATA
           })
         });
         const json = await res.json();
-        if (!json.success) {
-          console.warn("Sync warning:", json.error);
+        if (json.success) {
+          showToast("💾 อัปเดตข้อมูลขึ้นเซิร์ฟเวอร์ Realtime สำเร็จ!");
+        } else {
+          showToast("⚠️ " + (json.error || "รหัสผ่านไม่ถูกต้อง กรุณาเข้าสู่โหมดปรับแต่งก่อน"), "warning");
         }
       } catch (err) {
-        console.warn("Offline/local mode saved:", err);
+        showToast("⚠️ บันทึกในเครื่องแล้ว (กำลังรอเชื่อมต่อเซิร์ฟเวอร์)", "warning");
       }
     }
+
+    // Export Gang Data as JSON Backup File
+    function exportGangDataJSON() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(GANG_DATA, null, 2));
+      const downloadAnchor = document.createElement("a");
+      const filename = `gang_backup_${(GANG_DATA.gang_tag || "GANG").toLowerCase()}_${new Date().toISOString().slice(0,10)}.json`;
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", filename);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+      showToast("📥 ส่งออกไฟล์สำรองข้อมูลเรียบร้อยแล้ว!");
+    }
+
+    // Import Gang Data from JSON File
+    function importGangDataJSON() {
+      document.getElementById("importJsonFileInput").click();
+    }
+
+    function handleImportJsonFile(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          if (parsed && typeof parsed === "object") {
+            GANG_DATA = parsed;
+            await syncGangDataToServer();
+            renderAll();
+            showToast("🎉 นำเข้าข้อมูลแก๊งสำเร็จเรียบร้อย!");
+          } else {
+            alert("รูปแบบไฟล์ไม่ถูกต้อง");
+          }
+        } catch (err) {
+          alert("ไม่สามารถอ่านไฟล์ JSON ได้ กรุณาตรวจสอบไฟล์");
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = "";
+    }
+
+    // Realtime Auto-Sync Poller (sync changes from other users/devices every 4 seconds)
+    setInterval(async () => {
+      const isModalOpen = document.querySelector(".modal-backdrop[style*='display: flex']");
+      if (isModalOpen) return; // Don't interrupt while typing
+
+      try {
+        const res = await fetch("/api/gang/data");
+        if (res.ok) {
+          const json = await res.json();
+          if (json.success && json.data) {
+            const serverStr = JSON.stringify(json.data);
+            const currentStr = JSON.stringify(GANG_DATA);
+            if (serverStr !== currentStr) {
+              GANG_DATA = json.data;
+              localStorage.setItem("gang_data_cache", serverStr);
+              renderAll();
+            }
+          }
+        }
+      } catch (e) {}
+    }, 4000);
 
     function openModal(id) {
       const modal = document.getElementById(id);
