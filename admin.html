@@ -1653,9 +1653,20 @@
       }
     }
 
+    // ================= HELPER FUNCTIONS =================
+    function escapeHtml(str) {
+      if (str === null || str === undefined) return "";
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
     // ================= VISITOR COOKIES & NOCAPTCHA =================
     async function loadVisitorCookies() {
-      const passcode = localStorage.getItem('gang_admin_passcode') || 'gang123';
+      const passcode = currentPasscode || localStorage.getItem('sb577_admin_pass') || localStorage.getItem('gang_admin_passcode') || 'gang123';
       const tbody = document.getElementById('visitorsTableBody');
       if (!tbody) return;
       try {
@@ -1690,7 +1701,8 @@
           tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #ef4444; padding: 20px;">${escapeHtml(json.error || 'ไม่สามารถโหลดข้อมูลได้')}</td></tr>`;
         }
       } catch (e) {
-        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #ef4444; padding: 20px;">เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์</td></tr>';
+        console.error("loadVisitorCookies error:", e);
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #ef4444; padding: 20px;">เกิดข้อผิดพลาดในการโหลดข้อมูล: ${escapeHtml(e.message || 'Error')}</td></tr>`;
       }
     }
 
