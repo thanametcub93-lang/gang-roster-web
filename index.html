@@ -41,9 +41,13 @@
       padding: 0;
     }
 
-    /* Ambient animated noise grid */
+    /* ===================== PURE PITCH BLACK BACKGROUND ===================== */
     .bg-mesh {
-      display: none;
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background: #000000;
     }
 
     /* Top Navbar */
@@ -1078,23 +1082,7 @@
     }
 
     #landingParticles {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      overflow: hidden;
-      z-index: 0;
-    }
-    .sp {
-      position: absolute;
-      border-radius: 50%;
-      background: rgba(200,200,200,0.35);
-      animation: spFloat linear infinite;
-    }
-    @keyframes spFloat {
-      0%   { transform: translateY(110vh) translateX(0); opacity: 0; }
-      8%   { opacity: 1; }
-      92%  { opacity: 0.3; }
-      100% { transform: translateY(-10vh) translateX(var(--dx)); opacity: 0; }
+      display: none;
     }
 
     .landing-content {
@@ -1370,7 +1358,7 @@
     #mainRosterApp {
       display: none;
       min-height: 100vh;
-      background: #000000;
+      background: transparent;
       padding-bottom: 80px;
       position: relative;
       z-index: 1;
@@ -1967,7 +1955,7 @@
             </div>
             <div style="flex: 1; min-width: 160px;">
               <label class="form-label">ผู้เช็คชื่อ (หัวหน้า / ผู้ตรวจ)</label>
-              <input type="text" id="batchRollCallLeader" class="form-control" value="หัวหน้าแก๊ง (Leader)">
+              <input type="text" id="batchRollCallLeader" class="form-control" value="👑 Leader">
             </div>
             <div style="display: flex; gap: 6px;">
               <button type="button" class="btn btn-secondary" onclick="setAllRollCall('present')" style="font-size: 0.78rem; padding: 8px 12px;" title="ปรับทุกคนเป็นมา">
@@ -2053,21 +2041,18 @@
       song_title: "Lana Del Rey - Cinnamon Girl",
       song_autoplay: true,
       roles: [
-        {"name": "👑 หัวหน้าแก๊ง (Leader)", "color": "#f59e0b"},
-        {"name": "⚔️ รองหัวหน้า (Co-Leader)", "color": "#ef4444"},
-        {"name": "🛡️ เสนาธิการ (Officer)", "color": "#a855f7"},
-        {"name": "🔫 มือปืนประจำแก๊ง (Shooter)", "color": "#3b82f6"},
-        {"name": "🚗 พลขับ / ยานพาหนะ (Driver)", "color": "#10b981"},
-        {"name": "🔰 สมาชิกทดลองงาน (Trainee)", "color": "#64748b"}
+        {"name": "👑 Leader", "color": "#f59e0b", "priority": 1},
+        {"name": "⚔️ Co-Leader", "color": "#ef4444", "priority": 2},
+        {"name": "🔰 Member", "color": "#38bdf8", "priority": 3}
       ],
       members: [
         {
           id: "1",
-          name: "SPONGEBOB Leader",
-          nickname: "บอส",
-          rank: "👑 หัวหน้าแก๊ง (Leader)",
-          phone: "577-999-9999",
-          discord_id: "1499880829055144107",
+          name: "soon",
+          nickname: "soon",
+          rank: "👑 Leader",
+          phone: "00000",
+          discord_id: "1496785287747997778",
           avatar: "https://cdn.discordapp.com/embed/avatars/0.png",
           role_desc: "ผู้บัญชาการสูงสุด SPONGEBOB 577",
           status: "online",
@@ -2526,11 +2511,9 @@
 
       if (!roles.length) {
         optionsHtml = `
-          <option value="👑 หัวหน้าแก๊ง (Leader)">👑 หัวหน้าแก๊ง (Leader)</option>
-          <option value="⚔️ รองหัวหน้า (Co-Leader)">⚔️ รองหัวหน้า (Co-Leader)</option>
-          <option value="🛡️ เสนาธิการ (Officer)">🛡️ เสนาธิการ (Officer)</option>
-          <option value="🔫 มือปืนประจำแก๊ง (Shooter)">🔫 มือปืนประจำแก๊ง (Shooter)</option>
-          <option value="🔰 สมาชิก (Member)">🔰 สมาชิก (Member)</option>
+          <option value="👑 Leader">👑 Leader (หัวหน้าแก๊ง)</option>
+          <option value="⚔️ Co-Leader">⚔️ Co-Leader (รองหัวหน้า)</option>
+          <option value="🔰 Member">🔰 Member (สมาชิก)</option>
         `;
       }
 
@@ -3536,25 +3519,7 @@
       const loaderFill = document.getElementById('bottomLoaderFill');
       const particleBox = document.getElementById('landingParticles');
 
-      // Spawn floating particles
-      if (particleBox) {
-        for (let i = 0; i < 40; i++) {
-          const p = document.createElement('div');
-          p.className = 'sp';
-          const size = Math.random() * 2.5 + 1;
-          p.style.cssText = `
-            left: ${Math.random() * 100}%;
-            bottom: -8px;
-            width: ${size}px;
-            height: ${size}px;
-            --dx: ${(Math.random() - 0.5) * 120}px;
-            animation-duration: ${Math.random() * 7 + 5}s;
-            animation-delay: ${Math.random() * 5}s;
-            opacity: ${Math.random() * 0.4 + 0.15};
-          `;
-          particleBox.appendChild(p);
-        }
-      }
+      // Clean pure black background (no floating particles)
 
       let hasStartedLoading = false;
       let hasFinished = false;

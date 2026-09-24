@@ -1,60 +1,85 @@
 {
   "gang_name": "SPONGEBOB",
-  "gang_tag": "577",
+  "gang_tag": ".",
   "slogan": "NEW GEN",
   "announcement": "ยินดีต้อนรับสู่ทำเนียบสมาชิกแก๊ง SPONGEBOB [577] อย่างเป็นทางการ",
-  "logo_url": "https://cdn.discordapp.com/embed/avatars/0.png",
-  "banner_url": "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=1600&auto=format&fit=crop&q=80",
+  "logo_url": "/gang_logo.png",
+  "banner_url": "/gang_banner.jpg",
   "theme_color": "#e11d48",
-  "song_url": "https://www.youtube.com/watch?v=tQz93eTCpSA",
-  "song_title": "Lana Del Rey - Cinnamon Girl",
+  "song_url": "https://www.youtube.com/watch?v=TbjWsRQ6Hwk",
+  "song_title": "Godhand Champ Fivem",
   "song_autoplay": true,
-  "passcode": "gang123",
   "roles": [
     {
-      "name": "👑 หัวหน้าแก๊ง (Leader)",
+      "name": "👑 Leader",
       "color": "#f59e0b",
       "priority": 1
     },
     {
-      "name": "⚔️ รองหัวหน้า (Co-Leader)",
+      "name": "⚔️ Co-Leader",
       "color": "#ef4444",
       "priority": 2
     },
     {
-      "name": "🛡️ เสนาธิการ (Officer)",
-      "color": "#a855f7",
+      "name": "🔰 Member",
+      "color": "#38bdf8",
       "priority": 3
-    },
-    {
-      "name": "🔫 มือปืนประจำแก๊ง (Shooter)",
-      "color": "#3b82f6",
-      "priority": 4
-    },
-    {
-      "name": "🚗 พลขับ / จัดการยานพาหนะ (Driver)",
-      "color": "#10b981",
-      "priority": 5
-    },
-    {
-      "name": "🔰 สมาชิกทดลองงาน (Trainee)",
-      "color": "#64748b",
-      "priority": 6
     }
   ],
   "members": [
     {
-      "id": "1",
-      "name": "SPONGEBOB Leader",
-      "nickname": "บอส",
-      "rank": "👑 หัวหน้าแก๊ง (Leader)",
-      "phone": "577-999-9999",
+      "id": "1790185494663",
+      "name": "Jxyflex Vega",
+      "nickname": "flexCritical",
+      "rank": "👑 Leader",
+      "avatar": "https://cdn.discordapp.com/avatars/1496785287747997778/02ede5c91bf583e4a59d7bd5e64a368e.png?size=512",
+      "phone": "00000",
+      "discord_id": "1496785287747997778",
+      "weapon": "soon",
+      "joined_date": "0001-01-01",
+      "note": "",
+      "status": "offline"
+    },
+    {
+      "id": "1790186224433",
+      "name": "Jeff Lnwrainam",
+      "nickname": "white497",
+      "rank": "⚔️ Co-Leader",
+      "avatar": "https://cdn.discordapp.com/avatars/1509208692111970416/48dd1667185589e469a0ddd396d63798.png?size=512",
+      "phone": "00000",
+      "discord_id": "1509208692111970416",
+      "weapon": "pool",
+      "joined_date": "0001-01-01",
+      "note": "",
+      "status": "offline"
+    },
+    {
+      "id": "1790186300418",
+      "name": "Rchi Playtwowin",
+      "nickname": "ichi_sss.",
+      "rank": "⚔️ Co-Leader",
+      "avatar": "https://cdn.discordapp.com/avatars/1535644838073204806/a550edab5ffbc6c7cf6803d12b8f6cc2.png?size=512",
+      "phone": "00000",
+      "discord_id": "1535644838073204806",
+      "weapon": "pool",
+      "joined_date": "0001-01-01",
+      "note": "",
+      "status": "offline"
+    },
+    {
+      "id": "1790186388549",
+      "name": "Lucifer Dekrew",
+      "nickname": "JK",
+      "rank": "🔰 Member",
+      "avatar": "https://cdn.discordapp.com/avatars/1499880829055144107/a511d8881ea85fbef73501879eb9141d.png?size=512",
+      "phone": "00000",
       "discord_id": "1499880829055144107",
-      "avatar": "https://cdn.discordapp.com/embed/avatars/0.png",
-      "role_desc": "ผู้บัญชาการสูงสุด SPONGEBOB 577",
-      "status": "online",
-      "joined_date": "2026-01-01",
-      "weapon": "Heavy Rifle"
+      "weapon": "pool",
+      "joined_date": "0001-01-01",
+      "note": "",
+      "status": "online"
     }
-  ]
+  ],
+  "discord_webhook": "",
+  "passcode": "gang123"
 }
