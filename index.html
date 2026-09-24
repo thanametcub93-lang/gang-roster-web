@@ -714,134 +714,189 @@
       background: rgba(225, 29, 72, 0.7);
     }
 
-    /* Roster Grid */
+    /* Roster Grid — single wide column for hover cards */
     .roster-grid {
       margin-top: 1.8rem;
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 16px;
-    }
-
-    /* ===== FULL PROFILE CARD STYLE ===== */
-    .card-cover-area {
-      width: calc(100% + 2.8rem);
-      margin: -1.4rem -1.4rem 0 -1.4rem;
-      height: 90px;
-      border-radius: 20px 20px 0 0;
-      overflow: hidden;
-      position: relative;
-      flex-shrink: 0;
-    }
-    .card-cover-bg {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-    .card-cover-placeholder {
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-    }
-    /* Avatar centered, overlapping cover */
-    .card-profile-center {
       display: flex;
       flex-direction: column;
-      align-items: center;
-      margin-top: -38px;
-      margin-bottom: 10px;
-      position: relative;
-      z-index: 2;
+      gap: 10px;
+      max-width: 640px;
+      margin-left: auto;
+      margin-right: auto;
     }
+
+    /* ===== HOVER CARD STYLE ===== */
+    .member-card {
+      background: rgba(14, 14, 18, 0.92);
+      border: 1px solid rgba(225, 29, 72, 0.2);
+      border-radius: 16px;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      animation: cardFadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+      transition: all 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+      /* Corner brackets */
+      box-shadow: 0 4px 18px rgba(0,0,0,0.4);
+    }
+    /* Red corner brackets */
+    .member-card::before,
+    .member-card::after {
+      content: '';
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      border-color: rgba(225, 29, 72, 0.55);
+      border-style: solid;
+      transition: all 0.3s;
+    }
+    .member-card::before {
+      top: 6px; left: 6px;
+      border-width: 2px 0 0 2px;
+      border-radius: 3px 0 0 0;
+    }
+    .member-card::after {
+      bottom: 6px; right: 6px;
+      border-width: 0 2px 2px 0;
+      border-radius: 0 0 3px 0;
+    }
+    .member-card:hover {
+      background: rgba(20, 14, 20, 0.98);
+      border-color: rgba(225, 29, 72, 0.55);
+      box-shadow: 0 8px 32px rgba(225, 29, 72, 0.18);
+      transform: translateX(4px);
+    }
+    .member-card:hover::before,
+    .member-card:hover::after {
+      border-color: rgba(225, 29, 72, 0.9);
+    }
+    @keyframes cardFadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    /* Avatar */
     .card-avatar-full {
-      width: 76px;
-      height: 76px;
+      width: 56px;
+      height: 56px;
       border-radius: 50%;
       object-fit: cover;
-      border: 3px solid rgba(225, 29, 72, 0.6);
-      box-shadow: 0 4px 18px rgba(0,0,0,0.7);
-      background: #111;
+      border: 2px solid rgba(225, 29, 72, 0.5);
+      flex-shrink: 0;
+      box-shadow: 0 0 14px rgba(225,29,72,0.25);
+      transition: border-color 0.3s;
     }
-    .card-status-badge {
-      position: absolute;
-      bottom: 2px;
-      right: calc(50% - 46px);
-      width: 13px;
-      height: 13px;
-      border-radius: 50%;
-      border: 2px solid #07090e;
+    .member-card:hover .card-avatar-full {
+      border-color: rgba(225,29,72,0.9);
+    }
+    /* Card main body */
+    .card-body {
+      flex: 1;
+      min-width: 0;
     }
     .card-name {
-      font-size: 1.05rem;
+      font-size: 1rem;
       font-weight: 700;
       color: #fff;
-      margin-top: 8px;
-      text-align: center;
-    }
-    .card-nickname {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      text-align: center;
-      margin-top: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .card-rank-badge {
       display: inline-flex;
       align-items: center;
       gap: 5px;
-      font-size: 0.78rem;
+      font-size: 0.75rem;
       font-weight: 700;
-      padding: 3px 10px;
-      border-radius: 8px;
-      margin-top: 6px;
+      padding: 2px 9px;
+      border-radius: 6px;
+      margin-top: 5px;
       background: rgba(225, 29, 72, 0.15);
       color: #fda4af;
       border: 1px solid rgba(225, 29, 72, 0.3);
     }
+    /* Hover info panel — hidden by default, slides in on hover */
+    .card-hover-info {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease, margin 0.3s ease;
+      opacity: 0;
+      margin-top: 0;
+    }
+    .member-card:hover .card-hover-info {
+      max-height: 200px;
+      opacity: 1;
+      margin-top: 10px;
+    }
+    .hover-info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.82rem;
+      padding: 5px 0;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      gap: 8px;
+    }
+    .hover-info-label {
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+    .hover-info-val {
+      color: #e2e8f0;
+      font-weight: 600;
+      max-width: 180px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      text-align: right;
+      cursor: pointer;
+    }
+    .hover-info-val:hover { color: var(--gold); }
+    /* Status dot */
+    .card-status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      border: 2px solid #07090e;
+    }
+    /* Discord icon button */
+    .card-discord-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: rgba(99,102,241,0.12);
+      border: 1px solid rgba(99,102,241,0.3);
+      color: #818cf8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 1rem;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    .card-discord-btn:hover {
+      background: rgba(99,102,241,0.3);
+      color: #fff;
+    }
     /* Discord ID fix */
     .discord-id-val {
-      max-width: 130px;
+      max-width: 160px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
       display: inline-block;
       vertical-align: middle;
     }
-    /* old .member-header kept for compat */
-    .member-header { display: none; }
-
-    /* Member Card */
-    .member-card {
-      background: var(--bg-card);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 1.4rem;
-      position: relative;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-      animation: cardFadeUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
-      transition: background 0.35s ease, border-color 0.35s ease, transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.35s ease;
-    }
-    @keyframes cardFadeUp {
-      from {
-        opacity: 0;
-        transform: translateY(28px) scale(0.97);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
-    }
-
-    .member-card:hover {
-      background: var(--bg-card-hover);
-      border-color: var(--border-highlight);
-      transform: translateY(-4px);
-      box-shadow: 0 16px 35px rgba(225, 29, 72, 0.2);
-    }
+    /* old classes compat */
+    .member-header, .card-cover-area, .card-profile-center, .card-nickname,
+    .member-details, .card-editor-actions { display: none !important; }
 
     .member-header {
       display: flex;
@@ -2235,60 +2290,45 @@
           : `<div class="card-cover-placeholder"></div>`;
 
         cardsHtml += `
-          <div class="member-card" id="member_card_${m.id}" style="animation-delay: ${animDelay}s;">
+          <div class="member-card" id="member_card_${m.id}" style="animation-delay: ${animDelay}s; flex-direction: column; align-items: stretch;">
 
-            <div class="card-cover-area">${coverContent}</div>
+            <!-- Compact row: avatar + name + rank + discord btn -->
+            <div style="display:flex; align-items:center; gap:14px;">
+              <img src="${escapeHtml(avatarUrl)}" alt="${escapeHtml(m.name)}" class="card-avatar-full" onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'">
 
-            <div class="card-profile-center">
-              <div style="position:relative;display:inline-block;">
-                <img src="${escapeHtml(avatarUrl)}" alt="${escapeHtml(m.name)}" class="card-avatar-full" onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'">
-                <div class="card-status-badge ${statusClass}" title="${m.status || 'offline'}"></div>
+              <div class="card-body">
+                <div class="card-name">${escapeHtml(m.name)} <span style="font-size:0.78rem;color:var(--text-muted);font-weight:400;">(${escapeHtml(m.nickname || '')})</span></div>
+                <div class="card-rank-badge">${escapeHtml(m.rank || 'สมาชิกแก๊ง')}</div>
               </div>
-              <div class="card-name">${escapeHtml(m.name)}</div>
-              <div class="card-nickname">(${escapeHtml(m.nickname || 'ไม่มีชื่อเล่น')})</div>
-              <div class="card-rank-badge">${escapeHtml(m.rank || 'สมาชิกแก๊ง')}</div>
+
+              <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
+                <div class="card-status-dot ${statusClass}" title="${m.status || 'offline'}"></div>
+                ${m.discord_id ? `<div class="card-discord-btn" title="คัดลอก Discord ID" onclick="copyToClipboard('${escapeHtml(m.discord_id)}','คัดลอก Discord ID แล้ว')"><i class="fa-brands fa-discord"></i></div>` : ''}
+              </div>
             </div>
 
-            <div class="member-details">
-              <div class="detail-row">
-                <span class="detail-label"><i class="fa-solid fa-phone" style="color: #f59e0b;"></i> เบอร์โทร IC:</span>
-                <span class="detail-value copyable" onclick="copyToClipboard('${escapeHtml(m.phone || 'ไม่มี')}', 'คัดลอกเบอร์โทรแล้ว')">
-                  ${escapeHtml(m.phone || 'ไม่มี')} <i class="fa-regular fa-copy" style="font-size: 0.75rem;"></i>
-                </span>
+            <!-- Hover info panel -->
+            <div class="card-hover-info">
+              <div class="hover-info-row">
+                <span class="hover-info-label"><i class="fa-solid fa-phone" style="color:#f59e0b;"></i> เบอร์โทร IC</span>
+                <span class="hover-info-val" onclick="copyToClipboard('${escapeHtml(m.phone || 'ไม่มี')}','คัดลอกเบอร์แล้ว')">${escapeHtml(m.phone || 'ไม่มี')} <i class="fa-regular fa-copy" style="font-size:0.7rem;"></i></span>
               </div>
-              <div class="detail-row">
-                <span class="detail-label"><i class="fa-brands fa-discord" style="color: #6366f1;"></i> Discord ID:</span>
-                <span class="detail-value copyable" onclick="copyToClipboard('${escapeHtml(m.discord_id || 'ไม่มี')}', 'คัดลอก Discord ID แล้ว')" title="${escapeHtml(m.discord_id || 'ไม่มี')}">
-                  <span class="discord-id-val">${escapeHtml(m.discord_id || 'ไม่มี')}</span> <i class="fa-regular fa-copy" style="font-size: 0.75rem;"></i>
-                </span>
+              <div class="hover-info-row">
+                <span class="hover-info-label"><i class="fa-brands fa-discord" style="color:#6366f1;"></i> Discord ID</span>
+                <span class="hover-info-val" title="${escapeHtml(m.discord_id || 'ไม่มี')}" onclick="copyToClipboard('${escapeHtml(m.discord_id || '')}','คัดลอก Discord ID แล้ว')"><span class="discord-id-val">${escapeHtml(m.discord_id || 'ไม่มี')}</span> <i class="fa-regular fa-copy" style="font-size:0.7rem;"></i></span>
               </div>
               ${m.weapon ? `
-              <div class="detail-row">
-                <span class="detail-label"><i class="fa-solid fa-gun" style="color: #ef4444;"></i> ความถนัด:</span>
-                <span class="detail-value" style="color: #fca5a5;">${escapeHtml(m.weapon)}</span>
+              <div class="hover-info-row">
+                <span class="hover-info-label"><i class="fa-solid fa-gun" style="color:#ef4444;"></i> ความถนัด</span>
+                <span class="hover-info-val" style="color:#fca5a5;">${escapeHtml(m.weapon)}</span>
               </div>` : ''}
-              ${m.joined_date ? `
-              <div class="detail-row">
-                <span class="detail-label"><i class="fa-regular fa-calendar" style="color: #38bdf8;"></i> วันที่เข้า:</span>
-                <span class="detail-value">${escapeHtml(m.joined_date)}</span>
+              ${m.joined_date && m.joined_date !== '0001-01-01' ? `
+              <div class="hover-info-row">
+                <span class="hover-info-label"><i class="fa-regular fa-calendar" style="color:#38bdf8;"></i> วันที่เข้า</span>
+                <span class="hover-info-val">${escapeHtml(m.joined_date)}</span>
               </div>` : ''}
             </div>
 
-            <!-- Editor Buttons on Card -->
-            <div class="card-editor-actions" style="display: ${isEditorActive ? 'flex' : 'none'};">
-              <button class="btn btn-secondary btn-sm" onclick="openEditMemberModal('${m.id}')" title="แก้ไขข้อมูล">
-                <i class="fa-solid fa-pen"></i> แก้ไข
-              </button>
-              <button class="btn btn-secondary btn-sm" onclick="moveMemberOrder('${m.id}', -1)" title="ย้ายขึ้น">
-                <i class="fa-solid fa-arrow-up"></i>
-              </button>
-              <button class="btn btn-secondary btn-sm" onclick="moveMemberOrder('${m.id}', 1)" title="ย้ายลง">
-                <i class="fa-solid fa-arrow-down"></i>
-              </button>
-              <button class="btn btn-danger btn-sm" onclick="deleteMember('${m.id}')" title="ลบสมาชิก">
-                <i class="fa-solid fa-trash"></i>
-              </button>
-            </div>
           </div>
         `;
       });
