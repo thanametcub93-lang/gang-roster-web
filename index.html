@@ -722,23 +722,66 @@
       gap: 20px;
     }
 
-    /* Member Card Cover Image */
-    .member-cover {
+    /* Member Card Cover Image — Profile Card Style */
+    .member-cover-area {
       width: calc(100% + 2.8rem);
-      margin: -1.4rem -1.4rem 1rem -1.4rem;
-      height: 110px;
-      object-fit: cover;
+      margin: -1.4rem -1.4rem 0 -1.4rem;
+      position: relative;
+      height: 120px;
       border-radius: 20px 20px 0 0;
-      display: block;
-      background: #111;
+      overflow: hidden;
+      flex-shrink: 0;
     }
-    .member-cover-placeholder {
-      width: calc(100% + 2.8rem);
-      margin: -1.4rem -1.4rem 1rem -1.4rem;
-      height: 60px;
-      background: linear-gradient(135deg, rgba(225,29,72,0.08) 0%, rgba(0,0,0,0.3) 100%);
-      border-radius: 20px 20px 0 0;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
+    .member-cover-area img.cover-img,
+    .member-cover-area .cover-placeholder {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .member-cover-area .cover-placeholder {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    }
+    /* Avatar overlapping the cover */
+    .card-avatar-overlap {
+      position: absolute;
+      bottom: -28px;
+      left: 16px;
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      border: 3px solid #07090e;
+      object-fit: cover;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.6);
+      z-index: 2;
+    }
+    .card-status-dot {
+      position: absolute;
+      bottom: -22px;
+      left: 58px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 2.5px solid #07090e;
+      z-index: 3;
+    }
+    /* Space for overlapping avatar */
+    .member-header {
+      display: flex;
+      align-items: flex-end;
+      gap: 12px;
+      margin-top: 36px;
+      margin-bottom: 1rem;
+      padding-left: 88px;
+    }
+    /* Discord ID fix */
+    .discord-id-val {
+      max-width: 130px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      display: inline-block;
+      vertical-align: middle;
     }
 
     /* Member Card */
@@ -781,7 +824,6 @@
       gap: 15px;
       margin-bottom: 1.1rem;
     }
-
     .avatar-wrapper {
       position: relative;
       flex-shrink: 0;
@@ -2169,12 +2211,16 @@
 
         cardsHtml += `
           <div class="member-card" id="member_card_${m.id}" style="animation-delay: ${animDelay}s;">
-            ${coverHtml}
+            <div class="member-cover-area">
+              ${m.cover_url
+                ? `<img src="${escapeHtml(m.cover_url)}" class="cover-img" alt="cover" onerror="this.className='cover-placeholder'">`
+                : `<div class="cover-placeholder"></div>`
+              }
+              <img src="${escapeHtml(avatarUrl)}" alt="${escapeHtml(m.name)}" class="card-avatar-overlap" onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'">
+              <div class="card-status-dot ${statusClass}" title="สถานะ: ${m.status || 'offline'}"></div>
+            </div>
+
             <div class="member-header">
-              <div class="avatar-wrapper">
-                <img src="${escapeHtml(avatarUrl)}" alt="${escapeHtml(m.name)}" class="member-avatar" onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'">
-                <div class="status-indicator ${statusClass}" title="สถานะ: ${m.status || 'offline'}"></div>
-              </div>
               <div class="member-info">
                 <div class="member-ic-name" title="${escapeHtml(m.name)}">${escapeHtml(m.name)}</div>
                 <div class="member-nickname">(${escapeHtml(m.nickname || 'ไม่มีชื่อเล่น')})</div>
@@ -2193,8 +2239,8 @@
               </div>
               <div class="detail-row">
                 <span class="detail-label"><i class="fa-brands fa-discord" style="color: #6366f1;"></i> Discord ID:</span>
-                <span class="detail-value copyable" onclick="copyToClipboard('${escapeHtml(m.discord_id || 'ไม่มี')}', 'คัดลอก Discord ID แล้ว')">
-                  ${escapeHtml(m.discord_id || 'ไม่มี')} <i class="fa-regular fa-copy" style="font-size: 0.75rem;"></i>
+                <span class="detail-value copyable" onclick="copyToClipboard('${escapeHtml(m.discord_id || 'ไม่มี')}', 'คัดลอก Discord ID แล้ว')" title="${escapeHtml(m.discord_id || 'ไม่มี')}">
+                  <span class="discord-id-val">${escapeHtml(m.discord_id || 'ไม่มี')}</span> <i class="fa-regular fa-copy" style="font-size: 0.75rem;"></i>
                 </span>
               </div>
               ${m.weapon ? `
