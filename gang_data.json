@@ -11,17 +11,17 @@
   "song_autoplay": true,
   "roles": [
     {
-      "name": "👑 Leader",
+      "name": "Leader",
       "color": "#f59e0b",
       "priority": 1
     },
     {
-      "name": "⚔️ รองหัวหน้า",
+      "name": "Co-Leader",
       "color": "#ef4444",
       "priority": 2
     },
     {
-      "name": "🔰 Member",
+      "name": "Member",
       "color": "#38bdf8",
       "priority": 3
     }
@@ -31,7 +31,7 @@
       "id": "1790185494663",
       "name": "Jxyflex Vega",
       "nickname": "flexCritical",
-      "rank": "👑 Leader",
+      "rank": "Leader",
       "avatar": "https://cdn.discordapp.com/avatars/1496785287747997778/02ede5c91bf583e4a59d7bd5e64a368e.png?size=512",
       "phone": "00000",
       "discord_id": "1496785287747997778",
@@ -44,7 +44,7 @@
       "id": "1790186224433",
       "name": "Jeff Lnwrainam",
       "nickname": "white497",
-      "rank": "⚔️ รองหัวหน้า",
+      "rank": "Co-Leader",
       "avatar": "https://cdn.discordapp.com/avatars/1509208692111970416/48dd1667185589e469a0ddd396d63798.png?size=512",
       "phone": "00000",
       "discord_id": "1509208692111970416",
@@ -57,7 +57,7 @@
       "id": "1790186300418",
       "name": "Rchi Playtwowin",
       "nickname": "ichi_sss.",
-      "rank": "⚔️ รองหัวหน้า",
+      "rank": "Co-Leader",
       "avatar": "https://cdn.discordapp.com/avatars/1535644838073204806/a550edab5ffbc6c7cf6803d12b8f6cc2.png?size=512",
       "phone": "00000",
       "discord_id": "1535644838073204806",
@@ -70,7 +70,7 @@
       "id": "1790186388549",
       "name": "Lucifer Dekrew",
       "nickname": "JK",
-      "rank": "🔰 Member",
+      "rank": "Member",
       "avatar": "https://cdn.discordapp.com/avatars/1499880829055144107/a511d8881ea85fbef73501879eb9141d.png?size=512",
       "phone": "00000",
       "discord_id": "1499880829055144107",

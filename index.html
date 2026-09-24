@@ -1010,6 +1010,120 @@
       display: inline-block;
       vertical-align: middle;
     }
+
+    /* ===== DISCORD HOVER PROFILE CARD (MATCHING REFERENCE IMAGE) ===== */
+    .discord-global-popover {
+      position: fixed;
+      width: 250px;
+      background: #0d0d13;
+      border: 1.5px solid var(--pop-role-color, #fbbf24);
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.9), 0 0 24px var(--pop-role-glow, rgba(245, 158, 11, 0.25));
+      z-index: 99999;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(6px) scale(0.97);
+      transition: opacity 0.18s cubic-bezier(0.4, 0, 0.2, 1), transform 0.18s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.18s;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .discord-global-popover.visible {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0) scale(1);
+      pointer-events: auto;
+    }
+    .dc-pop-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .dc-pop-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 2px solid var(--pop-role-color, #fbbf24);
+      object-fit: cover;
+      box-shadow: 0 0 12px var(--pop-role-glow, rgba(245, 158, 11, 0.25));
+    }
+    .dc-pop-icon {
+      color: #94a3b8;
+      font-size: 1.3rem;
+      padding: 2px;
+    }
+    .dc-pop-name {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fff;
+      margin-top: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.2;
+    }
+    .dc-pop-link {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #94a3b8;
+      font-size: 0.8rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-top: -2px;
+    }
+    .dc-pop-badge {
+      display: inline-flex;
+      align-self: flex-start;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      padding: 3px 9px;
+      border-radius: 5px 5px 0 5px;
+      clip-path: polygon(
+        0 0,
+        100% 0,
+        100% calc(100% - 6px),
+        calc(100% - 6px) 100%,
+        0 100%
+      );
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--pop-role-color, #fbbf24);
+      border: 1px solid var(--pop-role-border, rgba(245, 158, 11, 0.4));
+    }
+    .dc-pop-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 8px 0;
+      border-radius: 20px;
+      border: 1.5px solid var(--pop-role-color, #fbbf24);
+      background: transparent;
+      color: var(--pop-role-color, #fbbf24);
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-top: 4px;
+    }
+    .dc-pop-btn:hover {
+      background: var(--pop-role-color, #fbbf24);
+      color: #000;
+      box-shadow: 0 4px 16px var(--pop-role-glow, rgba(245, 158, 11, 0.35));
+    }
+
     /* old classes compat */
     .member-header, .card-cover-area, .card-profile-center,
     .member-details, .card-editor-actions { display: none !important; }
@@ -1854,6 +1968,9 @@
     </main>
   </div>
 
+  <!-- Global Discord Hover Profile Popover (Rendered fixed above cursor/card) -->
+  <div id="discordGlobalPopover" class="discord-global-popover"></div>
+
   <!-- ==================== MODALS ==================== -->
 
   <!-- Admin Passcode Login Modal -->
@@ -2410,6 +2527,88 @@
         }
       }
 
+      // ===== DISCORD HOVER PROFILE POPOVER SYSTEM =====
+      let popoverTimeout = null;
+
+      function showDiscordPopover(btnEl, memberId) {
+        clearTimeout(popoverTimeout);
+        const popover = document.getElementById('discordGlobalPopover');
+        if (!popover) return;
+
+        const m = (GANG_DATA.members || []).find(x => String(x.id) === String(memberId));
+        if (!m) return;
+
+        const roles = GANG_DATA.roles || [];
+        const roleObj = roles.find(x => x.name === m.rank);
+        const rankColor = roleObj ? (roleObj.color || '#fbbf24') : '#fbbf24';
+        const rankPriority = getRolePriority(m.rank);
+        let rankIcon = 'fa-users';
+        let cleanRankText = 'MEMBER';
+        if (rankPriority <= 1) {
+          rankIcon = 'fa-crown';
+          cleanRankText = 'LEADER';
+        } else if (rankPriority === 2) {
+          rankIcon = 'fa-shield-halved';
+          cleanRankText = 'CO-LEADER';
+        } else {
+          rankIcon = 'fa-users'; // รูปคน 3 คน
+          cleanRankText = 'MEMBER';
+        }
+
+        const avatarUrl = m.avatar || 'https://cdn.discordapp.com/embed/avatars/0.png';
+        const discordTag = m.discord_id ? `discord.com/users/${m.discord_id}` : (m.nickname ? `@${m.nickname}` : 'discord.gg');
+        const discordUrl = m.discord_id ? `https://discord.com/users/${m.discord_id}` : `https://discord.com`;
+
+        popover.style.setProperty('--pop-role-color', rankColor);
+        popover.style.setProperty('--pop-role-glow', rankColor + '40');
+        popover.style.setProperty('--pop-role-border', rankColor + '60');
+
+        popover.innerHTML = `
+          <div class="dc-pop-top">
+            <img src="${escapeHtml(avatarUrl)}" class="dc-pop-avatar" alt="${escapeHtml(m.name)}" onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'">
+            <div class="dc-pop-icon"><i class="fa-brands fa-discord"></i></div>
+          </div>
+          <div class="dc-pop-name">${escapeHtml(m.name)}</div>
+          <div class="dc-pop-link">
+            <i class="fa-brands fa-discord" style="color: #5865F2;"></i>
+            <span>${escapeHtml(discordTag)}</span>
+          </div>
+          <div class="dc-pop-badge">
+            <i class="fa-solid ${rankIcon}"></i> ${escapeHtml(cleanRankText)}
+          </div>
+          <a href="${discordUrl}" target="_blank" rel="noopener noreferrer" class="dc-pop-btn" onclick="copyToClipboard('${escapeHtml(m.discord_id || '')}', 'คัดลอก Discord ID แล้ว')">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i> VIEW PROFILE
+          </a>
+        `;
+
+        popover.onmouseenter = () => clearTimeout(popoverTimeout);
+        popover.onmouseleave = hideDiscordPopover;
+
+        // Position popover relative to button in viewport
+        popover.classList.add('visible');
+        const rect = btnEl.getBoundingClientRect();
+        const popWidth = 250;
+        let left = rect.right - popWidth;
+        if (left < 10) left = 10;
+        if (left + popWidth > window.innerWidth - 10) left = window.innerWidth - popWidth - 10;
+
+        const popHeight = popover.offsetHeight || 220;
+        let top = rect.top - popHeight - 10;
+        if (top < 10) {
+          top = rect.bottom + 10;
+        }
+
+        popover.style.left = `${left}px`;
+        popover.style.top = `${top}px`;
+      }
+
+      function hideDiscordPopover() {
+        popoverTimeout = setTimeout(() => {
+          const popover = document.getElementById('discordGlobalPopover');
+          if (popover) popover.classList.remove('visible');
+        }, 160);
+      }
+
       // ---- helper: build one card HTML ----
       function buildCardHtml(m, idx) {
         const statusClass = m.status === 'online' ? 'status-online' : (m.status === 'busy' ? 'status-busy' : 'status-offline');
@@ -2421,16 +2620,16 @@
 
         // Rank badge text and icon
         const rankPriority = getRolePriority(m.rank);
-        let rankIcon = 'fa-shield';
+        let rankIcon = 'fa-users';
         let cleanRankText = 'MEMBER';
         if (rankPriority <= 1) {
-          rankIcon = 'fa-shield';
+          rankIcon = 'fa-crown';
           cleanRankText = 'LEADER';
         } else if (rankPriority === 2) {
           rankIcon = 'fa-shield-halved';
           cleanRankText = 'CO-LEADER';
         } else {
-          rankIcon = 'fa-shield';
+          rankIcon = 'fa-users'; // รูปคน 3 คน!
           cleanRankText = 'MEMBER';
         }
 
@@ -2456,7 +2655,10 @@
                   </div>
                 </div>
 
-                <div class="card-cut-btn" title="${m.discord_id ? 'คัดลอก Discord ID: ' + escapeHtml(m.discord_id) : 'คัดลอกข้อมูล'}" onclick="event.stopPropagation(); copyToClipboard('${escapeHtml(m.discord_id || m.phone || '')}','${m.discord_id ? 'คัดลอก Discord ID แล้ว' : 'คัดลอกข้อมูลแล้ว'}')">
+                <div class="card-cut-btn" title="ดูโปรไฟล์ Discord"
+                     onmouseenter="showDiscordPopover(this, '${m.id}')"
+                     onmouseleave="hideDiscordPopover()"
+                     onclick="event.stopPropagation(); copyToClipboard('${escapeHtml(m.discord_id || m.phone || '')}','${m.discord_id ? 'คัดลอก Discord ID แล้ว' : 'คัดลอกข้อมูลแล้ว'}')">
                   <i class="fa-brands fa-discord"></i>
                 </div>
               </div>
@@ -2497,11 +2699,11 @@
         return r ? (r.priority || 3) : 3;
       }
 
-      // Define display groups: Leader, Co-Leader, Member
+      // Define display groups: Leader, Co-Leader, Member (Pure vector icons, NO emojis)
       const GROUPS = [
-        { key: 'leader',    label: '👑 LEADER',       icon: 'fa-crown',         color: '#fbbf24', match: r => r <= 1 },
-        { key: 'colead',    label: '⚔️ CO-LEADER',    icon: 'fa-shield-halved', color: '#f87171', match: r => r === 2 },
-        { key: 'member',    label: '🔰 MEMBER',       icon: 'fa-users',         color: '#60a5fa', match: r => r >= 3 },
+        { key: 'leader',    label: 'LEADER',       icon: 'fa-crown',         color: '#fbbf24', match: r => r <= 1 },
+        { key: 'colead',    label: 'CO-LEADER',    icon: 'fa-shield-halved', color: '#f87171', match: r => r === 2 },
+        { key: 'member',    label: 'MEMBER',       icon: 'fa-users',         color: '#60a5fa', match: r => r >= 3 },
       ];
 
       let gridHtml = '';
