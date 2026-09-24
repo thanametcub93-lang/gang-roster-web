@@ -518,6 +518,33 @@
     .status-dot.offline { background: #64748b; }
     .status-dot.busy { background: #f59e0b; box-shadow: 0 0 8px #f59e0b; }
 
+    .filter-visitor-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #94a3b8;
+      border-radius: 8px;
+      padding: 6px 14px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+    .filter-visitor-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+    .filter-visitor-btn.active {
+      background: rgba(225, 29, 72, 0.22);
+      border-color: var(--primary);
+      color: #fff;
+      font-weight: 700;
+      box-shadow: 0 0 12px var(--primary-glow);
+    }
+
     /* Modals */
     .modal-overlay {
       position: fixed;
@@ -1178,17 +1205,33 @@
                 </div>
               </div>
 
+              <!-- หมวดหมู่ตัวกรอง (แยกประเภทคนจริง / บอทดิส / อื่นๆ) -->
+              <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; padding: 0 4px;">
+                <button class="filter-visitor-btn active" id="vFilterAll" onclick="setVisitorCategoryFilter('all')">
+                  <i class="fa-solid fa-layer-group"></i> ทั้งหมด (<span id="countFilterAll">0</span>)
+                </button>
+                <button class="filter-visitor-btn" id="vFilterHuman" onclick="setVisitorCategoryFilter('human')">
+                  <i class="fa-solid fa-user-check" style="color: #10b981;"></i> ผู้ใช้จริง (คน) (<span id="countFilterHuman">0</span>)
+                </button>
+                <button class="filter-visitor-btn" id="vFilterDiscord" onclick="setVisitorCategoryFilter('discord')">
+                  <i class="fa-brands fa-discord" style="color: #5865F2;"></i> บอท Discord (<span id="countFilterDiscord">0</span>)
+                </button>
+                <button class="filter-visitor-btn" id="vFilterOther" onclick="setVisitorCategoryFilter('other')">
+                  <i class="fa-solid fa-robot" style="color: #f59e0b;"></i> ระบบ/อื่นๆ (<span id="countFilterOther">0</span>)
+                </button>
+              </div>
+
               <div class="table-container">
                 <table class="custom-table">
                   <thead>
                     <tr>
-                      <th>Cookie ID (gang_visitor_id)</th>
-                      <th>IP Address</th>
+                      <th>Cookie ID</th>
+                      <th>หมวดหมู่ (ที่มา)</th>
+                      <th>IP Address & แหล่งที่อยู่</th>
                       <th>สถานะ NoCAPTCHA</th>
-                      <th>จำนวนครั้ง (Visits)</th>
-                      <th>เข้าครั้งแรก</th>
+                      <th>อุปกรณ์ / เบราว์เซอร์</th>
+                      <th style="text-align: center;">จำนวนครั้ง</th>
                       <th>เข้าล่าสุด</th>
-                      <th>เบราว์เซอร์ / อุปกรณ์ (User-Agent)</th>
                     </tr>
                   </thead>
                   <tbody id="visitorsTableBody">
@@ -1665,6 +1708,150 @@
     }
 
     // ================= VISITOR COOKIES & NOCAPTCHA =================
+    let cachedVisitorsList = [];
+    let visitorFilterType = 'all';
+
+    function parseVisitorMeta(v) {
+      const ua = (v.user_agent || "").toLowerCase();
+      const ip = (v.ip || "").trim();
+
+      // Category detection
+      let category = {
+        type: "human",
+        label: "ผู้ใช้จริง (คน)",
+        badgeStyle: "background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid #10b981;",
+        icon: "fa-solid fa-user-check"
+      };
+
+      if (ua.includes("discordbot") || ip.startsWith("104.196.") || ip.startsWith("35.196.") || ip.startsWith("35.231.")) {
+        category = {
+          type: "discord",
+          label: "บอท Discord (พรีวิวลิงก์)",
+          badgeStyle: "background: rgba(88, 101, 242, 0.25); color: #a5b4fc; border: 1px solid #5865F2;",
+          icon: "fa-brands fa-discord"
+        };
+      } else if (ua.includes("checker") || ua.includes("python") || ua.includes("curl") || ua.includes("postman")) {
+        category = {
+          type: "other",
+          label: "ระบบทดสอบ (Checker)",
+          badgeStyle: "background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid #f59e0b;",
+          icon: "fa-solid fa-robot"
+        };
+      } else if (ua.includes("googlebot") || ua.includes("bingbot")) {
+        category = {
+          type: "other",
+          label: "Google/Bing Bot",
+          badgeStyle: "background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid #ef4444;",
+          icon: "fa-brands fa-google"
+        };
+      } else if (ua.includes("facebookexternalhit") || ua.includes("facebot")) {
+        category = {
+          type: "other",
+          label: "Facebook Bot",
+          badgeStyle: "background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid #3b82f6;",
+          icon: "fa-brands fa-facebook"
+        };
+      }
+
+      // Location / Origin identification
+      let locationText = "ผู้ใช้งานทั่วไป (Client)";
+      let locationColor = "#34d399";
+      let locationIcon = "fa-location-dot";
+
+      if (category.type === "discord") {
+        locationText = "เซิร์ฟเวอร์ Discord (สหรัฐฯ)";
+        locationColor = "#a5b4fc";
+        locationIcon = "fa-server";
+      } else if (ip === "127.0.0.1" || ip === "localhost") {
+        locationText = "เครื่องตัวเอง (Localhost)";
+        locationColor = "#94a3b8";
+        locationIcon = "fa-desktop";
+      } else if (category.type === "other") {
+        locationText = "ระบบตรวจสอบอัตโนมัติ";
+        locationColor = "#fbbf24";
+        locationIcon = "fa-microchip";
+      }
+
+      // Device / Platform
+      let device = "เว็บเบราว์เซอร์";
+      if (category.type === "discord") {
+        device = "🤖 Discord Bot Scraper";
+      } else if (ua.includes("windows")) {
+        device = "💻 Windows PC";
+      } else if (ua.includes("iphone")) {
+        device = "📱 iPhone (iOS)";
+      } else if (ua.includes("ipad")) {
+        device = "📱 iPad";
+      } else if (ua.includes("android")) {
+        device = "📱 มือถือ Android";
+      } else if (ua.includes("macintosh") || ua.includes("mac os")) {
+        device = "🍏 Mac OS";
+      }
+
+      return { category, locationText, locationColor, locationIcon, device };
+    }
+
+    function setVisitorCategoryFilter(type) {
+      visitorFilterType = type;
+      ['vFilterAll', 'vFilterHuman', 'vFilterDiscord', 'vFilterOther'].forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) btn.classList.remove('active');
+      });
+
+      const activeBtnId = type === 'all' ? 'vFilterAll' : (type === 'human' ? 'vFilterHuman' : (type === 'discord' ? 'vFilterDiscord' : 'vFilterOther'));
+      const activeBtn = document.getElementById(activeBtnId);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      renderVisitorsTable();
+    }
+
+    function renderVisitorsTable() {
+      const tbody = document.getElementById('visitorsTableBody');
+      if (!tbody) return;
+
+      let filtered = cachedVisitorsList;
+      if (visitorFilterType !== 'all') {
+        filtered = cachedVisitorsList.filter(v => {
+          const meta = parseVisitorMeta(v);
+          return meta.category.type === visitorFilterType;
+        });
+      }
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 30px;">ไม่มีข้อมูลในหมวดหมู่นี้</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(v => {
+        const meta = parseVisitorMeta(v);
+        return `
+          <tr>
+            <td><code style="background: rgba(255,255,255,0.06); padding: 3px 8px; border-radius: 4px; font-size: 11px;">${escapeHtml(v.visitor_id || '-')}</code></td>
+            <td>
+              <span class="badge" style="${meta.category.badgeStyle}">
+                <i class="${meta.category.icon}"></i> ${meta.category.label}
+              </span>
+            </td>
+            <td>
+              <div style="font-weight: 700; color: #38bdf8; font-family: monospace; font-size: 13px;">${escapeHtml(v.ip || '127.0.0.1')}</div>
+              <div style="font-size: 11px; color: ${meta.locationColor}; margin-top: 3px;">
+                <i class="fa-solid ${meta.locationIcon}"></i> ${meta.locationText}
+              </div>
+            </td>
+            <td>
+              ${v.verified_human ? '<span class="badge" style="background: rgba(16,185,129,0.2); color: #10b981; border: 1px solid #10b981;"><i class="fa-solid fa-check"></i> มนุษย์ (Verified)</span>' : '<span class="badge" style="background: rgba(148,163,184,0.15); color: #94a3b8;"><i class="fa-solid fa-clock"></i> รอตรวจสอบ</span>'}
+            </td>
+            <td>
+              <div style="font-size: 12px; font-weight: 600; color: #e2e8f0;">${meta.device}</div>
+              <div style="font-size: 11px; color: var(--text-muted); max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${escapeHtml(v.user_agent || '')}">${escapeHtml(v.user_agent || '-')}</div>
+            </td>
+            <td style="font-weight: 700; text-align: center;">${v.visit_count || 1} ครั้ง</td>
+            <td style="font-size: 12px; color: var(--text-main); font-weight: 500;">${escapeHtml(v.last_seen || '-')}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
     async function loadVisitorCookies() {
       const passcode = currentPasscode || localStorage.getItem('sb577_admin_pass') || localStorage.getItem('gang_admin_passcode') || 'gang123';
       const tbody = document.getElementById('visitorsTableBody');
@@ -1677,26 +1864,31 @@
           document.getElementById('statVerifiedHumans').textContent = json.verified_humans || 0;
           
           let totalVisits = 0;
-          const list = json.visitors || [];
-          list.forEach(v => { totalVisits += (v.visit_count || 1); });
+          cachedVisitorsList = json.visitors || [];
+          cachedVisitorsList.forEach(v => { totalVisits += (v.visit_count || 1); });
           document.getElementById('statTotalVisits').textContent = totalVisits;
 
-          if (list.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 30px;">ยังไม่มีข้อมูลคุกกี้ผู้เข้าชม</td></tr>';
-            return;
-          }
+          // Update Category Counts
+          let humanCount = 0;
+          let discordCount = 0;
+          let otherCount = 0;
+          cachedVisitorsList.forEach(v => {
+            const meta = parseVisitorMeta(v);
+            if (meta.category.type === 'human') humanCount++;
+            else if (meta.category.type === 'discord') discordCount++;
+            else otherCount++;
+          });
 
-          tbody.innerHTML = list.map(v => `
-            <tr>
-              <td><code style="background: rgba(255,255,255,0.06); padding: 2px 6px; border-radius: 4px; font-size: 11px;">${escapeHtml(v.visitor_id || '-')}</code></td>
-              <td><span style="font-weight: 600; color: #38bdf8;">${escapeHtml(v.ip || '127.0.0.1')}</span></td>
-              <td>${v.verified_human ? '<span class="badge" style="background: rgba(16,185,129,0.2); color: #10b981; border: 1px solid #10b981;"><i class="fa-solid fa-check"></i> มนุษย์ (Verified)</span>' : '<span class="badge" style="background: rgba(148,163,184,0.15); color: #94a3b8;"><i class="fa-solid fa-clock"></i> รอตรวจสอบ</span>'}</td>
-              <td style="font-weight: 700;">${v.visit_count || 1} ครั้ง</td>
-              <td style="font-size: 12px; color: var(--text-muted);">${escapeHtml(v.first_seen || '-')}</td>
-              <td style="font-size: 12px; color: var(--text-main); font-weight: 500;">${escapeHtml(v.last_seen || '-')}</td>
-              <td style="font-size: 11px; color: var(--text-muted); max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${escapeHtml(v.user_agent || '')}">${escapeHtml(v.user_agent || '-')}</td>
-            </tr>
-          `).join('');
+          const elAll = document.getElementById('countFilterAll');
+          const elHuman = document.getElementById('countFilterHuman');
+          const elDiscord = document.getElementById('countFilterDiscord');
+          const elOther = document.getElementById('countFilterOther');
+          if (elAll) elAll.textContent = cachedVisitorsList.length;
+          if (elHuman) elHuman.textContent = humanCount;
+          if (elDiscord) elDiscord.textContent = discordCount;
+          if (elOther) elOther.textContent = otherCount;
+
+          renderVisitorsTable();
         } else {
           tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #ef4444; padding: 20px;">${escapeHtml(json.error || 'ไม่สามารถโหลดข้อมูลได้')}</td></tr>`;
         }
