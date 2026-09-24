@@ -1691,7 +1691,177 @@
       .form-grid-2 { grid-template-columns: 1fr; }
     }
 
-    /* ===================== LANDING PAGE (FIVEM FULLSCREEN LOADING SCREEN) ===================== */
+    /* ===================== NOCAPTCHA SECURITY GATE (SEPARATE FULLSCREEN) ===================== */
+    #captchaGateScreen {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      background: radial-gradient(circle at 50% 35%, #18191f 0%, #0c0d11 60%, #000000 100%);
+      z-index: 100000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      box-sizing: border-box;
+      transition: opacity 0.45s ease, transform 0.45s ease;
+    }
+    .captcha-gate-card {
+      background: rgba(20, 22, 28, 0.94);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 20px;
+      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.96), 0 0 50px rgba(225, 29, 72, 0.12);
+      padding: 38px 34px;
+      max-width: 440px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      box-sizing: border-box;
+      backdrop-filter: blur(12px);
+      animation: gateCardPop 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+    @keyframes gateCardPop {
+      from { opacity: 0; transform: scale(0.92) translateY(20px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .gate-logo-wrap {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      box-shadow: 0 0 30px rgba(225, 29, 72, 0.25);
+    }
+    .gate-logo-img {
+      width: 56px;
+      height: 56px;
+      object-fit: contain;
+    }
+    .gate-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 30px;
+      letter-spacing: 5px;
+      color: #fff;
+      margin-bottom: 4px;
+      line-height: 1;
+    }
+    .gate-subtitle {
+      font-family: 'Kanit', sans-serif;
+      font-size: 13px;
+      color: #94a3b8;
+      margin-bottom: 22px;
+      line-height: 1.5;
+    }
+    .gate-recaptcha-box {
+      width: 304px;
+      height: 76px;
+      background: #222222;
+      border: 1px solid #3c3c3c;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 14px;
+      box-sizing: border-box;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.6);
+    }
+    .gate-recaptcha-box:hover {
+      border-color: #555555;
+      background: #272727;
+    }
+    .gate-chk-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .gate-checkbox {
+      width: 28px;
+      height: 28px;
+      background: #ffffff;
+      border: 2px solid #c1c1c1;
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      transition: all 0.2s;
+    }
+    .gate-checkbox.verified {
+      background: #ffffff;
+      border-color: #0f9d58;
+    }
+    .gate-spinner {
+      display: none;
+      width: 20px;
+      height: 20px;
+      border: 3px solid #1a73e8;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: gateSpin 0.75s linear infinite;
+    }
+    @keyframes gateSpin {
+      to { transform: rotate(360deg); }
+    }
+    .gate-checkmark {
+      display: none;
+      color: #0f9d58;
+      font-size: 20px;
+      font-weight: 900;
+      animation: checkPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    @keyframes checkPop {
+      0% { transform: scale(0); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .gate-label {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Kanit", sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      color: #ffffff;
+      line-height: 1.2;
+    }
+    .gate-brand-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      opacity: 0.85;
+    }
+    .gate-logo {
+      width: 30px;
+      height: 30px;
+      object-fit: contain;
+    }
+    .gate-brand-txt {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-size: 9px;
+      color: #9aa0a6;
+      font-weight: 600;
+    }
+    .gate-terms-txt {
+      font-size: 8px;
+      color: #70757a;
+    }
+    .gate-status-msg {
+      margin-top: 14px;
+      font-family: 'Kanit', sans-serif;
+      font-size: 12px;
+      color: #94a3b8;
+      min-height: 18px;
+      transition: color 0.2s;
+    }
+
+    /* ===================== LANDING PAGE (SCROLL DOWN TO LOAD) ===================== */
     #landingPage {
       width: 100%;
       height: 100vh;
@@ -1702,82 +1872,56 @@
       z-index: 9999;
       color: #fff;
       padding: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
+      overflow-y: auto;
+      overflow-x: hidden;
       box-sizing: border-box;
-      cursor: pointer;
-    }
-
-    #landingParticles {
-      display: none;
+      scroll-behavior: smooth;
     }
 
     .landing-content {
       position: relative;
       z-index: 2;
       width: 100%;
-      max-width: 1100px;
-      height: 100vh;
-      max-height: 100vh;
+      max-width: 1340px;
+      margin: 0 auto;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      padding: 12px 16px;
+      padding: 24px 16px 80px;
       box-sizing: border-box;
-      overflow: hidden;
     }
 
+    /* ── SECTION 1: HERO SCREEN (หน้าแรก เต็มจอ 100vh) ── */
     .landing-hero-screen {
       width: 100%;
-      height: 100%;
-      max-height: 100vh;
+      min-height: calc(100vh - 48px);
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      gap: 10px;
+      justify-content: space-between;
+      gap: 16px;
       box-sizing: border-box;
+      padding-bottom: 20px;
     }
 
-    /* ── 1. Big HD Banner at Top (ขนาดพอดีจอ 100vh ไม่ล้น ไม่ต้องเลื่อนจอ) ── */
     .landing-banner-wrap {
       width: 100%;
-      max-width: 980px;
+      max-width: 1100px;
       aspect-ratio: 16 / 9;
-      max-height: clamp(170px, 40vh, 380px);
-      border-radius: 16px;
+      max-height: 520px;
+      border-radius: 18px;
       overflow: hidden;
       border: 1px solid rgba(255, 255, 255, 0.15);
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.95), 0 0 30px rgba(255, 255, 255, 0.05);
+      box-shadow: 0 24px 65px rgba(0, 0, 0, 0.95), 0 0 40px rgba(255, 255, 255, 0.06);
       background: #000;
       position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
       opacity: 0;
-      transform: translateY(20px) scale(0.98);
+      transform: translateY(25px) scale(0.98);
       filter: blur(6px);
-      animation: bannerStaggerIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
-      transition: transform 0.4s ease;
-    }
-    .landing-banner-wrap:hover {
-      transform: scale(1.01);
-    }
-    @keyframes bannerStaggerIn {
-      0% {
-        opacity: 0;
-        transform: translateY(20px) scale(0.98);
-        filter: blur(6px);
-      }
-      100% {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-        filter: blur(0px);
-      }
+      animation: bannerStaggerIn 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
     }
 
     .landing-banner-img {
@@ -1789,62 +1933,33 @@
       display: block;
     }
 
-    /* ── 2. Tagline & Header ── */
     .landing-header {
       text-align: center;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 3px;
+      gap: 4px;
     }
     .landing-title {
       font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(28px, 4.5vw, 48px);
-      letter-spacing: 11px;
+      font-size: clamp(34px, 5.5vw, 54px);
+      letter-spacing: 12px;
       line-height: 1;
       background: linear-gradient(180deg, #ffffff 0%, #cccccc 50%, #777777 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       margin: 0;
-      opacity: 0;
-      transform: translateY(16px);
-      animation: titleStaggerIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
-    }
-    @keyframes titleStaggerIn {
-      0% {
-        opacity: 0;
-        transform: translateY(16px);
-        letter-spacing: 11px;
-      }
-      100% {
-        opacity: 1;
-        transform: translateY(0);
-        letter-spacing: 8px;
-      }
     }
     .landing-subtitle {
       font-family: 'Rajdhani', sans-serif;
-      font-size: 12px;
-      letter-spacing: 6px;
+      font-size: 13px;
+      letter-spacing: 7px;
       color: #888;
       font-weight: 700;
       text-transform: uppercase;
-      opacity: 0;
-      transform: translateY(12px);
-      animation: subtitleStaggerIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.45s forwards;
-    }
-    @keyframes subtitleStaggerIn {
-      0% {
-        opacity: 0;
-        transform: translateY(18px);
-      }
-      100% {
-        opacity: 1;
-        transform: translateY(0);
-      }
     }
 
-    /* ── 3. Scroll Down Guide ── */
+    /* ── Scroll Down Guide ── */
     .landing-scroll-guide {
       display: flex;
       flex-direction: column;
@@ -1852,45 +1967,43 @@
       gap: 8px;
       margin-top: 10px;
       color: #aaa;
-      opacity: 0;
-      transform: translateY(15px);
-      animation: guideStaggerIn 0.9s cubic-bezier(0.16, 1, 0.3, 1) 1.25s forwards;
+      animation: guideBounce 1.8s ease-in-out infinite;
     }
-    @keyframes guideStaggerIn {
-      0% {
-        opacity: 0;
-        transform: translateY(15px);
-      }
-      100% {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    @keyframes guideBounce {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(8px); }
     }
     .scroll-arrow-anim {
-      font-size: 22px;
+      font-size: 24px;
       color: #ffffff;
-      animation: arrowBounce 1.5s ease-in-out infinite;
-      text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
-    }
-    @keyframes arrowBounce {
-      0%, 100% { transform: translateY(0); opacity: 0.3; }
-      50%       { transform: translateY(6px); opacity: 1; }
+      text-shadow: 0 0 12px rgba(255, 255, 255, 0.9);
     }
     .scroll-guide-txt {
       font-family: 'Kanit', 'Rajdhani', sans-serif;
       font-size: 13px;
-      letter-spacing: 2px;
-      color: #888;
+      letter-spacing: 3px;
+      color: #94a3b8;
       text-transform: uppercase;
     }
 
-    /* ── 4. Gang Emblem & Info (เมื่อเลื่อนหน้าเว็บลงมา) ── */
+    /* ── SECTION 2: SCROLL DOWN TARGET (ต้องเลื่อนหน้าเว็บลงมาจริงๆ ถึงจะเจอและเริ่มโหลด) ── */
+    .landing-scroll-target {
+      width: 100%;
+      min-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+      padding-top: 40px;
+      box-sizing: border-box;
+    }
+
     .landing-emblem-section {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 16px;
-      margin-top: 40px;
+      gap: 14px;
       text-align: center;
       max-width: 580px;
     }
@@ -1904,13 +2017,17 @@
       justify-content: center;
     }
     .landing-emblem-img {
-      width: 68px;
-      height: 68px;
+      width: 70px;
+      height: 70px;
       object-fit: contain;
       position: relative;
       z-index: 2;
-      filter: drop-shadow(0 0 16px rgba(255,255,255,0.25));
+      filter: drop-shadow(0 0 18px rgba(255,255,255,0.3));
       animation: logoFloat 3.5s ease-in-out infinite;
+    }
+    @keyframes logoFloat {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(-7px); }
     }
     .motto-badge {
       font-family: 'Rajdhani', sans-serif;
@@ -1929,24 +2046,23 @@
       line-height: 1.6;
     }
 
-    /* ── 5. Bottom Loader Box (FiveM Style Loading Bar) ── */
+    /* ── FiveM Bottom Loader Box ── */
     .bottom-loader-box {
       width: 100%;
-      max-width: 360px;
+      max-width: 380px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 7px;
-      margin-top: 4px;
-      margin-bottom: 6px;
+      gap: 10px;
+      margin-top: 10px;
       text-align: center;
       cursor: pointer;
     }
     .loader-track {
       width: 100%;
-      height: 4px;
-      background: rgba(255, 255, 255, 0.15);
-      border-radius: 4px;
+      height: 3.5px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 3px;
       overflow: hidden;
       position: relative;
     }
@@ -1957,146 +2073,37 @@
       box-shadow: 0 0 12px rgba(255, 255, 255, 0.95);
       transition: width 0.05s linear;
     }
-    .loader-status-row {
-      display: flex;
-      justify-content: space-between;
-      width: 100%;
-      font-size: 11.5px;
-      color: #999;
-      font-family: 'Kanit', 'Rajdhani', sans-serif;
-      letter-spacing: 1px;
+    .loader-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(30px, 5vw, 40px);
+      letter-spacing: 9px;
+      line-height: 1;
+      background: linear-gradient(180deg, #ffffff 0%, #d8d8d8 50%, #888888 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin: 0;
+      text-align: center;
+    }
+    .loader-sub {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 12px;
+      color: #888888;
+      text-transform: uppercase;
+      text-align: center;
+      margin-left: 12px;
     }
     .loader-skip-hint {
       font-family: 'Kanit', sans-serif;
       font-size: 11px;
       letter-spacing: 1.5px;
       color: rgba(255, 255, 255, 0.45);
-      margin-top: 2px;
+      margin-top: 4px;
       transition: color 0.2s;
     }
     .bottom-loader-box:hover .loader-skip-hint {
-      color: rgba(255, 255, 255, 0.95);
-    }
-
-    /* ===================== NOCAPTCHA RECAPTCHA WIDGET ===================== */
-    .nocaptcha-container {
-      margin-top: 4px;
-      margin-bottom: 4px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6px;
-      z-index: 10;
-      position: relative;
-    }
-    .nocaptcha-card {
-      width: 290px;
-      height: 68px;
-      background: #18191c;
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      border-radius: 6px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 14px;
-      box-sizing: border-box;
-      cursor: pointer;
-      user-select: none;
-      transition: all 0.25s ease;
-    }
-    .nocaptcha-card:hover {
-      border-color: rgba(255, 255, 255, 0.4);
-      background: #202226;
-      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.85);
-    }
-    .nocaptcha-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .nocaptcha-checkbox {
-      width: 28px;
-      height: 28px;
-      background: #2b2d31;
-      border: 2px solid #585c65;
-      border-radius: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      transition: all 0.2s ease;
-      cursor: pointer;
-    }
-    .nocaptcha-card:hover .nocaptcha-checkbox {
-      border-color: #888d98;
-    }
-    .nocaptcha-checkbox.verified {
-      background: rgba(16, 185, 129, 0.15) !important;
-      border-color: #10b981 !important;
-    }
-    .nocaptcha-spinner {
-      display: none;
-      width: 20px;
-      height: 20px;
-      border: 3px solid #3b82f6;
-      border-top-color: transparent;
-      border-radius: 50%;
-      animation: captchaSpin 0.7s linear infinite;
-    }
-    @keyframes captchaSpin {
-      to { transform: rotate(360deg); }
-    }
-    .nocaptcha-checkmark {
-      display: none;
-      color: #10b981;
-      font-size: 19px;
-      font-weight: 900;
-      animation: checkmarkPop 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-    @keyframes checkmarkPop {
-      0% { transform: scale(0); opacity: 0; }
-      100% { transform: scale(1); opacity: 1; }
-    }
-    .nocaptcha-label {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Kanit", sans-serif;
-      font-size: 13.5px;
-      font-weight: 500;
-      color: #f1f5f9;
-      line-height: 1.2;
-      cursor: pointer;
-    }
-    .nocaptcha-right {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2px;
-      cursor: default;
-      opacity: 0.85;
-    }
-    .nocaptcha-logo {
-      width: 28px;
-      height: 28px;
-      object-fit: contain;
-    }
-    .nocaptcha-brand {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      font-size: 9.5px;
-      font-weight: 600;
-      color: #94a3b8;
-      letter-spacing: 0.2px;
-    }
-    .nocaptcha-terms {
-      font-size: 8px;
-      color: #64748b;
-    }
-    .nocaptcha-msg {
-      font-family: 'Kanit', sans-serif;
-      font-size: 11.5px;
-      letter-spacing: 0.5px;
-      color: #94a3b8;
-      text-align: center;
-      transition: color 0.2s;
+      color: rgba(255, 255, 255, 0.9);
     }
 
     /* Main Roster Container */
@@ -2145,9 +2152,39 @@
 </head>
 <body>
 
-  <!-- ===== HERO LANDING PAGE (FIVEM LOADING SCREEN) ===== -->
-  <div id="landingPage" title="กดตรงไหนก็ได้เพื่อเข้าสู่เว็บทันที">
+  <!-- ===== 1. DEDICATED NOCAPTCHA RECAPTCHA SECURITY GATE ===== -->
+  <div id="captchaGateScreen">
+    <div class="captcha-gate-card">
+      <div class="gate-logo-wrap">
+        <img src="/gang_logo.png" alt="SPONGEBOB" class="gate-logo-img">
+      </div>
+      <div class="gate-title">SPONGEBOB 577</div>
+      <div class="gate-subtitle">ระบบตรวจสอบความปลอดภัย • กรุณายืนยันตัวตนก่อนเข้าสู่เว็บแก๊ง</div>
+
+      <!-- Google Style NoCAPTCHA Box -->
+      <div class="gate-recaptcha-box" id="gateRecaptchaBox" onclick="verifyGateCaptcha(event)">
+        <div class="gate-chk-left">
+          <div class="gate-checkbox" id="gateCheckbox">
+            <div class="gate-spinner" id="gateSpinner"></div>
+            <i class="fa-solid fa-check gate-checkmark" id="gateCheckmark"></i>
+          </div>
+          <label class="gate-label" id="gateLabel">ฉันไม่ใช่โปรแกรมอัตโนมัติ (I'm not a robot)</label>
+        </div>
+        <div class="gate-brand-col">
+          <img src="https://www.gstatic.com/recaptcha/api2/logo_48.png" alt="reCAPTCHA" class="gate-logo" onerror="this.src='/gang_logo.png'">
+          <span class="gate-brand-txt">reCAPTCHA</span>
+          <span class="gate-terms-txt">Privacy - Terms</span>
+        </div>
+      </div>
+
+      <div class="gate-status-msg" id="gateStatusMsg">คลิกที่กล่องด้านบนเพื่อยืนยันตัวตน</div>
+    </div>
+  </div>
+
+  <!-- ===== 2. HERO LANDING PAGE (SCROLL DOWN TO LOAD) ===== -->
+  <div id="landingPage">
     <div class="landing-content">
+      <!-- ── SECTION 1: HERO SCREEN (หน้าแรก เต็มจอ 100vh) ── -->
       <div class="landing-hero-screen">
         <!-- 1. Big HD Banner at Top -->
         <div class="landing-banner-wrap">
@@ -2166,35 +2203,32 @@
           <div class="landing-subtitle">N E W &nbsp; G E N &nbsp;&bull;&nbsp; OFFICIAL FIVEM GANG</div>
         </div>
 
-        <!-- NoCAPTCHA reCAPTCHA Security Check & Cookie Tracker -->
-        <div class="nocaptcha-container" id="noCaptchaContainer" onclick="event.stopPropagation()">
-          <div class="nocaptcha-card" id="noCaptchaCard" onclick="verifyCaptchaHuman(event)">
-            <div class="nocaptcha-left">
-              <div class="nocaptcha-checkbox" id="noCaptchaCheckbox">
-                <div class="nocaptcha-spinner" id="noCaptchaSpinner"></div>
-                <i class="fa-solid fa-check nocaptcha-checkmark" id="noCaptchaCheckmark"></i>
-              </div>
-              <div class="nocaptcha-label" id="noCaptchaLabel">ฉันไม่ใช่โปรแกรมอัตโนมัติ (I'm not a robot)</div>
-            </div>
-            <div class="nocaptcha-right">
-              <img src="https://www.gstatic.com/recaptcha/api2/logo_48.png" alt="reCAPTCHA" class="nocaptcha-logo" onerror="this.src='/gang_logo.png'">
-              <div class="nocaptcha-brand">reCAPTCHA</div>
-              <div class="nocaptcha-terms">Privacy - Terms</div>
-            </div>
+        <!-- 3. Scroll Down Guide -->
+        <div class="landing-scroll-guide">
+          <i class="fa-solid fa-angles-down scroll-arrow-anim"></i>
+          <span class="scroll-guide-txt">เลื่อนหน้าเว็บลงด้านล่าง</span>
+        </div>
+      </div>
+
+      <!-- ── SECTION 2: SCROLL DOWN TARGET (ต้องเลื่อนหน้าเว็บลงมาจริงๆ ถึงจะเจอและเริ่มโหลด) ── -->
+      <div class="landing-scroll-target">
+        <!-- 4. Gang Emblem & Info (ปรากฏเมื่อเลื่อนหน้าเว็บลงมา) -->
+        <div class="landing-emblem-section">
+          <div class="landing-emblem-wrap">
+            <img class="landing-emblem-img" src="/gang_logo.png" alt="SPONGEBOB" onerror="this.style.opacity='0'">
           </div>
-          <div class="nocaptcha-msg" id="noCaptchaMsg">ระบบป้องกัน NoCAPTCHA • บันทึก Cookie ผู้เข้าชมเรียบร้อย</div>
+          <div class="motto-badge">RESPECT &bull; LOYALTY &bull; BROTHERHOOD</div>
+          <p class="motto-desc">รายชื่อสมาชิกแก๊งอย่างเป็นทางการ อัปเดตสถานะและข้อมูลสมาชิกแบบเรียลไทม์</p>
         </div>
 
-        <!-- 3. FiveM Bottom Loading Bar (โหลดอัตโนมัติ 0% -> 100% ทันทีที่เข้าเว็บ) -->
+        <!-- 5. Bottom Loading (สไตล์ FiveM: เส้นโหลดเงินบน + SPONGEBOB 577 + NEW GEN) -->
         <div class="bottom-loader-box" id="bottomLoaderBox">
           <div class="loader-track">
             <div class="loader-fill" id="bottomLoaderFill"></div>
           </div>
-          <div class="loader-status-row">
-            <span class="loader-status-txt" id="loaderStatusTxt">กำลังโหลดเข้าสู่หน้าเว็บ...</span>
-            <span class="loader-pct-txt" id="loaderPctTxt">0%</span>
-          </div>
-          <div class="loader-skip-hint">กดที่ใดก็ได้เพื่อเข้าสู่เว็บทันที (CLICK TO ENTER)</div>
+          <div class="loader-title">SPONGEBOB 577</div>
+          <div class="loader-sub">N E W &nbsp; G E N</div>
+          <div class="loader-skip-hint">กำลังโหลดระบบแก๊ง...</div>
         </div>
       </div>
     </div>
@@ -4427,97 +4461,54 @@
       // Clean pure black background (no floating particles)
 
       let hasFinished = false;
-      let hasStarted = false;
+      let hasStartedLoading = false;
+      const captchaGate = document.getElementById('captchaGateScreen');
+      let isGatePassed = document.cookie.includes('gang_human_verified=1');
+      let isGateVerifying = false;
 
-      function enterRoster() {
-        if (hasFinished) return;
-        hasFinished = true;
-        if (loaderFill) loaderFill.style.width = '100%';
-
-        landing.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
-        landing.style.opacity = '0';
-        landing.style.transform = 'scale(1.02)';
-
-        setTimeout(function() {
-          landing.style.display = 'none';
-          if (rosterApp) {
-            rosterApp.style.display = 'block';
-            rosterApp.style.opacity = '0';
-            rosterApp.style.transition = 'opacity 0.4s ease';
-            requestAnimationFrame(() => { rosterApp.style.opacity = '1'; });
-          }
-          if (typeof renderRoster === 'function') renderRoster();
-          if (typeof renderStats === 'function') renderStats();
-          window.scrollTo({ top: 0, behavior: 'instant' });
-        }, 380);
-      }
-
-      function startLoading() {
-        if (hasStarted || hasFinished) return;
-        hasStarted = true;
-
-        const startTime = performance.now();
-        const duration = 1100; // 1.1s smooth FiveM loading experience
-
-        function step(now) {
-          if (hasFinished) return;
-          const elapsed = now - startTime;
-          const progress = Math.min(100, Math.round((elapsed / duration) * 100));
-
-          if (loaderFill) {
-            loaderFill.style.width = progress + '%';
-          }
-          const pctTxt = document.getElementById('loaderPctTxt');
-          if (pctTxt) pctTxt.textContent = progress + '%';
-
-          if (progress < 100) {
-            requestAnimationFrame(step);
-          } else {
-            enterRoster();
-          }
+      // ── STEP 1: CAPTCHA GATE FLOW ──
+      function showLoadingScreen() {
+        if (captchaGate) {
+          captchaGate.style.opacity = '0';
+          captchaGate.style.transform = 'scale(1.04)';
+          setTimeout(() => {
+            captchaGate.style.display = 'none';
+          }, 450);
         }
-
-        requestAnimationFrame(step);
-      }
-
-      // ===== NOCAPTCHA RECAPTCHA VERIFICATION =====
-      let isVerifying = false;
-      let isVerified = document.cookie.includes('gang_human_verified=1');
-
-      function markCaptchaVerified() {
-        isVerified = true;
-        const chk = document.getElementById('noCaptchaCheckbox');
-        const spinner = document.getElementById('noCaptchaSpinner');
-        const checkmark = document.getElementById('noCaptchaCheckmark');
-        const label = document.getElementById('noCaptchaLabel');
-        const msg = document.getElementById('noCaptchaMsg');
-
-        if (spinner) spinner.style.display = 'none';
-        if (checkmark) checkmark.style.display = 'block';
-        if (chk) chk.classList.add('verified');
-        if (label) label.textContent = 'ฉันไม่ใช่โปรแกรมอัตโนมัติ (ยืนยันแล้ว)';
-        if (msg) {
-          msg.textContent = '✓ ยืนยันตัวตนสำเร็จ • บันทึก Cookie เรียบร้อย';
-          msg.style.color = '#10b981';
+        if (landing) {
+          landing.style.display = 'block';
+          landing.style.opacity = '0';
+          landing.scrollTop = 0;
+          requestAnimationFrame(() => {
+            landing.style.transition = 'opacity 0.4s ease';
+            landing.style.opacity = '1';
+          });
         }
       }
 
-      window.verifyCaptchaHuman = async function(e) {
+      window.verifyGateCaptcha = async function(e) {
         if (e && typeof e.stopPropagation === 'function') e.stopPropagation();
-        if (isVerifying) return;
-        isVerifying = true;
+        if (isGatePassed) {
+          showLoadingScreen();
+          return;
+        }
+        if (isGateVerifying) return;
+        isGateVerifying = true;
 
-        const spinner = document.getElementById('noCaptchaSpinner');
-        const checkmark = document.getElementById('noCaptchaCheckmark');
-        const msg = document.getElementById('noCaptchaMsg');
+        const spinner = document.getElementById('gateSpinner');
+        const checkmark = document.getElementById('gateCheckmark');
+        const chk = document.getElementById('gateCheckbox');
+        const label = document.getElementById('gateLabel');
+        const msg = document.getElementById('gateStatusMsg');
+
         if (spinner) spinner.style.display = 'block';
         if (checkmark) checkmark.style.display = 'none';
-        if (msg) msg.textContent = 'กำลังวิเคราะห์ความปลอดภัย (Analyzing telemetry)...';
+        if (msg) msg.textContent = 'กำลังตรวจสอบความปลอดภัย (NoCAPTCHA Verification)...';
 
         const telemetry = {
           webdriver: !!navigator.webdriver,
           hardwareConcurrency: navigator.hardwareConcurrency || 4,
-          screen: { w: screen.width, h: screen.height, colorDepth: screen.colorDepth },
+          screen: { w: screen.width, h: screen.height },
           language: navigator.language,
           cookieEnabled: navigator.cookieEnabled,
           timestamp: Date.now()
@@ -4531,46 +4522,116 @@
           });
           const data = await res.json();
           if (data && data.success) {
-            markCaptchaVerified();
+            isGatePassed = true;
+            if (spinner) spinner.style.display = 'none';
+            if (checkmark) checkmark.style.display = 'block';
+            if (chk) chk.classList.add('verified');
+            if (label) label.textContent = 'ฉันไม่ใช่โปรแกรมอัตโนมัติ (ยืนยันแล้ว)';
+            if (msg) {
+              msg.textContent = '✓ ยืนยันสำเร็จ กำลังเข้าสู่หน้าโหลด...';
+              msg.style.color = '#10b981';
+            }
+            setTimeout(showLoadingScreen, 600);
+          } else {
+            if (spinner) spinner.style.display = 'none';
+            if (msg) {
+              msg.textContent = '❌ ' + (data.error || 'การยืนยันล้มเหลว');
+              msg.style.color = '#ef4444';
+            }
           }
         } catch (err) {
-          markCaptchaVerified();
+          isGatePassed = true;
+          showLoadingScreen();
         } finally {
-          isVerifying = false;
+          isGateVerifying = false;
         }
       };
 
-      if (isVerified) {
-        markCaptchaVerified();
+      // Initial Gate Check
+      if (isGatePassed) {
+        if (captchaGate) captchaGate.style.display = 'none';
+        if (landing) landing.style.display = 'block';
       } else {
-        // Auto-verify human in background so user is never stuck
-        setTimeout(window.verifyCaptchaHuman, 250);
+        if (captchaGate) captchaGate.style.display = 'flex';
+        if (landing) landing.style.display = 'none';
       }
 
-      // Start loading automatically on page load (No scrolling required!)
-      if (document.readyState === 'complete' || document.readyState === 'interactive') {
-        setTimeout(startLoading, 100);
-      } else {
-        window.addEventListener('DOMContentLoaded', () => setTimeout(startLoading, 100));
+      // ── STEP 2: SCROLL DOWN TO LOAD FLOW ──
+      function enterRoster() {
+        if (hasFinished) return;
+        hasFinished = true;
+        if (loaderFill) loaderFill.style.width = '100%';
+
+        if (landing) {
+          landing.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+          landing.style.opacity = '0';
+          landing.style.transform = 'scale(1.02)';
+        }
+
+        setTimeout(function() {
+          if (landing) landing.style.display = 'none';
+          if (rosterApp) {
+            rosterApp.style.display = 'block';
+            rosterApp.style.opacity = '0';
+            rosterApp.style.transition = 'opacity 0.4s ease';
+            requestAnimationFrame(() => { rosterApp.style.opacity = '1'; });
+          }
+          if (typeof renderRoster === 'function') renderRoster();
+          if (typeof renderStats === 'function') renderStats();
+          window.scrollTo({ top: 0, behavior: 'instant' });
+        }, 380);
       }
 
-      // Click anywhere to immediately enter
-      landing.addEventListener('click', function(e) {
-        enterRoster();
-      });
+      function startBottomLoading() {
+        if (hasStartedLoading || hasFinished) return;
+        hasStartedLoading = true;
 
-      // Mouse wheel or touch swipe immediately enters
-      window.addEventListener('wheel', function() {
-        if (!hasFinished) enterRoster();
-      }, { passive: true });
+        const startTime = performance.now();
+        const duration = 850; // Smooth 0.85s FiveM loading bar
 
-      window.addEventListener('touchmove', function() {
-        if (!hasFinished) enterRoster();
-      }, { passive: true });
+        function step(now) {
+          if (hasFinished) return;
+          const elapsed = now - startTime;
+          const progress = Math.min(100, Math.round((elapsed / duration) * 100));
 
-      // Any keypress (Enter, Space, Arrow, etc.) immediately enters
+          if (loaderFill) {
+            loaderFill.style.width = progress + '%';
+          }
+
+          if (progress < 100) {
+            requestAnimationFrame(step);
+          } else {
+            enterRoster();
+          }
+        }
+
+        requestAnimationFrame(step);
+      }
+
+      // ตรวจจับเมื่อผู้ใช้เลื่อนหน้าเว็บลงมาด้านล่างเท่านั้นตามที่ต้องการ
+      function checkScrollVisibility() {
+        if (hasStartedLoading || hasFinished || !landing) return;
+        const scrollPosition = landing.scrollTop;
+        if (scrollPosition > 180) {
+          startBottomLoading();
+        }
+      }
+
+      if (landing) {
+        landing.addEventListener('scroll', checkScrollVisibility, { passive: true });
+        
+        // คลิกที่กล่องโหลดด้านล่างก็เข้าได้เช่นกัน
+        if (loaderBox) {
+          loaderBox.addEventListener('click', function(e) {
+            e.stopPropagation();
+            enterRoster();
+          });
+        }
+      }
+
+      // Enter / Space keys to enter immediately if gate already passed
       window.addEventListener('keydown', function(e) {
-        if (!hasFinished) {
+        if (!hasFinished && isGatePassed && (e.key === 'Enter' || e.key === ' ')) {
           enterRoster();
         }
       });
@@ -4578,16 +4639,16 @@
       // Click on brand in navbar to return to landing page
       window.returnToLanding = function() {
         if (landing) {
-          landing.style.display = 'flex';
+          landing.style.display = 'block';
           landing.style.opacity = '1';
           landing.style.transform = 'none';
+          landing.scrollTop = 0;
         }
         if (rosterApp) rosterApp.style.display = 'none';
         hasFinished = false;
-        hasStarted = false;
+        hasStartedLoading = false;
         if (loaderFill) loaderFill.style.width = '0%';
         window.scrollTo({ top: 0, behavior: 'instant' });
-        setTimeout(startLoading, 150);
       };
     })();
     // ===== CLIENT-SIDE ANTI-F5 FLOOD & SPAM GUARD =====
