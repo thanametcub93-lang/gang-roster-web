@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="th">
 <head>
   <meta charset="UTF-8">
@@ -722,6 +722,25 @@
       gap: 20px;
     }
 
+    /* Member Card Cover Image */
+    .member-cover {
+      width: calc(100% + 2.8rem);
+      margin: -1.4rem -1.4rem 1rem -1.4rem;
+      height: 110px;
+      object-fit: cover;
+      border-radius: 20px 20px 0 0;
+      display: block;
+      background: #111;
+    }
+    .member-cover-placeholder {
+      width: calc(100% + 2.8rem);
+      margin: -1.4rem -1.4rem 1rem -1.4rem;
+      height: 60px;
+      background: linear-gradient(135deg, rgba(225,29,72,0.08) 0%, rgba(0,0,0,0.3) 100%);
+      border-radius: 20px 20px 0 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
     /* Member Card */
     .member-card {
       background: var(--bg-card);
@@ -831,12 +850,16 @@
     .member-details {
       background: rgba(0, 0, 0, 0.25);
       border-radius: 12px;
-      padding: 10px 14px;
+      padding: 12px 16px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 12px;
       border: 1px solid rgba(255, 255, 255, 0.04);
       font-size: 0.85rem;
+    }
+    .member-details .detail-row + .detail-row {
+      border-top: 1px solid rgba(255,255,255,0.04);
+      padding-top: 10px;
     }
 
     .detail-row {
@@ -2140,9 +2163,13 @@
         const statusClass = m.status === 'online' ? 'status-online' : (m.status === 'busy' ? 'status-busy' : 'status-offline');
         const avatarUrl = m.avatar || "https://cdn.discordapp.com/embed/avatars/0.png";
         const animDelay = (Math.min(idx * 0.045, 0.75) + 0.55).toFixed(2);
+        const coverHtml = m.cover_url
+          ? `<img src="${escapeHtml(m.cover_url)}" class="member-cover" alt="cover" onerror="this.style.display='none'">`
+          : `<div class="member-cover-placeholder"></div>`;
 
         cardsHtml += `
           <div class="member-card" id="member_card_${m.id}" style="animation-delay: ${animDelay}s;">
+            ${coverHtml}
             <div class="member-header">
               <div class="avatar-wrapper">
                 <img src="${escapeHtml(avatarUrl)}" alt="${escapeHtml(m.name)}" class="member-avatar" onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'">
