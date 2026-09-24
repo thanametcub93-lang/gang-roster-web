@@ -1949,39 +1949,6 @@
       </header>
     </div>
 
-    <!-- Stats Bar beneath banner -->
-    <div class="hero-stats-row">
-      <div class="stat-badge">
-        <div class="stat-icon" style="background: rgba(225, 29, 72, 0.15); color: #f43f5e;">
-          <i class="fa-solid fa-users"></i>
-        </div>
-        <div>
-          <div class="stat-num" id="statTotalMembers">0</div>
-          <div class="stat-label">สมาชิกทั้งหมด</div>
-        </div>
-      </div>
-
-      <div class="stat-badge">
-        <div class="stat-icon" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">
-          <i class="fa-solid fa-shield-halved"></i>
-        </div>
-        <div>
-          <div class="stat-num" id="statActiveMembers">0</div>
-          <div class="stat-label">ประจำการ (Active)</div>
-        </div>
-      </div>
-
-      <div class="stat-badge">
-        <div class="stat-icon" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b;">
-          <i class="fa-solid fa-crown"></i>
-        </div>
-        <div>
-          <div class="stat-num" id="statHighTier">0</div>
-          <div class="stat-label">ผู้บริหาร / หัวหน้า</div>
-        </div>
-      </div>
-    </div>
-
     <!-- Editor Strip removed: use admin.html for all management -->
     <input type="file" id="importJsonFileInput" accept=".json" style="display:none;" onchange="handleImportJsonFile(event)">
 
@@ -2506,14 +2473,19 @@
     }
 
     function renderStats() {
+      const elTotal = document.getElementById("statTotalMembers");
+      const elActive = document.getElementById("statActiveMembers");
+      const elHigh = document.getElementById("statHighTier");
+      if (!elTotal && !elActive && !elHigh) return;
+
       const members = GANG_DATA.members || [];
       const total = members.length;
       const active = members.filter(m => m.status === "online").length;
       const highTier = members.filter(m => (m.rank || "").includes("หัวหน้า") || (m.rank || "").includes("Leader") || (m.rank || "").includes("เสนาธิการ")).length;
 
-      document.getElementById("statTotalMembers").textContent = total;
-      document.getElementById("statActiveMembers").textContent = active;
-      document.getElementById("statHighTier").textContent = highTier;
+      if (elTotal) elTotal.textContent = total;
+      if (elActive) elActive.textContent = active;
+      if (elHigh) elHigh.textContent = highTier;
     }
 
     function filterMembers() {
