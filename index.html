@@ -714,62 +714,86 @@
       background: rgba(225, 29, 72, 0.7);
     }
 
-    /* Roster Grid — 2 columns */
+    /* Roster Grid — Centered & Compact Balanced */
     .roster-grid {
       margin-top: 1.8rem;
       display: flex;
       flex-direction: column;
-      gap: 28px;
+      align-items: center;
+      gap: 32px;
+      width: 100%;
     }
     .rank-section {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      align-items: center;
+      gap: 16px;
+      width: 100%;
+      max-width: 820px;
     }
     .rank-section-cards {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
+      grid-template-columns: repeat(2, minmax(0, 380px));
+      justify-content: center;
+      gap: 16px;
+      width: 100%;
       align-items: start;
     }
-    @media (max-width: 720px) {
-      .rank-section-cards { grid-template-columns: 1fr; }
+    @media (max-width: 800px) {
+      .rank-section-cards { grid-template-columns: minmax(0, 400px); }
     }
-    /* Section header */
+    /* Section header — Centered between dual lines (matching screenshot) */
     .rank-section-header {
       display: flex;
       align-items: center;
-      gap: 12px;
+      justify-content: center;
+      gap: 16px;
+      width: 100%;
       padding: 0 4px;
+    }
+    .rank-section-line-left,
+    .rank-section-line-right {
+      flex: 1;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.08);
     }
     .rank-section-title {
       font-family: 'Outfit', sans-serif;
-      font-size: 0.82rem;
+      font-size: 1.15rem;
       font-weight: 800;
-      letter-spacing: 2px;
+      letter-spacing: 3px;
       text-transform: uppercase;
-      color: var(--text-muted);
+      color: #fff;
       display: flex;
       align-items: center;
-    }
-    .rank-section-line {
-      flex: 1;
-      height: 1px;
-      background: rgba(255,255,255,0.07);
+      gap: 10px;
     }
     .rank-section-count {
-      font-size: 0.72rem;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.75rem;
       font-weight: 700;
-      padding: 2px 10px;
+      letter-spacing: 1px;
+      padding: 3px 12px;
       border-radius: 20px;
-      background: rgba(255,255,255,0.05);
-      color: var(--text-muted);
+      background: rgba(0, 0, 0, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .rank-section-count::before {
+      content: '•';
+      font-size: 1rem;
+      color: inherit;
     }
 
     /* ===== CYBERPUNK CUT-CORNER HOVER CARD STYLE ===== */
     .member-card {
       position: relative;
       align-self: start;
+      width: 100%;
+      max-width: 380px; /* ไม่ยาวเกินไป ขนาดกะทัดรัดพอดีกรอบตามรูปต้นฉบับ */
       background: var(--role-border, rgba(225, 29, 72, 0.45));
       padding: 1.5px;
       border-radius: 14px 14px 0 14px;
@@ -2749,14 +2773,17 @@
         anyRendered = true;
 
         const cardsHtml = groupMembers.map((m, i) => buildCardHtml(m, i)).join('');
+        const countFormatted = String(groupMembers.length).padStart(2, '0');
         gridHtml += `
           <div class="rank-section">
             <div class="rank-section-header">
-              <span class="rank-section-title" style="color: ${group.color};">
-                <i class="fa-solid ${group.icon}" style="margin-right: 8px;"></i>${group.label}
+              <div class="rank-section-line-left" style="background: linear-gradient(90deg, transparent, ${group.color}45);"></div>
+              <span class="rank-section-title">
+                <i class="fa-solid ${group.icon}" style="color: ${group.color};"></i>
+                <span>${group.label}</span>
               </span>
-              <div class="rank-section-line" style="background: linear-gradient(90deg, ${group.color}40, transparent);"></div>
-              <span class="rank-section-count" style="border: 1px solid ${group.color}35; color: ${group.color};">${groupMembers.length} คน</span>
+              <span class="rank-section-count" style="border-color: ${group.color}50; color: ${group.color};">${countFormatted}</span>
+              <div class="rank-section-line-right" style="background: linear-gradient(90deg, ${group.color}45, transparent);"></div>
             </div>
             <div class="rank-section-cards">${cardsHtml}</div>
           </div>`;
