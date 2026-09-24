@@ -1498,25 +1498,6 @@
         </div>
       </div>
 
-      <!-- Admin Action Group: ซ่อนไว้เป็นค่าเริ่มต้น (จะแสดงขึ้นมาเฉพาะตอนใส่รหัส Admin สำเร็จ) -->
-      <div id="adminActionGroup" style="display: none; align-items: center; gap: 8px;">
-        <button class="btn btn-secondary" onclick="openAttendanceModal()" style="border-color: rgba(245, 158, 11, 0.4); color: #fef08a;" title="ระบบเช็คชื่อรวมพล & ดูประวัติ Log">
-          <i class="fa-solid fa-calendar-check" style="color: #f59e0b;"></i> <span>เช็คชื่อรวมพล</span>
-        </button>
-
-        <button class="btn btn-editor-active" id="btnEditorToggle" onclick="handleEditorButtonClick()" title="จัดการแก๊ง / ปิด-เปิดแถบเครื่องมือ">
-          <i class="fa-solid fa-gear"></i> <span id="btnEditorText">จัดการแก๊ง (Admin)</span>
-        </button>
-
-        <button class="btn btn-secondary" onclick="adminLogout()" style="padding: 8px 12px; color: #f87171; border-color: rgba(239, 68, 68, 0.3); font-size: 0.85rem;" title="ออกจากระบบ Admin (ซ่อนปุ่มทั้งหมด)">
-          <i class="fa-solid fa-right-from-bracket"></i>
-        </button>
-      </div>
-
-      <!-- Admin Login Button (แสดงตอนยังไม่ได้ล็อกอิน admin) -->
-      <button class="btn btn-secondary" id="btnAdminLoginTrigger" onclick="openAdminLoginModal()" style="border-color: rgba(255, 255, 255, 0.12); color: #cbd5e1; font-size: 0.82rem; padding: 7px 14px; display: inline-flex; align-items: center; gap: 6px;" title="เข้าสู่ระบบ Admin (เฉพาะเจ้าของ)">
-        <i class="fa-solid fa-shield-halved" style="color: #f59e0b;"></i> <span>Admin</span>
-      </button>
     </div>
   </nav>
 
@@ -1592,34 +1573,8 @@
       </div>
     </div>
 
-    <!-- Editor Control Strip (Appears when Editor Mode is active) -->
-    <div class="editor-strip" id="editorStrip">
-      <div class="editor-strip-info">
-        <div class="pulse-dot"></div>
-        <div>
-          <strong style="color: #fff; font-size: 0.98rem;">🛠️ โหมดปรับแต่งรายชื่อแก๊ง (Editor Mode Active)</strong>
-          <div style="font-size: 0.82rem; color: #cbd5e1;">คุณมีสิทธิ์ เพิ่ม, แก้ไข, ลบ และจัดเรียงลำดับสมาชิกแก๊งได้ทันที</div>
-        </div>
-      </div>
-      <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-        <button class="btn btn-primary" onclick="openAddMemberModal()">
-          <i class="fa-solid fa-user-plus"></i> <span>เพิ่มสมาชิกใหม่</span>
-        </button>
-        <button class="btn btn-secondary" onclick="openGangSettingsModal()">
-          <i class="fa-solid fa-gear"></i> <span>ตั้งค่าแก๊ง & รหัส</span>
-        </button>
-        <button class="btn btn-secondary" onclick="exportGangDataJSON()" title="ดาวน์โหลดสำรองข้อมูลแก๊งเก็บไว้">
-          <i class="fa-solid fa-download"></i> <span>สำรองข้อมูล</span>
-        </button>
-        <button class="btn btn-secondary" onclick="importGangDataJSON()" title="นำเข้าข้อมูลแก๊งจากไฟล์ที่สำรองไว้">
-          <i class="fa-solid fa-upload"></i> <span>นำเข้าข้อมูล</span>
-        </button>
-        <button class="btn btn-danger" onclick="logoutEditor()" title="ออกจากโหมดแก้ไข">
-          <i class="fa-solid fa-right-from-bracket"></i> <span>ออกจากระบบ</span>
-        </button>
-        <input type="file" id="importJsonFileInput" accept=".json" style="display:none;" onchange="handleImportJsonFile(event)">
-      </div>
-    </div>
+    <!-- Editor Strip removed: use admin.html for all management -->
+    <input type="file" id="importJsonFileInput" accept=".json" style="display:none;" onchange="handleImportJsonFile(event)">
 
     <!-- Search Control -->
     <section class="filter-section" style="justify-content: center;">
@@ -2268,23 +2223,8 @@
     }
 
     function setAdminMode(active) {
-      isEditorActive = active;
-      const adminGroup = document.getElementById("adminActionGroup");
-      const loginBtn = document.getElementById("btnAdminLoginTrigger");
-      const strip = document.getElementById("editorStrip");
-      const btnText = document.getElementById("btnEditorText");
-
-      if (active) {
-        if (adminGroup) adminGroup.style.display = "inline-flex";
-        if (loginBtn) loginBtn.style.display = "none";
-        if (strip) strip.style.display = "flex";
-        if (btnText) btnText.textContent = "จัดการแก๊ง (Admin)";
-      } else {
-        if (adminGroup) adminGroup.style.display = "none";
-        if (loginBtn) loginBtn.style.display = "inline-flex";
-        if (strip) strip.style.display = "none";
-        if (btnText) btnText.textContent = "ใส่รหัสปรับแต่ง";
-      }
+      // Admin controls are only available in admin.html — not shown on the public roster page
+      isEditorActive = false;
       renderRoster();
     }
 
