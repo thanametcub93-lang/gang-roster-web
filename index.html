@@ -730,6 +730,7 @@
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 12px;
+      align-items: start;
     }
     @media (max-width: 720px) {
       .rank-section-cards { grid-template-columns: 1fr; }
@@ -768,6 +769,7 @@
     /* ===== CYBERPUNK CUT-CORNER HOVER CARD STYLE ===== */
     .member-card {
       position: relative;
+      align-self: start;
       background: var(--role-border, rgba(225, 29, 72, 0.45));
       padding: 1.5px;
       border-radius: 14px 14px 0 14px;
@@ -960,15 +962,17 @@
     .card-hover-info {
       max-height: 0;
       overflow: hidden;
-      transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease, margin 0.3s ease;
+      transition: max-height 0.32s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.22s ease, margin 0.25s ease;
       opacity: 0;
       margin-top: 0;
+      pointer-events: none;
     }
     .member-card:hover .card-hover-info,
     .member-card.is-active .card-hover-info {
       max-height: 220px;
       opacity: 1;
       margin-top: 10px;
+      pointer-events: auto;
     }
     .hover-info-row {
       display: flex;
@@ -2392,6 +2396,20 @@
         return;
       }
 
+      // Helper: on mobile touch devices only, tap opens/closes the card (and closes others)
+      // On desktop mouse, hover automatically handles it so click doesn't keep it open
+      function handleCardClick(el, ev) {
+        if (ev.target.closest('.card-cut-btn') || ev.target.closest('.hover-info-val')) return;
+        const isTouch = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+        if (!isTouch) return;
+
+        const wasActive = el.classList.contains('is-active');
+        document.querySelectorAll('.member-card.is-active').forEach(c => c.classList.remove('is-active'));
+        if (!wasActive) {
+          el.classList.add('is-active');
+        }
+      }
+
       // ---- helper: build one card HTML ----
       function buildCardHtml(m, idx) {
         const statusClass = m.status === 'online' ? 'status-online' : (m.status === 'busy' ? 'status-busy' : 'status-offline');
@@ -2417,7 +2435,7 @@
         }
 
         return `
-          <div class="member-card" id="member_card_${m.id}" onclick="this.classList.toggle('is-active')" style="--role-color:${rankColor}; --role-border:${rankColor}55; --role-bg:${rankColor}16; --role-glow:${rankColor}33; animation-delay:${animDelay}s;">
+          <div class="member-card" id="member_card_${m.id}" onclick="handleCardClick(this, event)" style="--role-color:${rankColor}; --role-border:${rankColor}55; --role-bg:${rankColor}16; --role-glow:${rankColor}33; animation-delay:${animDelay}s;">
             <div class="member-card-inner">
               <div class="tech-corner-tl"></div>
 
@@ -2515,6 +2533,13 @@
           <p>ลองค้นหาด้วยคำอื่น</p>
         </div>`;
     }
+
+    // Close any active member card when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.member-card')) {
+        document.querySelectorAll('.member-card.is-active').forEach(c => c.classList.remove('is-active'));
+      }
+    });
 
     // ==================== AUTH & ADMIN SYSTEM ====================
 
