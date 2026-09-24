@@ -2486,6 +2486,135 @@
       renderRoster();
     }
 
+    // ---- Role Priority Helper (Global Scope) ----
+    function getRolePriority(rankName) {
+      if (!rankName) return 99;
+      const clean = rankName.toLowerCase();
+      if (clean.includes('leader') && !clean.includes('co-') && !clean.includes('co ') && !clean.includes('รอง')) return 1;
+      if (clean.includes('co-') || clean.includes('co ') || clean.includes('รอง') || clean.includes('coleader')) return 2;
+      const roles = GANG_DATA.roles || [];
+      const r = roles.find(x => x.name === rankName);
+      return r ? (r.priority || 3) : 3;
+    }
+    window.getRolePriority = getRolePriority;
+
+    // ---- Mobile Touch Card Toggle Helper (Global Scope) ----
+    function handleCardClick(el, ev) {
+      if (ev.target.closest('.card-cut-btn') || ev.target.closest('.hover-info-val')) return;
+      const isTouch = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+      if (!isTouch) return;
+
+      const wasActive = el.classList.contains('is-active');
+      document.querySelectorAll('.member-card.is-active').forEach(c => c.classList.remove('is-active'));
+      if (!wasActive) {
+        el.classList.add('is-active');
+      }
+    }
+    window.handleCardClick = handleCardClick;
+
+    // ===== DISCORD HOVER PROFILE POPOVER SYSTEM (GLOBAL SCOPE) =====
+    let popoverTimeout = null;
+
+    function showDiscordPopover(btnEl, memberId) {
+      clearTimeout(popoverTimeout);
+      const popover = document.getElementById('discordGlobalPopover');
+      if (!popover) return;
+
+      const m = (GANG_DATA.members || []).find(x => String(x.id) === String(memberId));
+      if (!m) return;
+
+      const roles = GANG_DATA.roles || [];
+      const roleObj = roles.find(x => x.name === m.rank);
+      const rankColor = roleObj ? (roleObj.color || '#fbbf24') : '#fbbf24';
+      const rankPriority = getRolePriority(m.rank);
+      let rankIcon = 'fa-users';
+      let cleanRankText = 'MEMBER';
+      if (rankPriority <= 1) {
+        rankIcon = 'fa-crown';
+        cleanRankText = 'LEADER';
+      } else if (rankPriority === 2) {
+        rankIcon = 'fa-shield-halved';
+        cleanRankText = 'CO-LEADER';
+      } else {
+        rankIcon = 'fa-users'; // รูปคน 3 คน
+        cleanRankText = 'MEMBER';
+      }
+
+      const avatarUrl = m.avatar || 'https://cdn.discordapp.com/embed/avatars/0.png';
+      const discordTag = m.discord_id ? `discord.com/users/${m.discord_id}` : (m.nickname ? `@${m.nickname}` : 'discord.gg');
+      const discordUrl = m.discord_id ? `https://discord.com/users/${m.discord_id}` : `https://discord.com`;
+
+      popover.style.setProperty('--pop-role-color', rankColor);
+      popover.style.setProperty('--pop-role-glow', rankColor + '40');
+      popover.style.setProperty('--pop-role-border', rankColor + '60');
+
+      popover.innerHTML = `
+        <div class="dc-pop-top">
+          <img src="${escapeHtml(avatarUrl)}" class="dc-pop-avatar" alt="${escapeHtml(m.name)}" onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'">
+          <div class="dc-pop-icon"><i class="fa-brands fa-discord"></i></div>
+        </div>
+        <div class="dc-pop-name">${escapeHtml(m.name)}</div>
+        <div class="dc-pop-link">
+          <i class="fa-brands fa-discord" style="color: #5865F2;"></i>
+          <span>${escapeHtml(discordTag)}</span>
+        </div>
+        <div class="dc-pop-badge">
+          <i class="fa-solid ${rankIcon}"></i> ${escapeHtml(cleanRankText)}
+        </div>
+        <a href="${discordUrl}" target="_blank" rel="noopener noreferrer" class="dc-pop-btn" onclick="copyToClipboard('${escapeHtml(m.discord_id || '')}', 'คัดลอก Discord ID แล้ว')">
+          <i class="fa-solid fa-arrow-up-right-from-square"></i> VIEW PROFILE
+        </a>
+      `;
+
+      popover.onmouseenter = () => clearTimeout(popoverTimeout);
+      popover.onmouseleave = hideDiscordPopover;
+
+      // Position popover relative to button in viewport
+      const rect = btnEl.getBoundingClientRect();
+      const popWidth = 250;
+      let left = rect.right - popWidth;
+      if (left < 10) left = 10;
+      if (left + popWidth > window.innerWidth - 10) left = window.innerWidth - popWidth - 10;
+
+      popover.style.left = `${left}px`;
+      popover.classList.add('visible');
+
+      const popHeight = popover.offsetHeight || 220;
+      let top = rect.top - popHeight - 10;
+      if (top < 10) {
+        top = rect.bottom + 10;
+      }
+      popover.style.top = `${top}px`;
+    }
+    window.showDiscordPopover = showDiscordPopover;
+
+    function hideDiscordPopover() {
+      popoverTimeout = setTimeout(() => {
+        const popover = document.getElementById('discordGlobalPopover');
+        if (popover) popover.classList.remove('visible');
+      }, 200);
+    }
+    window.hideDiscordPopover = hideDiscordPopover;
+
+    function handleDiscordBtnClick(btnEl, memberId, ev) {
+      ev.stopPropagation();
+      const isTouch = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+      if (isTouch) {
+        const popover = document.getElementById('discordGlobalPopover');
+        if (popover && popover.classList.contains('visible')) {
+          hideDiscordPopover();
+        } else {
+          showDiscordPopover(btnEl, memberId);
+        }
+        return;
+      }
+      const m = (GANG_DATA.members || []).find(x => String(x.id) === String(memberId));
+      if (m && m.discord_id) {
+        copyToClipboard(m.discord_id, 'คัดลอก Discord ID แล้ว');
+      }
+    }
+    window.handleDiscordBtnClick = handleDiscordBtnClick;
+
     function renderRoster() {
       const grid = document.getElementById("rosterGrid");
       const searchQuery = (document.getElementById("searchInput").value || "").toLowerCase().trim();
@@ -2511,102 +2640,6 @@
           </div>
         `;
         return;
-      }
-
-      // Helper: on mobile touch devices only, tap opens/closes the card (and closes others)
-      // On desktop mouse, hover automatically handles it so click doesn't keep it open
-      function handleCardClick(el, ev) {
-        if (ev.target.closest('.card-cut-btn') || ev.target.closest('.hover-info-val')) return;
-        const isTouch = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
-        if (!isTouch) return;
-
-        const wasActive = el.classList.contains('is-active');
-        document.querySelectorAll('.member-card.is-active').forEach(c => c.classList.remove('is-active'));
-        if (!wasActive) {
-          el.classList.add('is-active');
-        }
-      }
-
-      // ===== DISCORD HOVER PROFILE POPOVER SYSTEM =====
-      let popoverTimeout = null;
-
-      function showDiscordPopover(btnEl, memberId) {
-        clearTimeout(popoverTimeout);
-        const popover = document.getElementById('discordGlobalPopover');
-        if (!popover) return;
-
-        const m = (GANG_DATA.members || []).find(x => String(x.id) === String(memberId));
-        if (!m) return;
-
-        const roles = GANG_DATA.roles || [];
-        const roleObj = roles.find(x => x.name === m.rank);
-        const rankColor = roleObj ? (roleObj.color || '#fbbf24') : '#fbbf24';
-        const rankPriority = getRolePriority(m.rank);
-        let rankIcon = 'fa-users';
-        let cleanRankText = 'MEMBER';
-        if (rankPriority <= 1) {
-          rankIcon = 'fa-crown';
-          cleanRankText = 'LEADER';
-        } else if (rankPriority === 2) {
-          rankIcon = 'fa-shield-halved';
-          cleanRankText = 'CO-LEADER';
-        } else {
-          rankIcon = 'fa-users'; // รูปคน 3 คน
-          cleanRankText = 'MEMBER';
-        }
-
-        const avatarUrl = m.avatar || 'https://cdn.discordapp.com/embed/avatars/0.png';
-        const discordTag = m.discord_id ? `discord.com/users/${m.discord_id}` : (m.nickname ? `@${m.nickname}` : 'discord.gg');
-        const discordUrl = m.discord_id ? `https://discord.com/users/${m.discord_id}` : `https://discord.com`;
-
-        popover.style.setProperty('--pop-role-color', rankColor);
-        popover.style.setProperty('--pop-role-glow', rankColor + '40');
-        popover.style.setProperty('--pop-role-border', rankColor + '60');
-
-        popover.innerHTML = `
-          <div class="dc-pop-top">
-            <img src="${escapeHtml(avatarUrl)}" class="dc-pop-avatar" alt="${escapeHtml(m.name)}" onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'">
-            <div class="dc-pop-icon"><i class="fa-brands fa-discord"></i></div>
-          </div>
-          <div class="dc-pop-name">${escapeHtml(m.name)}</div>
-          <div class="dc-pop-link">
-            <i class="fa-brands fa-discord" style="color: #5865F2;"></i>
-            <span>${escapeHtml(discordTag)}</span>
-          </div>
-          <div class="dc-pop-badge">
-            <i class="fa-solid ${rankIcon}"></i> ${escapeHtml(cleanRankText)}
-          </div>
-          <a href="${discordUrl}" target="_blank" rel="noopener noreferrer" class="dc-pop-btn" onclick="copyToClipboard('${escapeHtml(m.discord_id || '')}', 'คัดลอก Discord ID แล้ว')">
-            <i class="fa-solid fa-arrow-up-right-from-square"></i> VIEW PROFILE
-          </a>
-        `;
-
-        popover.onmouseenter = () => clearTimeout(popoverTimeout);
-        popover.onmouseleave = hideDiscordPopover;
-
-        // Position popover relative to button in viewport
-        popover.classList.add('visible');
-        const rect = btnEl.getBoundingClientRect();
-        const popWidth = 250;
-        let left = rect.right - popWidth;
-        if (left < 10) left = 10;
-        if (left + popWidth > window.innerWidth - 10) left = window.innerWidth - popWidth - 10;
-
-        const popHeight = popover.offsetHeight || 220;
-        let top = rect.top - popHeight - 10;
-        if (top < 10) {
-          top = rect.bottom + 10;
-        }
-
-        popover.style.left = `${left}px`;
-        popover.style.top = `${top}px`;
-      }
-
-      function hideDiscordPopover() {
-        popoverTimeout = setTimeout(() => {
-          const popover = document.getElementById('discordGlobalPopover');
-          if (popover) popover.classList.remove('visible');
-        }, 160);
       }
 
       // ---- helper: build one card HTML ----
@@ -2658,7 +2691,7 @@
                 <div class="card-cut-btn" title="ดูโปรไฟล์ Discord"
                      onmouseenter="showDiscordPopover(this, '${m.id}')"
                      onmouseleave="hideDiscordPopover()"
-                     onclick="event.stopPropagation(); copyToClipboard('${escapeHtml(m.discord_id || m.phone || '')}','${m.discord_id ? 'คัดลอก Discord ID แล้ว' : 'คัดลอกข้อมูลแล้ว'}')">
+                     onclick="handleDiscordBtnClick(this, '${m.id}', event)">
                   <i class="fa-brands fa-discord"></i>
                 </div>
               </div>
@@ -2686,17 +2719,6 @@
               </div>
             </div>
           </div>`;
-      }
-
-      // ---- group by role priority ----
-      const roles = GANG_DATA.roles || [];
-      function getRolePriority(rankName) {
-        if (!rankName) return 99;
-        const clean = rankName.toLowerCase();
-        if (clean.includes('leader') && !clean.includes('co-') && !clean.includes('co ') && !clean.includes('รอง')) return 1;
-        if (clean.includes('co-') || clean.includes('co ') || clean.includes('รอง') || clean.includes('coleader')) return 2;
-        const r = roles.find(x => x.name === rankName);
-        return r ? (r.priority || 3) : 3;
       }
 
       // Define display groups: Leader, Co-Leader, Member (Pure vector icons, NO emojis)
