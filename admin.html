@@ -1781,6 +1781,13 @@
           badgeStyle: "background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid #3b82f6;",
           icon: "fa-brands fa-facebook"
         };
+      } else if (ua.includes("go-http-client") || ua.includes("render")) {
+        category = {
+          type: "other",
+          label: "ระบบตรวจเซิร์ฟเวอร์ Render",
+          badgeStyle: "background: rgba(148, 163, 184, 0.15); color: #94a3b8; border: 1px solid #475569;",
+          icon: "fa-solid fa-cloud"
+        };
       }
 
       // Location / ISP / Origin identification
@@ -1861,7 +1868,26 @@
       const tbody = document.getElementById('visitorsTableBody');
       if (!tbody) return;
 
-      let filtered = cachedVisitorsList;
+      // Group & deduplicate by IP so each computer/connection appears only ONCE!
+      const groupedMap = new Map();
+      cachedVisitorsList.forEach(v => {
+        const isMyMachine = v.is_my_pc || v.ip === '127.0.0.1' || v.visitor_id === 'vis_my_local_pc';
+        const key = isMyMachine ? 'my_pc' : (v.ip || v.visitor_id);
+        if (!groupedMap.has(key)) {
+          groupedMap.set(key, { ...v });
+        } else {
+          const item = groupedMap.get(key);
+          item.visit_count = (item.visit_count || 1) + (v.visit_count || 1);
+          if ((v.last_seen || '') > (item.last_seen || '')) item.last_seen = v.last_seen;
+          if (v.verified_human) item.verified_human = true;
+          if (v.router_lan_ip && !item.router_lan_ip) item.router_lan_ip = v.router_lan_ip;
+          if (v.gateway_ip && !item.gateway_ip) item.gateway_ip = v.gateway_ip;
+          if (v.router_wan_ip && !item.router_wan_ip) item.router_wan_ip = v.router_wan_ip;
+          if (v.network_info && !item.network_info) item.network_info = v.network_info;
+        }
+      });
+
+      let filtered = Array.from(groupedMap.values());
       if (visitorFilterType !== 'all') {
         filtered = filtered.filter(v => {
           const meta = parseVisitorMeta(v);
