@@ -1,155 +1,28 @@
 {
-  "vis_ac5da668c1704db9": {
-    "visitor_id": "vis_ac5da668c1704db9",
-    "ip": "127.0.0.1",
-    "user_agent": "Mozilla/5.0 Chrome/120.0",
-    "verified_human": false,
-    "first_seen": "2026-09-25 02:04:02",
-    "last_seen": "2026-09-25 02:04:02",
-    "visit_count": 1
-  },
-  "vis_1806fe0eb6604dce": {
-    "visitor_id": "vis_1806fe0eb6604dce",
-    "ip": "127.0.0.1",
-    "user_agent": "Mozilla/5.0 Chrome/120.0",
-    "verified_human": false,
-    "first_seen": "2026-09-25 02:04:02",
-    "last_seen": "2026-09-25 02:04:02",
-    "visit_count": 1
-  },
-  "vis_c2612ce12f784309": {
-    "visitor_id": "vis_c2612ce12f784309",
-    "ip": "127.0.0.1",
-    "user_agent": "Mozilla/5.0 (compatible; Discordbot/2.0; +https://discordapp.com)",
-    "verified_human": false,
-    "first_seen": "2026-09-25 02:04:02",
-    "last_seen": "2026-09-25 02:04:02",
-    "visit_count": 1
-  },
-  "vis_05d52740bcc54b42": {
-    "visitor_id": "vis_05d52740bcc54b42",
-    "ip": "127.0.0.1",
-    "user_agent": "Mozilla/5.0 Chrome/120.0",
-    "verified_human": false,
-    "first_seen": "2026-09-25 02:04:02",
-    "last_seen": "2026-09-25 02:04:02",
-    "visit_count": 1
-  },
-  "vis_59f3d92f0d4f4028": {
-    "visitor_id": "vis_59f3d92f0d4f4028",
-    "ip": "127.0.0.1",
-    "user_agent": "Mozilla/5.0 TestBrowser/1.0",
-    "verified_human": false,
-    "first_seen": "2026-09-25 02:04:05",
-    "last_seen": "2026-09-25 02:04:05",
-    "visit_count": 1
-  },
-  "vis_44992f4b27f24837": {
-    "visitor_id": "vis_44992f4b27f24837",
-    "ip": "127.0.0.1",
-    "user_agent": "Mozilla/5.0 TestBrowser/1.0",
-    "verified_human": false,
-    "first_seen": "2026-09-25 02:04:13",
-    "last_seen": "2026-09-25 02:04:13",
-    "visit_count": 1
-  },
-  "vis_50dbf147e5c04e9b": {
-    "visitor_id": "vis_50dbf147e5c04e9b",
-    "ip": "127.0.0.1",
-    "user_agent": "Mozilla/5.0 Chrome/120.0",
-    "verified_human": false,
-    "first_seen": "2026-09-25 02:04:34",
-    "last_seen": "2026-09-25 02:04:34",
-    "visit_count": 1
-  },
-  "vis_ef731961c0e9461f": {
-    "visitor_id": "vis_ef731961c0e9461f",
-    "ip": "127.0.0.1",
-    "user_agent": "Mozilla/5.0 Chrome/120.0",
-    "verified_human": false,
-    "first_seen": "2026-09-25 02:04:34",
-    "last_seen": "2026-09-25 02:04:34",
-    "visit_count": 1
-  },
-  "vis_e0d63f43e64b47ec": {
-    "visitor_id": "vis_e0d63f43e64b47ec",
-    "ip": "127.0.0.1",
-    "user_agent": "Mozilla/5.0 (compatible; Discordbot/2.0; +https://discordapp.com)",
-    "verified_human": false,
-    "first_seen": "2026-09-25 02:04:34",
-    "last_seen": "2026-09-25 02:04:34",
-    "visit_count": 1
-  },
-  "vis_7600c6c7a2524b98": {
-    "visitor_id": "vis_7600c6c7a2524b98",
-    "ip": "127.0.0.1",
-    "user_agent": "Mozilla/5.0 Chrome/120.0",
-    "verified_human": false,
-    "first_seen": "2026-09-25 02:04:34",
-    "last_seen": "2026-09-25 02:04:34",
-    "visit_count": 1
-  },
-  "vis_952fec3c1ca34243": {
-    "visitor_id": "vis_952fec3c1ca34243",
-    "ip": "127.0.0.1",
-    "user_agent": "Mozilla/5.0",
-    "verified_human": false,
-    "first_seen": "2026-09-25 02:07:43",
-    "last_seen": "2026-09-25 02:07:43",
-    "visit_count": 1
-  },
-  "vis_acc515bd872d4129": {
-    "visitor_id": "vis_acc515bd872d4129",
-    "ip": "127.0.0.1",
-    "user_agent": "Mozilla/5.0",
-    "verified_human": false,
-    "first_seen": "2026-09-25 02:07:43",
-    "last_seen": "2026-09-25 02:07:43",
-    "visit_count": 1
-  },
-  "vis_1b91007b45ca49c3": {
-    "visitor_id": "vis_1b91007b45ca49c3",
-    "ip": "127.0.0.1",
-    "user_agent": "Mozilla/5.0",
-    "verified_human": false,
-    "first_seen": "2026-09-25 02:08:08",
-    "last_seen": "2026-09-25 02:08:08",
-    "visit_count": 1
-  },
-  "vis_d89fdd36ed3d4d0d": {
-    "visitor_id": "vis_d89fdd36ed3d4d0d",
-    "ip": "127.0.0.1",
-    "user_agent": "Mozilla/5.0",
-    "verified_human": false,
-    "first_seen": "2026-09-25 02:08:08",
-    "last_seen": "2026-09-25 02:08:08",
-    "visit_count": 1
-  },
-  "vis_c5f716fa606a410a": {
-    "visitor_id": "vis_c5f716fa606a410a",
-    "ip": "127.0.0.1",
-    "user_agent": "Mozilla/5.0",
-    "verified_human": false,
-    "first_seen": "2026-09-25 02:08:08",
-    "last_seen": "2026-09-25 02:08:08",
-    "visit_count": 1
-  },
-  "vis_1f95c5e37dea408b": {
-    "visitor_id": "vis_1f95c5e37dea408b",
-    "ip": "127.0.0.1",
-    "user_agent": "Mozilla/5.0",
-    "verified_human": false,
-    "first_seen": "2026-09-25 02:08:08",
-    "last_seen": "2026-09-25 02:08:08",
-    "visit_count": 1
-  },
-  "vis_e534c0340e904708": {
-    "visitor_id": "vis_e534c0340e904708",
-    "ip": "127.0.0.1",
+  "vis_test_router_probe": {
+    "visitor_id": "vis_test_router_probe",
+    "ip": "27.130.32.32",
+    "router_wan_ip": "27.130.32.32",
+    "router_lan_ip": "192.168.1.105",
+    "screen": null,
+    "language": null,
     "user_agent": "Python-urllib/3.14",
-    "verified_human": false,
-    "first_seen": "2026-09-25 02:13:23",
-    "last_seen": "2026-09-25 02:13:23",
+    "verified_human": true,
+    "first_seen": "2026-09-25 02:37:41",
+    "last_seen": "2026-09-25 02:37:41",
     "visit_count": 1
+  },
+  "vis_my_local_pc": {
+    "visitor_id": "vis_my_local_pc",
+    "ip": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 Chrome/120.0",
+    "verified_human": true,
+    "first_seen": "2026-09-25 02:04:02",
+    "last_seen": "2026-09-25 02:44:38",
+    "visit_count": 23,
+    "is_my_pc": true,
+    "router_lan_ip": "192.168.1.101",
+    "gateway_ip": "192.168.1.1",
+    "router_wan_ip": "27.130.32.32"
   }
 }

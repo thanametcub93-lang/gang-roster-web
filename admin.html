@@ -1745,7 +1745,15 @@
         icon: "fa-solid fa-user-check"
       };
 
-      if (ua.includes("discordbot") || ip.startsWith("104.196.") || ip.startsWith("35.196.") || ip.startsWith("35.231.")) {
+      if (v.is_my_pc || ip === "127.0.0.1" || ip === "localhost" || v.visitor_id === "vis_my_local_pc") {
+        category = {
+          type: "human",
+          isMyPc: true,
+          label: "💻 เครื่องเราเอง (คอมเครื่องนี้)",
+          badgeStyle: "background: rgba(16, 185, 129, 0.25); color: #34d399; border: 1px solid #10b981; font-weight: 700;",
+          icon: "fa-solid fa-laptop-code"
+        };
+      } else if (ua.includes("discordbot") || ip.startsWith("104.196.") || ip.startsWith("35.196.") || ip.startsWith("35.231.")) {
         category = {
           type: "discord",
           label: "บอท Discord (พรีวิวลิงก์)",
@@ -1785,7 +1793,11 @@
       let locationColor = "#38bdf8";
       let locationIcon = "fa-location-dot";
 
-      if (category.type === "discord") {
+      if (category.isMyPc) {
+        locationText = "คอมพิวเตอร์ที่บ้าน (Local Machine)";
+        locationColor = "#34d399";
+        locationIcon = "fa-house-user";
+      } else if (category.type === "discord") {
         locationText = "เซิร์ฟเวอร์ Discord (พรีวิวลิงก์)";
         locationColor = "#a5b4fc";
         locationIcon = "fa-server";
@@ -1805,7 +1817,9 @@
 
       // Device / Platform
       let device = "เว็บเบราว์เซอร์";
-      if (category.type === "discord") {
+      if (category.isMyPc) {
+        device = "💻 เครื่องคอมพิวเตอร์ของเรา (Admin PC)";
+      } else if (category.type === "discord") {
         device = "🤖 Discord Bot Scraper";
       } else if (ua.includes("windows")) {
         device = "💻 Windows PC";
@@ -1861,6 +1875,7 @@
           const ip = (v.ip || '').toLowerCase();
           const wan = (v.router_wan_ip || '').toLowerCase();
           const lan = (v.router_lan_ip || '').toLowerCase();
+          const gw = (v.gateway_ip || '').toLowerCase();
           const ua = (v.user_agent || '').toLowerCase();
           const net = v.network_info || {};
           const isp = (net.isp || '').toLowerCase();
@@ -1870,6 +1885,7 @@
                  ip.includes(visitorSearchQuery) || 
                  wan.includes(visitorSearchQuery) || 
                  lan.includes(visitorSearchQuery) || 
+                 gw.includes(visitorSearchQuery) || 
                  isp.includes(visitorSearchQuery) || 
                  org.includes(visitorSearchQuery) || 
                  ua.includes(visitorSearchQuery) || 
@@ -1886,8 +1902,10 @@
       tbody.innerHTML = filtered.map(v => {
         const meta = parseVisitorMeta(v);
         const displayWanIp = v.router_wan_ip || v.ip || '127.0.0.1';
+        const isMyMachine = v.is_my_pc || v.ip === '127.0.0.1' || v.visitor_id === 'vis_my_local_pc';
+
         return `
-          <tr>
+          <tr ${isMyMachine ? 'style="background: rgba(16,185,129,0.04);"' : ''}>
             <td><code style="background: rgba(255,255,255,0.06); padding: 3px 8px; border-radius: 4px; font-size: 11px;">${escapeHtml(v.visitor_id || '-')}</code></td>
             <td>
               <span class="badge" style="${meta.category.badgeStyle}">
@@ -1895,24 +1913,59 @@
               </span>
             </td>
             <td>
-              <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-                <span style="font-size: 10px; background: rgba(56, 189, 248, 0.15); color: #38bdf8; padding: 1px 6px; border-radius: 4px; font-weight: 700; border: 1px solid rgba(56, 189, 248, 0.3); display: inline-flex; align-items: center; gap: 4px;">
-                  <i class="fa-solid fa-wifi"></i> WAN เร้าเตอร์
-                </span>
-                <span style="font-weight: 700; color: #38bdf8; font-family: monospace; font-size: 13px;">${escapeHtml(displayWanIp)}</span>
-              </div>
-
-              ${v.router_lan_ip ? `
-                <div style="display: flex; align-items: center; gap: 5px; margin-top: 4px; font-size: 11px; color: #a3e635; font-family: monospace;">
-                  <i class="fa-solid fa-network-wired" style="font-size: 10px;"></i>
-                  <span>LAN: ${escapeHtml(v.router_lan_ip)}</span>
-                  <span style="font-size: 9.5px; color: #94a3b8; font-family: sans-serif;">(วงแลนเร้าเตอร์)</span>
+              ${isMyMachine ? `
+                <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 8px; padding: 7px 10px;">
+                  <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+                    <span style="font-size: 10.5px; font-weight: 700; color: #34d399;">
+                      <i class="fa-solid fa-laptop"></i> IP เครื่องคอมเราที่บ้าน:
+                    </span>
+                    <span style="font-family: monospace; font-size: 12.5px; font-weight: 800; color: #a3e635;">
+                      ${escapeHtml(v.router_lan_ip || '192.168.1.101')}
+                    </span>
+                  </div>
+                  <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 3px;">
+                    <span style="font-size: 10px; color: #94a3b8;">
+                      <i class="fa-solid fa-router"></i> IP เร้าเตอร์เน็ตบ้าน:
+                    </span>
+                    <span style="font-family: monospace; font-size: 12px; font-weight: 700; color: #38bdf8;">
+                      ${escapeHtml(v.gateway_ip || '192.168.1.1')} <span style="font-size: 9px; color: #64748b;">(Gateway)</span>
+                    </span>
+                  </div>
+                  <div style="border-top: 1px dashed rgba(255,255,255,0.12); margin-top: 5px; padding-top: 4px; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+                    <span style="font-size: 10px; color: #94a3b8;">
+                      <i class="fa-solid fa-globe"></i> IP ขาออกเน็ตบ้าน (WAN):
+                    </span>
+                    <span style="font-family: monospace; font-size: 11px; color: #f59e0b;">
+                      ${escapeHtml(displayWanIp)} <span style="font-size: 9px; color: #94a3b8;">(${escapeHtml(meta.net?.org || meta.net?.isp || 'AIS Fibre')})</span>
+                    </span>
+                  </div>
                 </div>
-              ` : ''}
+              ` : `
+                <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                  <span style="font-size: 10px; background: rgba(56, 189, 248, 0.15); color: #38bdf8; padding: 1px 6px; border-radius: 4px; font-weight: 700; border: 1px solid rgba(56, 189, 248, 0.3); display: inline-flex; align-items: center; gap: 4px;">
+                    <i class="fa-solid fa-wifi"></i> IP ขาออก (WAN)
+                  </span>
+                  <span style="font-weight: 700; color: #38bdf8; font-family: monospace; font-size: 13px;">${escapeHtml(displayWanIp)}</span>
+                </div>
 
-              <div style="font-size: 11px; color: ${meta.locationColor}; margin-top: 4px; line-height: 1.35;">
-                <i class="fa-solid ${meta.locationIcon}"></i> ${escapeHtml(meta.locationText)}
-              </div>
+                ${v.router_lan_ip ? `
+                  <div style="display: flex; align-items: center; gap: 5px; margin-top: 4px; font-size: 11px; color: #a3e635; font-family: monospace;">
+                    <i class="fa-solid fa-network-wired" style="font-size: 10px;"></i>
+                    <span>IP เครื่องในบ้าน: ${escapeHtml(v.router_lan_ip)}</span>
+                  </div>
+                ` : ''}
+
+                ${v.gateway_ip ? `
+                  <div style="display: flex; align-items: center; gap: 5px; margin-top: 2px; font-size: 10.5px; color: #94a3b8; font-family: monospace;">
+                    <i class="fa-solid fa-router" style="font-size: 10px; color: #38bdf8;"></i>
+                    <span>เร้าเตอร์บ้าน: ${escapeHtml(v.gateway_ip)}</span>
+                  </div>
+                ` : ''}
+
+                <div style="font-size: 11px; color: ${meta.locationColor}; margin-top: 4px; line-height: 1.35;">
+                  <i class="fa-solid ${meta.locationIcon}"></i> ${escapeHtml(meta.locationText)}
+                </div>
+              `}
             </td>
             <td>
               ${v.verified_human ? '<span class="badge" style="background: rgba(16,185,129,0.2); color: #10b981; border: 1px solid #10b981;"><i class="fa-solid fa-check"></i> มนุษย์ (Verified)</span>' : '<span class="badge" style="background: rgba(148,163,184,0.15); color: #94a3b8;"><i class="fa-solid fa-clock"></i> รอตรวจสอบ</span>'}

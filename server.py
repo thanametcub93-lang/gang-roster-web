@@ -124,6 +124,18 @@ def save_visitor_cookies(data):
         except Exception as e:
             print(f"[!] Error saving {VISITOR_COOKIES_FILE}: {e}")
 
+def get_local_machine_net():
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(('8.8.8.8', 80))
+        local_ip = s.getsockname()[0]
+        s.close()
+        parts = local_ip.split(".")
+        gateway = f"{parts[0]}.{parts[1]}.{parts[2]}.1" if len(parts) == 4 else "192.168.1.1"
+        return local_ip, gateway
+    except Exception:
+        return "192.168.1.101", "192.168.1.1"
+
 def track_and_get_visitor(handler):
     raw_cookie = handler.headers.get("Cookie", "")
     cookie = http.cookies.SimpleCookie()
@@ -133,9 +145,14 @@ def track_and_get_visitor(handler):
         except Exception:
             pass
 
+    real_ip = shield.get_real_ip(handler)
+    is_local_pc = real_ip in ("127.0.0.1", "localhost", "::1")
+
     visitor_id = None
     is_new = False
-    if "gang_visitor_id" in cookie:
+    if is_local_pc:
+        visitor_id = "vis_my_local_pc"
+    elif "gang_visitor_id" in cookie:
         visitor_id = cookie["gang_visitor_id"].value
 
     if not visitor_id or len(visitor_id) < 8:
@@ -143,14 +160,14 @@ def track_and_get_visitor(handler):
         is_new = True
 
     is_verified = False
-    if "gang_human_verified" in cookie and cookie["gang_human_verified"].value == "1":
+    if is_local_pc or ("gang_human_verified" in cookie and cookie["gang_human_verified"].value == "1"):
         is_verified = True
 
     visitors = load_visitor_cookies()
-
-    real_ip = shield.get_real_ip(handler)
     user_agent = handler.headers.get("User-Agent", "Unknown")
     now_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    local_lan_ip, local_gateway = get_local_machine_net()
 
     if visitor_id not in visitors:
         visitors[visitor_id] = {
@@ -160,12 +177,22 @@ def track_and_get_visitor(handler):
             "verified_human": is_verified,
             "first_seen": now_str,
             "last_seen": now_str,
-            "visit_count": 1
+            "visit_count": 1,
+            "is_my_pc": is_local_pc,
+            "router_lan_ip": local_lan_ip if is_local_pc else "",
+            "gateway_ip": local_gateway if is_local_pc else "192.168.1.1",
+            "router_wan_ip": "27.130.32.32" if is_local_pc else real_ip
         }
     else:
         visitors[visitor_id]["last_seen"] = now_str
         visitors[visitor_id]["visit_count"] = visitors[visitor_id].get("visit_count", 1) + 1
         visitors[visitor_id]["ip"] = real_ip
+        if is_local_pc:
+            visitors[visitor_id]["is_my_pc"] = True
+            visitors[visitor_id]["router_lan_ip"] = local_lan_ip
+            visitors[visitor_id]["gateway_ip"] = local_gateway
+            if not visitors[visitor_id].get("router_wan_ip"):
+                visitors[visitor_id]["router_wan_ip"] = "27.130.32.32"
         if is_verified:
             visitors[visitor_id]["verified_human"] = True
 
@@ -633,6 +660,36 @@ class GangRequestHandler(SimpleHTTPRequestHandler):
                 self.send_json_response(401, {"success": False, "error": "รหัสผ่านไม่ถูกต้อง ไม่มีสิทธิ์เข้าถึงข้อมูล Cookies"})
                 return
             visitors = load_visitor_cookies()
+            
+            # Consolidate any duplicate local PC records into a single record so "เครื่องคอมเรา" appears only once
+            cleaned = {}
+            local_pc = None
+            local_lan_ip, local_gw = get_local_machine_net()
+            for vid, v in visitors.items():
+                ip = v.get("ip", "")
+                if ip in ("127.0.0.1", "localhost", "::1") or vid == "vis_my_local_pc" or v.get("is_my_pc"):
+                    if not local_pc:
+                        local_pc = dict(v)
+                        local_pc["visitor_id"] = "vis_my_local_pc"
+                        local_pc["ip"] = "127.0.0.1"
+                        local_pc["is_my_pc"] = True
+                        local_pc["router_lan_ip"] = v.get("router_lan_ip") or local_lan_ip
+                        local_pc["gateway_ip"] = v.get("gateway_ip") or local_gw
+                        local_pc["router_wan_ip"] = v.get("router_wan_ip") or "27.130.32.32"
+                        local_pc["verified_human"] = True
+                    else:
+                        local_pc["visit_count"] = local_pc.get("visit_count", 1) + v.get("visit_count", 1)
+                        if v.get("last_seen", "") > local_pc.get("last_seen", ""):
+                            local_pc["last_seen"] = v.get("last_seen")
+                else:
+                    cleaned[vid] = v
+
+            if local_pc:
+                cleaned["vis_my_local_pc"] = local_pc
+
+            save_visitor_cookies(cleaned)
+            visitors = cleaned
+
             v_list = sorted(list(visitors.values()), key=lambda x: x.get("last_seen", ""), reverse=True)
             for v in v_list:
                 target_ip = v.get("router_wan_ip") or v.get("ip") or ""
@@ -693,6 +750,7 @@ class GangRequestHandler(SimpleHTTPRequestHandler):
             
             router_wan_ip = str(telemetry.get("router_wan_ip", "")).strip()
             router_lan_ip = str(telemetry.get("router_lan_ip", "")).strip()
+            gateway_ip = str(telemetry.get("gateway_ip", "192.168.1.1")).strip()
 
             visitors = load_visitor_cookies()
             now_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -707,6 +765,8 @@ class GangRequestHandler(SimpleHTTPRequestHandler):
                     visitors[vis_id]["ip"] = router_wan_ip
                 if router_lan_ip:
                     visitors[vis_id]["router_lan_ip"] = router_lan_ip
+                if gateway_ip:
+                    visitors[vis_id]["gateway_ip"] = gateway_ip
                 if telemetry.get("screen"):
                     visitors[vis_id]["screen"] = telemetry.get("screen")
                 if telemetry.get("language"):
@@ -717,6 +777,7 @@ class GangRequestHandler(SimpleHTTPRequestHandler):
                     "ip": effective_ip,
                     "router_wan_ip": router_wan_ip or effective_ip,
                     "router_lan_ip": router_lan_ip,
+                    "gateway_ip": gateway_ip or "192.168.1.1",
                     "screen": telemetry.get("screen"),
                     "language": telemetry.get("language"),
                     "user_agent": self.headers.get("User-Agent", "Unknown"),

