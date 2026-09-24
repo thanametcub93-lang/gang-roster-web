@@ -744,8 +744,8 @@
             <span>สำรองข้อมูล & รหัส</span>
           </div>
           <div class="nav-item" onclick="switchTab('tabVisitors')">
-            <i class="fa-solid fa-cookie-bite"></i>
-            <span>คุกกี้ & ผู้เข้าชม (NoCAPTCHA)</span>
+            <i class="fa-brands fa-google" style="color: #4285F4;"></i>
+            <span>ผู้เข้าชม (Gmail Account)</span>
           </div>
         </nav>
 
@@ -1161,16 +1161,16 @@
             </div>
           </div>
 
-          <!-- TAB: VISITORS & COOKIES (NoCAPTCHA LOGS) -->
+          <!-- TAB: VISITORS & GMAIL ACCOUNTS (SECURITY LOGS) -->
           <div class="tab-pane" id="tabVisitors">
             <!-- 4 Modern Metric Cards -->
             <div class="metrics-grid">
               <div class="metric-card">
-                <div class="metric-icon" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b;">
-                  <i class="fa-solid fa-cookie-bite"></i>
+                <div class="metric-icon" style="background: rgba(66, 133, 244, 0.15); color: #4285F4;">
+                  <i class="fa-brands fa-google"></i>
                 </div>
                 <div class="metric-info">
-                  <h4>Cookies ผู้เข้าชมทั้งหมด</h4>
+                  <h4>บัญชี Gmail / ผู้เข้าชมทั้งหมด</h4>
                   <div class="value" id="statTotalCookies">0</div>
                 </div>
               </div>
@@ -1180,7 +1180,7 @@
                   <i class="fa-solid fa-user-check"></i>
                 </div>
                 <div class="metric-info">
-                  <h4>ผ่าน NoCAPTCHA (คนจริง)</h4>
+                  <h4>ยืนยัน Gmail สำเร็จ (คนจริง)</h4>
                   <div class="value" id="statVerifiedHumans" style="color: #10b981;">0</div>
                 </div>
               </div>
@@ -1210,7 +1210,7 @@
             <div class="content-card">
               <div class="card-header-bar" style="margin-bottom: 16px;">
                 <div class="card-title">
-                  <i class="fa-solid fa-shield-halved" style="color: #10b981;"></i> บันทึก Cookie ผู้เข้าชม & ตรวจจับ NoCAPTCHA
+                  <i class="fa-brands fa-google" style="color: #4285F4;"></i> รายชื่อผู้เข้าชม & บัญชี Gmail ที่ยืนยันความปลอดภัย
                 </div>
                 <div style="display: flex; gap: 8px; align-items: center;">
                   <span id="visitorLastSyncTime" style="font-size: 11px; color: var(--text-muted);">อัปเดตล่าสุด: กำลังโหลด...</span>
@@ -1239,7 +1239,7 @@
 
                 <div style="position: relative; width: 100%; max-width: 280px;">
                   <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 12px;"></i>
-                  <input type="text" id="visitorSearchInput" class="form-control" style="padding: 7px 12px 7px 32px; font-size: 0.84rem;" placeholder="ค้นหา Cookie ID, อุปกรณ์, เบราว์เซอร์..." oninput="handleVisitorSearch(this.value)">
+                  <input type="text" id="visitorSearchInput" class="form-control" style="padding: 7px 12px 7px 32px; font-size: 0.84rem;" placeholder="ค้นหาชื่อ, Gmail, อุปกรณ์..." oninput="handleVisitorSearch(this.value)">
                 </div>
               </div>
 
@@ -1247,16 +1247,17 @@
                 <table class="custom-table">
                   <thead>
                     <tr>
-                      <th style="min-width: 170px;">Cookie ID</th>
-                      <th style="min-width: 160px;">หมวดหมู่ (ที่มา)</th>
-                      <th style="min-width: 160px;">สถานะความปลอดภัย (NoCAPTCHA)</th>
-                      <th style="min-width: 220px;">อุปกรณ์ / ระบบ</th>
-                      <th style="text-align: center; min-width: 90px;">จำนวนครั้ง</th>
-                      <th style="min-width: 150px;">เข้าชมล่าสุด</th>
+                      <th style="min-width: 180px;">👤 ชื่อผู้เข้าชม (Name)</th>
+                      <th style="min-width: 230px;">📧 บัญชี Gmail (Google Account)</th>
+                      <th style="min-width: 150px;">หมวดหมู่ (ที่มา)</th>
+                      <th style="min-width: 160px;">สถานะความปลอดภัย</th>
+                      <th style="min-width: 200px;">อุปกรณ์ / ระบบ</th>
+                      <th style="text-align: center; min-width: 85px;">จำนวนครั้ง</th>
+                      <th style="min-width: 140px;">เข้าชมล่าสุด</th>
                     </tr>
                   </thead>
                   <tbody id="visitorsTableBody">
-                    <tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 30px;">กำลังโหลดข้อมูล...</td></tr>
+                    <tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 30px;">กำลังโหลดข้อมูล...</td></tr>
                   </tbody>
                 </table>
               </div>
@@ -1706,10 +1707,12 @@
         tabMusic: { icon: 'fa-music', text: 'เพลงประจำแก๊ง (Gang Music)' },
         tabDiscord: { icon: 'fa-brands fa-discord', text: 'Discord Webhook & การแจ้งเตือน' },
         tabBackup: { icon: 'fa-database', text: 'สำรองข้อมูล & รหัสผ่าน (Backup & Security)' },
-        tabVisitors: { icon: 'fa-cookie-bite', text: 'บันทึก Cookie ผู้เข้าชม & NoCAPTCHA' }
+        tabVisitors: { icon: 'fa-google', isBrand: true, text: 'รายชื่อผู้เข้าชม & บัญชี Gmail (Google Verified)' }
       };
       if (titles[tabId]) {
-        document.getElementById("pageTitleText").innerHTML = `<i class="fa-solid ${titles[tabId].icon}" style="color: var(--primary);"></i> <span>${titles[tabId].text}</span>`;
+        const iconClass = titles[tabId].isBrand ? `fa-brands ${titles[tabId].icon}` : `fa-solid ${titles[tabId].icon}`;
+        const iconColor = titles[tabId].isBrand ? '#4285F4' : 'var(--primary)';
+        document.getElementById("pageTitleText").innerHTML = `<i class="${iconClass}" style="color: ${iconColor};"></i> <span>${titles[tabId].text}</span>`;
       }
 
       if (tabId === 'tabVisitors') {
@@ -1836,11 +1839,11 @@
       const tbody = document.getElementById('visitorsTableBody');
       if (!tbody) return;
 
-      // Group & deduplicate by visitor_id so each cookie session appears once
+      // Group & deduplicate by email or visitor_id
       const groupedMap = new Map();
       cachedVisitorsList.forEach(v => {
         const isMyMachine = v.is_my_pc || v.visitor_id === 'vis_my_local_pc';
-        const key = isMyMachine ? 'my_pc' : (v.visitor_id || 'unknown');
+        const key = isMyMachine ? 'my_pc' : (v.email && v.email !== '-' ? v.email : (v.visitor_id || 'unknown'));
         if (!groupedMap.has(key)) {
           groupedMap.set(key, { ...v });
         } else {
@@ -1848,6 +1851,8 @@
           item.visit_count = (item.visit_count || 1) + (v.visit_count || 1);
           if ((v.last_seen || '') > (item.last_seen || '')) item.last_seen = v.last_seen;
           if (v.verified_human) item.verified_human = true;
+          if (v.name && !item.name) item.name = v.name;
+          if (v.email && !item.email) item.email = v.email;
           if (v.user_agent && !item.user_agent) item.user_agent = v.user_agent;
         }
       });
@@ -1862,10 +1867,12 @@
 
       if (visitorSearchQuery) {
         filtered = filtered.filter(v => {
-          const id = (v.visitor_id || '').toLowerCase();
+          const name = (v.name || '').toLowerCase();
+          const email = (v.email || '').toLowerCase();
           const ua = (v.user_agent || '').toLowerCase();
           const meta = parseVisitorMeta(v);
-          return id.includes(visitorSearchQuery) || 
+          return name.includes(visitorSearchQuery) || 
+                 email.includes(visitorSearchQuery) || 
                  ua.includes(visitorSearchQuery) || 
                  meta.category.label.toLowerCase().includes(visitorSearchQuery) || 
                  meta.device.toLowerCase().includes(visitorSearchQuery);
@@ -1873,7 +1880,7 @@
       }
 
       if (filtered.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 30px;">ไม่มีข้อมูลคุกกี้ที่ตรงกับเงื่อนไข</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 30px;">ไม่มีข้อมูลผู้เข้าชมที่ตรงกับเงื่อนไข</td></tr>';
         return;
       }
 
@@ -1884,9 +1891,22 @@
         return `
           <tr ${isMyMachine ? 'style="background: rgba(16,185,129,0.04);"' : ''}>
             <td>
+              <div style="display: flex; align-items: center; gap: 9px;">
+                <div style="width: 32px; height: 32px; border-radius: 50%; background: ${isMyMachine ? 'linear-gradient(135deg, #10b981, #059669)' : 'linear-gradient(135deg, #3b82f6, #1d4ed8)'}; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: #fff; flex-shrink: 0; box-shadow: 0 2px 6px rgba(0,0,0,0.3);">
+                  ${(v.name || (isMyMachine ? 'A' : 'U')).charAt(0).toUpperCase()}
+                </div>
+                <div>
+                  <div style="font-weight: 700; color: #f8fafc; font-size: 13px;">${escapeHtml(v.name || (isMyMachine ? 'แอดมิน (เราเอง)' : 'ผู้เข้าชม'))}</div>
+                  ${isMyMachine ? '<span style="font-size: 10px; color: #34d399; font-weight: 600;">(เครื่องหลักเราเอง)</span>' : ''}
+                </div>
+              </div>
+            </td>
+            <td>
               <div style="display: flex; align-items: center; gap: 8px;">
-                <i class="fa-solid fa-cookie-bite" style="color: #f59e0b; font-size: 13px;"></i>
-                <code style="background: rgba(255,255,255,0.06); padding: 3px 8px; border-radius: 4px; font-size: 11.5px; color: #38bdf8; font-weight: 600;">${escapeHtml(v.visitor_id || '-')}</code>
+                <img src="https://www.gstatic.com/images/branding/product/1x/gmail_2020q4_32dp.png" style="width: 17px; height: 17px; object-fit: contain; flex-shrink: 0;" alt="Gmail">
+                <span style="font-family: monospace; font-size: 12.5px; font-weight: 600; color: #38bdf8;">
+                  ${escapeHtml(v.email && v.email !== '-' ? v.email : (isMyMachine ? 'admin.sb577@gmail.com' : 'ยังไม่ระบุ Gmail'))}
+                </span>
               </div>
             </td>
             <td>
@@ -1896,15 +1916,15 @@
             </td>
             <td>
               ${v.verified_human ? 
-                '<span class="badge" style="background: rgba(16,185,129,0.18); color: #10b981; border: 1px solid rgba(16,185,129,0.4); padding: 4px 9px; display: inline-flex; align-items: center; gap: 5px;"><i class="fa-solid fa-shield-check"></i> ยืนยันแล้ว (NoCAPTCHA ผ่าน)</span>' : 
-                '<span class="badge" style="background: rgba(245,158,11,0.15); color: #fbbf24; border: 1px solid rgba(245,158,11,0.3); padding: 4px 9px; display: inline-flex; align-items: center; gap: 5px;"><i class="fa-solid fa-hourglass-half"></i> รอยืนยันความปลอดภัย</span>'
+                '<span class="badge" style="background: rgba(16,185,129,0.18); color: #10b981; border: 1px solid rgba(16,185,129,0.4); padding: 4px 9px; display: inline-flex; align-items: center; gap: 5px;"><i class="fa-solid fa-circle-check"></i> ยืนยัน Google แล้ว</span>' : 
+                '<span class="badge" style="background: rgba(245,158,11,0.15); color: #fbbf24; border: 1px solid rgba(245,158,11,0.3); padding: 4px 9px; display: inline-flex; align-items: center; gap: 5px;"><i class="fa-solid fa-hourglass-half"></i> รอยืนยันตัวตน</span>'
               }
             </td>
             <td>
               <div style="font-size: 12px; font-weight: 600; color: #e2e8f0; display: flex; align-items: center; gap: 6px;">
                 <span>${meta.device}</span>
               </div>
-              <div style="font-size: 11px; color: var(--text-muted); max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 2px;" title="${escapeHtml(v.user_agent || '')}">${escapeHtml(v.user_agent || '-')}</div>
+              <div style="font-size: 11px; color: var(--text-muted); max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 2px;" title="${escapeHtml(v.user_agent || '')}">${escapeHtml(v.user_agent || '-')}</div>
             </td>
             <td style="font-weight: 700; text-align: center; color: #cbd5e1;">${v.visit_count || 1} ครั้ง</td>
             <td style="font-size: 12px; color: var(--text-main); font-weight: 500;">

