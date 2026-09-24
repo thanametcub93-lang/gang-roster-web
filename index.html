@@ -1468,7 +1468,7 @@
       <img src="/gang_logo.png" alt="Gang Logo" class="nav-logo" id="navLogo">
       <div class="nav-title">
         <span id="navGangName">SPONGEBOB</span>
-        <span class="gang-tag-pill" id="navGangTag">577</span>
+        <span class="gang-tag-pill" id="navGangTag" style="display: none;"></span>
       </div>
     </a>
     
@@ -1774,8 +1774,8 @@
           <input type="text" id="setGangNameInput" class="form-control">
         </div>
         <div class="form-group">
-          <label class="form-label">แท็กย่อแก๊ง (Gang Tag)</label>
-          <input type="text" id="setGangTagInput" class="form-control">
+          <label class="form-label">แท็กย่อแก๊ง (Gang Tag) <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: normal;">(ไม่บังคับ / เว้นว่างได้)</span></label>
+          <input type="text" id="setGangTagInput" class="form-control" placeholder="เช่น 577 (หรือเว้นว่างไว้ถ้าไม่มี)">
         </div>
       </div>
 
@@ -2033,7 +2033,7 @@
   <script>
     let GANG_DATA = {
       gang_name: "SPONGEBOB",
-      gang_tag: "577",
+      gang_tag: "",
       slogan: "NEW GEN",
       logo_url: "https://cdn.discordapp.com/embed/avatars/0.png",
       banner_url: "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=1600&auto=format&fit=crop&q=80",
@@ -2105,16 +2105,24 @@
 
     function renderHeader() {
       const name = GANG_DATA.gang_name || "SPONGEBOB";
-      const tag = GANG_DATA.gang_tag || "577";
+      const tag = (GANG_DATA.gang_tag !== undefined && GANG_DATA.gang_tag !== null) ? GANG_DATA.gang_tag.trim() : "";
       const slogan = GANG_DATA.slogan || "NEW GEN";
       const logo = GANG_DATA.logo_url || "/gang_logo.png";
       const banner = GANG_DATA.banner_url || "/gang_banner.jpg";
 
-      document.title = `${name} [${tag}] • ทำเนียบรายชื่อแก๊ง`;
+      document.title = tag ? `${name} [${tag}] • ทำเนียบรายชื่อแก๊ง` : `${name} • ทำเนียบรายชื่อแก๊ง`;
       const navName = document.getElementById("navGangName");
       if (navName) navName.textContent = name;
       const navTag = document.getElementById("navGangTag");
-      if (navTag) navTag.textContent = tag;
+      if (navTag) {
+        if (tag) {
+          navTag.textContent = tag;
+          navTag.style.display = "inline-block";
+        } else {
+          navTag.textContent = "";
+          navTag.style.display = "none";
+        }
+      }
       const navLogo = document.getElementById("navLogo");
       if (navLogo) navLogo.src = logo;
 
@@ -2610,8 +2618,8 @@
 
     async function saveGangSettings() {
       GANG_DATA.gang_name = document.getElementById("setGangNameInput").value.trim() || GANG_DATA.gang_name;
-      GANG_DATA.gang_tag = document.getElementById("setGangTagInput").value.trim() || GANG_DATA.gang_tag;
-      GANG_DATA.slogan = document.getElementById("setSloganInput").value.trim() || GANG_DATA.slogan;
+      GANG_DATA.gang_tag = document.getElementById("setGangTagInput").value.trim();
+      GANG_DATA.slogan = document.getElementById("setSloganInput").value.trim();
       GANG_DATA.logo_url = document.getElementById("setLogoInput").value.trim() || GANG_DATA.logo_url;
       GANG_DATA.banner_url = document.getElementById("setBannerInput").value.trim() || GANG_DATA.banner_url;
       GANG_DATA.song_url = document.getElementById("setSongUrlInput").value.trim();

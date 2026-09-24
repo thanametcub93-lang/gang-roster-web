@@ -1,6 +1,6 @@
 {
   "gang_name": "SPONGEBOB",
-  "gang_tag": ".",
+  "gang_tag": "",
   "slogan": "NEW GEN",
   "announcement": "ยินดีต้อนรับสู่ทำเนียบสมาชิกแก๊ง SPONGEBOB [577] อย่างเป็นทางการ",
   "logo_url": "/gang_logo.png",
@@ -80,6 +80,6 @@
       "status": "online"
     }
   ],
-  "discord_webhook": "",
+  "discord_webhook": "https://discord.com/api/webhooks/1552684176497578014/du--3vPt4dEFEGSnVK_QYMR12K8zOXpeEnzkUCkeikJQBc_LECyqen8t6WtdxHo2TgCi",
   "passcode": "gang123"
 }
