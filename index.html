@@ -967,12 +967,20 @@
       margin-top: 0;
       pointer-events: none;
     }
-    .member-card:hover .card-hover-info,
-    .member-card.is-active .card-hover-info {
+    /* Hover info panel — hidden by default, slides in on hover / tap (except when hovering on discord button) */
+    .member-card:hover:not(:has(.card-cut-btn:hover)) .card-hover-info,
+    .member-card.is-active:not(.is-hovering-btn) .card-hover-info {
       max-height: 220px;
       opacity: 1;
       margin-top: 10px;
       pointer-events: auto;
+    }
+    .member-card:has(.card-cut-btn:hover) .card-hover-info,
+    .member-card.is-hovering-btn .card-hover-info {
+      max-height: 0 !important;
+      opacity: 0 !important;
+      margin-top: 0 !important;
+      pointer-events: none !important;
     }
     .hover-info-row {
       display: flex;
@@ -2569,6 +2577,9 @@
       popover.onmouseenter = () => clearTimeout(popoverTimeout);
       popover.onmouseleave = hideDiscordPopover;
 
+      // Prevent the parent member-card from expanding while hovering on the discord button
+      btnEl.closest('.member-card')?.classList.add('is-hovering-btn');
+
       // Position popover relative to button in viewport
       const rect = btnEl.getBoundingClientRect();
       const popWidth = 250;
@@ -2592,6 +2603,7 @@
       popoverTimeout = setTimeout(() => {
         const popover = document.getElementById('discordGlobalPopover');
         if (popover) popover.classList.remove('visible');
+        document.querySelectorAll('.member-card.is-hovering-btn').forEach(c => c.classList.remove('is-hovering-btn'));
       }, 200);
     }
     window.hideDiscordPopover = hideDiscordPopover;
