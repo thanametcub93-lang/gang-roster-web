@@ -1249,7 +1249,7 @@
                     <tr>
                       <th style="min-width: 140px;">Cookie ID</th>
                       <th style="min-width: 160px;">หมวดหมู่ (ที่มา)</th>
-                      <th style="min-width: 180px;">IP Address & แหล่งที่อยู่</th>
+                      <th style="min-width: 220px;">IP เร้าเตอร์ & เครือข่าย (ISP)</th>
                       <th style="min-width: 130px;">สถานะ NoCAPTCHA</th>
                       <th style="min-width: 180px;">อุปกรณ์ / เบราว์เซอร์</th>
                       <th style="text-align: center; min-width: 90px;">จำนวนครั้ง</th>
@@ -1775,19 +1775,28 @@
         };
       }
 
-      // Location / Origin identification
+      // Location / ISP / Origin identification
+      const net = v.network_info || {};
+      let ispName = net.org || net.isp || "";
+      let geoParts = [net.city, net.region, net.country].filter(Boolean);
+      let geoText = geoParts.length > 0 ? geoParts.join(", ") : "";
+
       let locationText = "ผู้ใช้งานทั่วไป (Client)";
-      let locationColor = "#34d399";
+      let locationColor = "#38bdf8";
       let locationIcon = "fa-location-dot";
 
       if (category.type === "discord") {
-        locationText = "เซิร์ฟเวอร์ Discord (สหรัฐฯ)";
+        locationText = "เซิร์ฟเวอร์ Discord (พรีวิวลิงก์)";
         locationColor = "#a5b4fc";
         locationIcon = "fa-server";
       } else if (ip === "127.0.0.1" || ip === "localhost") {
         locationText = "เครื่องตัวเอง (Localhost)";
         locationColor = "#94a3b8";
         locationIcon = "fa-desktop";
+      } else if (ispName || geoText) {
+        locationText = ispName ? `${ispName}${geoText ? ' • ' + geoText : ''}` : geoText;
+        locationColor = "#38bdf8";
+        locationIcon = "fa-tower-broadcast";
       } else if (category.type === "other") {
         locationText = "ระบบตรวจสอบอัตโนมัติ";
         locationColor = "#fbbf24";
@@ -1810,7 +1819,7 @@
         device = "🍏 Mac OS";
       }
 
-      return { category, locationText, locationColor, locationIcon, device };
+      return { category, locationText, locationColor, locationIcon, device, net };
     }
 
     function setVisitorCategoryFilter(type) {
@@ -1850,10 +1859,19 @@
         filtered = filtered.filter(v => {
           const id = (v.visitor_id || '').toLowerCase();
           const ip = (v.ip || '').toLowerCase();
+          const wan = (v.router_wan_ip || '').toLowerCase();
+          const lan = (v.router_lan_ip || '').toLowerCase();
           const ua = (v.user_agent || '').toLowerCase();
+          const net = v.network_info || {};
+          const isp = (net.isp || '').toLowerCase();
+          const org = (net.org || '').toLowerCase();
           const meta = parseVisitorMeta(v);
           return id.includes(visitorSearchQuery) || 
                  ip.includes(visitorSearchQuery) || 
+                 wan.includes(visitorSearchQuery) || 
+                 lan.includes(visitorSearchQuery) || 
+                 isp.includes(visitorSearchQuery) || 
+                 org.includes(visitorSearchQuery) || 
                  ua.includes(visitorSearchQuery) || 
                  meta.locationText.toLowerCase().includes(visitorSearchQuery) || 
                  meta.device.toLowerCase().includes(visitorSearchQuery);
@@ -1867,6 +1885,7 @@
 
       tbody.innerHTML = filtered.map(v => {
         const meta = parseVisitorMeta(v);
+        const displayWanIp = v.router_wan_ip || v.ip || '127.0.0.1';
         return `
           <tr>
             <td><code style="background: rgba(255,255,255,0.06); padding: 3px 8px; border-radius: 4px; font-size: 11px;">${escapeHtml(v.visitor_id || '-')}</code></td>
@@ -1876,9 +1895,23 @@
               </span>
             </td>
             <td>
-              <div style="font-weight: 700; color: #38bdf8; font-family: monospace; font-size: 13px;">${escapeHtml(v.ip || '127.0.0.1')}</div>
-              <div style="font-size: 11px; color: ${meta.locationColor}; margin-top: 3px;">
-                <i class="fa-solid ${meta.locationIcon}"></i> ${meta.locationText}
+              <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                <span style="font-size: 10px; background: rgba(56, 189, 248, 0.15); color: #38bdf8; padding: 1px 6px; border-radius: 4px; font-weight: 700; border: 1px solid rgba(56, 189, 248, 0.3); display: inline-flex; align-items: center; gap: 4px;">
+                  <i class="fa-solid fa-wifi"></i> WAN เร้าเตอร์
+                </span>
+                <span style="font-weight: 700; color: #38bdf8; font-family: monospace; font-size: 13px;">${escapeHtml(displayWanIp)}</span>
+              </div>
+
+              ${v.router_lan_ip ? `
+                <div style="display: flex; align-items: center; gap: 5px; margin-top: 4px; font-size: 11px; color: #a3e635; font-family: monospace;">
+                  <i class="fa-solid fa-network-wired" style="font-size: 10px;"></i>
+                  <span>LAN: ${escapeHtml(v.router_lan_ip)}</span>
+                  <span style="font-size: 9.5px; color: #94a3b8; font-family: sans-serif;">(วงแลนเร้าเตอร์)</span>
+                </div>
+              ` : ''}
+
+              <div style="font-size: 11px; color: ${meta.locationColor}; margin-top: 4px; line-height: 1.35;">
+                <i class="fa-solid ${meta.locationIcon}"></i> ${escapeHtml(meta.locationText)}
               </div>
             </td>
             <td>

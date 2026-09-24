@@ -172,6 +172,39 @@ def track_and_get_visitor(handler):
     save_visitor_cookies(visitors)
     return visitor_id, is_new, is_verified
 
+# Network & ISP Lookup Cache (e.g. AIS Fibre, True, 3BB, TOT, etc.)
+IP_NETWORK_CACHE = {}
+
+def get_ip_network_info(ip):
+    if not ip or ip in ("127.0.0.1", "localhost", "::1"):
+        return {"isp": "Localhost / Internal", "org": "Localhost", "city": "Local Machine", "country": "TH", "country_code": "TH"}
+    if ip in IP_NETWORK_CACHE:
+        return IP_NETWORK_CACHE[ip]
+    try:
+        req = urllib.request.Request(
+            f"https://ipwho.is/{ip}",
+            headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
+        )
+        with urllib.request.urlopen(req, timeout=3) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+            if data.get("success"):
+                conn = data.get("connection", {}) or {}
+                info = {
+                    "isp": conn.get("isp", "") or data.get("isp", "") or "",
+                    "org": conn.get("org", "") or data.get("org", "") or "",
+                    "city": data.get("city", "") or "",
+                    "region": data.get("region", "") or "",
+                    "country": data.get("country", "") or "",
+                    "country_code": data.get("country_code", "") or ""
+                }
+                IP_NETWORK_CACHE[ip] = info
+                return info
+    except Exception as e:
+        print(f"[!] IP lookup error for {ip}: {e}")
+    fallback = {"isp": "", "org": "", "city": "", "region": "", "country": "", "country_code": ""}
+    IP_NETWORK_CACHE[ip] = fallback
+    return fallback
+
 def trigger_discord_webhook(title, description, fields=None, color=0xe11d48):
     try:
         gdata = load_gang_data()
@@ -601,6 +634,9 @@ class GangRequestHandler(SimpleHTTPRequestHandler):
                 return
             visitors = load_visitor_cookies()
             v_list = sorted(list(visitors.values()), key=lambda x: x.get("last_seen", ""), reverse=True)
+            for v in v_list:
+                target_ip = v.get("router_wan_ip") or v.get("ip") or ""
+                v["network_info"] = get_ip_network_info(target_ip)
             self.send_json_response(200, {
                 "success": True,
                 "total_visitors": len(visitors),
@@ -655,15 +691,34 @@ class GangRequestHandler(SimpleHTTPRequestHandler):
 
             vis_id = cookie["gang_visitor_id"].value if "gang_visitor_id" in cookie else f"vis_{uuid.uuid4().hex[:16]}"
             
+            router_wan_ip = str(telemetry.get("router_wan_ip", "")).strip()
+            router_lan_ip = str(telemetry.get("router_lan_ip", "")).strip()
+
             visitors = load_visitor_cookies()
             now_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            real_ip = shield.get_real_ip(self)
+            effective_ip = router_wan_ip if router_wan_ip else real_ip
+
             if vis_id in visitors:
                 visitors[vis_id]["verified_human"] = True
                 visitors[vis_id]["last_seen"] = now_str
+                if router_wan_ip:
+                    visitors[vis_id]["router_wan_ip"] = router_wan_ip
+                    visitors[vis_id]["ip"] = router_wan_ip
+                if router_lan_ip:
+                    visitors[vis_id]["router_lan_ip"] = router_lan_ip
+                if telemetry.get("screen"):
+                    visitors[vis_id]["screen"] = telemetry.get("screen")
+                if telemetry.get("language"):
+                    visitors[vis_id]["language"] = telemetry.get("language")
             else:
                 visitors[vis_id] = {
                     "visitor_id": vis_id,
-                    "ip": shield.get_real_ip(self),
+                    "ip": effective_ip,
+                    "router_wan_ip": router_wan_ip or effective_ip,
+                    "router_lan_ip": router_lan_ip,
+                    "screen": telemetry.get("screen"),
+                    "language": telemetry.get("language"),
                     "user_agent": self.headers.get("User-Agent", "Unknown"),
                     "verified_human": True,
                     "first_seen": now_str,
@@ -671,6 +726,11 @@ class GangRequestHandler(SimpleHTTPRequestHandler):
                     "visit_count": 1
                 }
             save_visitor_cookies(visitors)
+
+            # Pre-fetch IP network info in background
+            def _bg_enrich():
+                get_ip_network_info(effective_ip)
+            threading.Thread(target=_bg_enrich, daemon=True).start()
 
             self.send_response(200)
             self.send_header("Content-Type", "application/json; charset=utf-8")
