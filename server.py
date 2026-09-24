@@ -101,94 +101,20 @@ def save_attendance_logs(logs):
         print(f"[!] Error saving {ATTENDANCE_FILE}: {e}")
 
 # ==============================================================================
-# 🍪 VISITOR COOKIE STORE & NOCAPTCHA VERIFICATION
+# 🛡️ CAPTCHA VERIFICATION HELPER
 # ==============================================================================
-VISITOR_COOKIES_FILE = os.path.join(BASE_DIR, "visitor_cookies.json")
-VISITOR_LOCK = threading.Lock()
-
-def load_visitor_cookies():
-    if not os.path.exists(VISITOR_COOKIES_FILE):
-        return {}
-    try:
-        with open(VISITOR_COOKIES_FILE, "r", encoding="utf-8") as f:
-            return json.load(f)
-    except Exception as e:
-        print(f"[!] Error loading {VISITOR_COOKIES_FILE}: {e}")
-        return {}
-
-def save_visitor_cookies(data):
-    with VISITOR_LOCK:
-        try:
-            with open(VISITOR_COOKIES_FILE, "w", encoding="utf-8") as f:
-                json.dump(data, f, ensure_ascii=False, indent=2)
-        except Exception as e:
-            print(f"[!] Error saving {VISITOR_COOKIES_FILE}: {e}")
-
-def track_and_get_visitor(handler):
+def is_captcha_verified(handler):
     raw_cookie = handler.headers.get("Cookie", "")
+    if not raw_cookie:
+        return False
+    if "gang_human_verified=1" in raw_cookie:
+        return True
     cookie = http.cookies.SimpleCookie()
-    if raw_cookie:
-        try:
-            cookie.load(raw_cookie)
-        except Exception:
-            pass
-
-    visitor_id = None
-    is_new = False
-    if "gang_visitor_id" in cookie:
-        visitor_id = cookie["gang_visitor_id"].value
-
-    if not visitor_id or len(visitor_id) < 8:
-        visitor_id = f"vis_{uuid.uuid4().hex[:16]}"
-        is_new = True
-
-    is_verified = False
-    if "gang_human_verified" in cookie and cookie["gang_human_verified"].value == "1":
-        is_verified = True
-
-    visitor_name = ""
-    visitor_email = ""
-    if "gang_visitor_name" in cookie:
-        try:
-            visitor_name = urllib.parse.unquote(cookie["gang_visitor_name"].value).strip()
-        except Exception:
-            pass
-    if "gang_visitor_email" in cookie:
-        try:
-            visitor_email = urllib.parse.unquote(cookie["gang_visitor_email"].value).strip()
-        except Exception:
-            pass
-
-    has_valid_account = bool(visitor_email and "@" in visitor_email and visitor_name and visitor_name != "รอยืนยันตัวตน")
-    is_verified = bool(is_verified and has_valid_account)
-
-    visitors = load_visitor_cookies()
-    user_agent = handler.headers.get("User-Agent", "Unknown")
-    now_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-    if visitor_id not in visitors:
-        visitors[visitor_id] = {
-            "visitor_id": visitor_id,
-            "name": visitor_name or "รอยืนยันตัวตน",
-            "email": visitor_email or "-",
-            "user_agent": user_agent,
-            "verified_human": is_verified,
-            "first_seen": now_str,
-            "last_seen": now_str,
-            "visit_count": 1
-        }
-    else:
-        visitors[visitor_id]["last_seen"] = now_str
-        visitors[visitor_id]["visit_count"] = visitors[visitor_id].get("visit_count", 1) + 1
-        visitors[visitor_id]["user_agent"] = user_agent
-        if visitor_name:
-            visitors[visitor_id]["name"] = visitor_name
-        if visitor_email:
-            visitors[visitor_id]["email"] = visitor_email
-        visitors[visitor_id]["verified_human"] = is_verified
-
-    save_visitor_cookies(visitors)
-    return visitor_id, is_new, is_verified
+    try:
+        cookie.load(raw_cookie)
+        return "gang_human_verified" in cookie and cookie["gang_human_verified"].value == "1"
+    except Exception:
+        return False
 
 def trigger_discord_webhook(title, description, fields=None, color=0xe11d48):
     try:
@@ -483,10 +409,8 @@ class GangRequestHandler(SimpleHTTPRequestHandler):
         clean_path = parsed.path.rstrip("/")
         is_api = clean_path.startswith("/api/")
 
-        # Track visitor cookie and persistence
-        vis_id, is_new, is_ver = track_and_get_visitor(self)
-        if is_new:
-            self.new_visitor_cookie = f"gang_visitor_id={vis_id}; Path=/; Max-Age=31536000; SameSite=Lax"
+        # Check CAPTCHA verification
+        is_ver = is_captcha_verified(self)
 
         # Security & Rate Limiting Check
         allowed, status, err_msg, retry = shield.verify(self, is_api=is_api, is_auth=False)
@@ -610,24 +534,6 @@ class GangRequestHandler(SimpleHTTPRequestHandler):
             })
             return
 
-        elif clean_path == "/api/admin/visitors":
-            query = urllib.parse.parse_qs(parsed.query)
-            passcode = query.get("passcode", [""])[0].strip()
-            data = load_gang_data()
-            if not passcode or passcode != data.get("passcode", "gang123"):
-                self.send_json_response(401, {"success": False, "error": "รหัสผ่านไม่ถูกต้อง ไม่มีสิทธิ์เข้าถึงข้อมูล Cookies"})
-                return
-            visitors = load_visitor_cookies()
-            
-            v_list = sorted(list(visitors.values()), key=lambda x: x.get("last_seen", ""), reverse=True)
-            self.send_json_response(200, {
-                "success": True,
-                "total_visitors": len(visitors),
-                "verified_humans": sum(1 for v in visitors.values() if v.get("verified_human") and v.get("email") and v.get("email") != "-" and v.get("name") and v.get("name") != "รอยืนยันตัวตน"),
-                "visitors": v_list
-            })
-            return
-
         elif clean_path == "/health":
             self.send_response(200)
             self.send_header("Content-Type", "text/plain")
@@ -661,72 +567,18 @@ class GangRequestHandler(SimpleHTTPRequestHandler):
 
         if clean_path == "/api/security/verify_human":
             telemetry = body.get("telemetry", {})
-            name = str(body.get("name", "")).strip()
-            email = str(body.get("email", body.get("gmail", ""))).strip()
-
-            if not name:
-                self.send_json_response(400, {"success": False, "error": "กรุณากรอกชื่อของคุณเพื่อยืนยันตัวตน"})
-                return
-            if not email or "@" not in email:
-                self.send_json_response(400, {"success": False, "error": "กรุณากรอกบัญชี Gmail / อีเมลให้ถูกต้อง"})
-                return
-
             is_webdriver = telemetry.get("webdriver", False)
             if is_webdriver:
                 self.send_json_response(403, {"success": False, "error": "ตรวจพบบอทอัตโนมัติ (Automated Bot Blocked)"})
                 return
 
-            raw_cookie = self.headers.get("Cookie", "")
-            cookie = http.cookies.SimpleCookie()
-            if raw_cookie:
-                try: cookie.load(raw_cookie)
-                except Exception: pass
-
-            vis_id = cookie["gang_visitor_id"].value if "gang_visitor_id" in cookie else f"vis_{uuid.uuid4().hex[:16]}"
-
-            visitors = load_visitor_cookies()
-            now_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-            if vis_id in visitors:
-                visitors[vis_id]["name"] = name
-                visitors[vis_id]["email"] = email
-                visitors[vis_id]["verified_human"] = True
-                visitors[vis_id]["last_seen"] = now_str
-                if telemetry.get("screen"):
-                    visitors[vis_id]["screen"] = telemetry.get("screen")
-                if telemetry.get("language"):
-                    visitors[vis_id]["language"] = telemetry.get("language")
-            else:
-                visitors[vis_id] = {
-                    "visitor_id": vis_id,
-                    "name": name,
-                    "email": email,
-                    "screen": telemetry.get("screen"),
-                    "language": telemetry.get("language"),
-                    "user_agent": self.headers.get("User-Agent", "Unknown"),
-                    "verified_human": True,
-                    "first_seen": now_str,
-                    "last_seen": now_str,
-                    "visit_count": 1
-                }
-            save_visitor_cookies(visitors)
-
-            encoded_name = urllib.parse.quote(name)
-            encoded_email = urllib.parse.quote(email)
-
             self.send_response(200)
             self.send_header("Content-Type", "application/json; charset=utf-8")
-            self.send_header("Set-Cookie", f"gang_visitor_id={vis_id}; Path=/; Max-Age=31536000; SameSite=Lax")
             self.send_header("Set-Cookie", "gang_human_verified=1; Path=/; Max-Age=604800; SameSite=Lax")
-            self.send_header("Set-Cookie", f"gang_visitor_name={encoded_name}; Path=/; Max-Age=31536000; SameSite=Lax")
-            self.send_header("Set-Cookie", f"gang_visitor_email={encoded_email}; Path=/; Max-Age=31536000; SameSite=Lax")
             self.end_headers()
             self.wfile.write(json.dumps({
                 "success": True, 
-                "message": f"ยืนยันตัวตนสำเร็จ ยินดีต้อนรับ {name} ({email})", 
-                "name": name,
-                "email": email,
-                "visitor_id": vis_id
+                "message": "ผ่านการตรวจสอบความปลอดภัยเรียบร้อย (CAPTCHA Verified)"
             }, ensure_ascii=False).encode("utf-8"))
             return
 
