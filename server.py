@@ -217,9 +217,48 @@ class GangRequestHandler(SimpleHTTPRequestHandler):
     def do_GET(self):
         parsed = urllib.parse.urlparse(self.path)
         clean_path = parsed.path.rstrip("/")
-        if clean_path in ["", "/gang"]:
-            self.path = "/index.html"
-            return super().do_GET()
+        if clean_path in ["", "/gang", "/index.html"]:
+            try:
+                html_path = os.path.join(BASE_DIR, "index.html")
+                with open(html_path, "r", encoding="utf-8") as f:
+                    html = f.read()
+
+                # Determine host and protocol for crawler-compatible absolute URLs
+                host = self.headers.get("Host") or f"localhost:{PORT}"
+                proto = self.headers.get("X-Forwarded-Proto") or ("https" if "onrender.com" in host or "herokuapp.com" in host else "http")
+                base_url = f"{proto}://{host}"
+
+                gdata = load_gang_data()
+                gname = gdata.get("gang_name", "SPONGEBOB")
+                gtag = gdata.get("gang_tag", "577")
+                gslogan = gdata.get("slogan", "NEW GEN")
+                
+                banner_url = gdata.get("banner_url", "/gang_banner.jpg")
+                if not banner_url.startswith("http://") and not banner_url.startswith("https://"):
+                    if not banner_url.startswith("/"):
+                        banner_url = "/" + banner_url
+                    banner_url = f"{base_url}{banner_url}"
+
+                tag_display = f" [{gtag}]" if (gtag and gtag.strip() and gtag.strip() != ".") else ""
+                og_title = f"{gname}{tag_display} • GANG ROSTER"
+                og_desc = f"ทำเนียบสมาชิกแก๊ง {gname} {gslogan} อย่างเป็นทางการ • OFFICIAL FIVEM GANG ROSTER"
+
+                html = html.replace("__BASE_URL__", base_url)
+                html = html.replace("__OG_IMAGE__", banner_url)
+                html = html.replace("__OG_TITLE__", og_title)
+                html = html.replace("__OG_DESC__", og_desc)
+
+                content = html.encode("utf-8")
+                self.send_response(200)
+                self.send_header("Content-Type", "text/html; charset=utf-8")
+                self.send_header("Content-Length", str(len(content)))
+                self.end_headers()
+                self.wfile.write(content)
+                return
+            except Exception as e:
+                print(f"[!] Error serving dynamic index.html: {e}")
+                self.path = "/index.html"
+                return super().do_GET()
         elif clean_path in ["/admin", "/manage", "/dashboard"]:
             self.path = "/admin.html"
             return super().do_GET()
