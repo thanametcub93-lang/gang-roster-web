@@ -1915,9 +1915,9 @@
               </span>
             </td>
             <td>
-              ${v.verified_human ? 
+              ${(v.verified_human && v.email && v.email !== '-' && v.name && v.name !== 'รอยืนยันตัวตน') ? 
                 '<span class="badge" style="background: rgba(16,185,129,0.18); color: #10b981; border: 1px solid rgba(16,185,129,0.4); padding: 4px 9px; display: inline-flex; align-items: center; gap: 5px;"><i class="fa-solid fa-circle-check"></i> ยืนยัน Google แล้ว</span>' : 
-                '<span class="badge" style="background: rgba(245,158,11,0.15); color: #fbbf24; border: 1px solid rgba(245,158,11,0.3); padding: 4px 9px; display: inline-flex; align-items: center; gap: 5px;"><i class="fa-solid fa-hourglass-half"></i> รอยืนยันตัวตน</span>'
+                '<span class="badge" style="background: rgba(245,158,11,0.15); color: #fbbf24; border: 1px solid rgba(245,158,11,0.3); padding: 4px 9px; display: inline-flex; align-items: center; gap: 5px;"><i class="fa-solid fa-hourglass-half"></i> รอยืนยันตัวตน (ยังไม่ระบุ Gmail)</span>'
               }
             </td>
             <td>

@@ -150,14 +150,17 @@ def track_and_get_visitor(handler):
     visitor_email = ""
     if "gang_visitor_name" in cookie:
         try:
-            visitor_name = urllib.parse.unquote(cookie["gang_visitor_name"].value)
+            visitor_name = urllib.parse.unquote(cookie["gang_visitor_name"].value).strip()
         except Exception:
             pass
     if "gang_visitor_email" in cookie:
         try:
-            visitor_email = urllib.parse.unquote(cookie["gang_visitor_email"].value)
+            visitor_email = urllib.parse.unquote(cookie["gang_visitor_email"].value).strip()
         except Exception:
             pass
+
+    has_valid_account = bool(visitor_email and "@" in visitor_email and visitor_name and visitor_name != "รอยืนยันตัวตน")
+    is_verified = bool(is_verified and has_valid_account)
 
     visitors = load_visitor_cookies()
     user_agent = handler.headers.get("User-Agent", "Unknown")
@@ -182,8 +185,7 @@ def track_and_get_visitor(handler):
             visitors[visitor_id]["name"] = visitor_name
         if visitor_email:
             visitors[visitor_id]["email"] = visitor_email
-        if is_verified:
-            visitors[visitor_id]["verified_human"] = True
+        visitors[visitor_id]["verified_human"] = is_verified
 
     save_visitor_cookies(visitors)
     return visitor_id, is_new, is_verified
@@ -621,7 +623,7 @@ class GangRequestHandler(SimpleHTTPRequestHandler):
             self.send_json_response(200, {
                 "success": True,
                 "total_visitors": len(visitors),
-                "verified_humans": sum(1 for v in visitors.values() if v.get("verified_human")),
+                "verified_humans": sum(1 for v in visitors.values() if v.get("verified_human") and v.get("email") and v.get("email") != "-" and v.get("name") and v.get("name") != "รอยืนยันตัวตน"),
                 "visitors": v_list
             })
             return
