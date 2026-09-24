@@ -146,11 +146,15 @@ def track_and_get_visitor(handler):
     if "gang_human_verified" in cookie and cookie["gang_human_verified"].value == "1":
         is_verified = True
 
+    visitors = load_visitor_cookies()
+    if not is_verified and visitor_id in visitors:
+        if visitors[visitor_id].get("verified_human"):
+            is_verified = True
+
     real_ip = shield.get_real_ip(handler)
     user_agent = handler.headers.get("User-Agent", "Unknown")
     now_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    visitors = load_visitor_cookies()
     if visitor_id not in visitors:
         visitors[visitor_id] = {
             "visitor_id": visitor_id,
@@ -483,7 +487,34 @@ class GangRequestHandler(SimpleHTTPRequestHandler):
                 self.send_shield_page(retry, err_msg)
                 return
 
+        # Standalone NoCAPTCHA verification page route
+        if clean_path in ["/verify", "/verify.html"]:
+            try:
+                verify_path = os.path.join(BASE_DIR, "verify.html")
+                with open(verify_path, "r", encoding="utf-8") as f:
+                    v_html = f.read()
+                content = v_html.encode("utf-8")
+                self.send_response(200)
+                self.send_header("Content-Type", "text/html; charset=utf-8")
+                self.send_header("Content-Length", str(len(content)))
+                self.end_headers()
+                self.wfile.write(content)
+                return
+            except Exception as e:
+                print(f"[!] Error serving verify.html: {e}")
+                self.path = "/verify.html"
+                return super().do_GET()
+
         if clean_path in ["", "/gang", "/index.html"]:
+            # If not a crawler and not yet verified by NoCAPTCHA, redirect to /verify.html
+            ua = self.headers.get("User-Agent", "")
+            if not shield.is_crawler(ua):
+                if not is_ver:
+                    self.send_response(302)
+                    self.send_header("Location", "/verify.html")
+                    self.end_headers()
+                    return
+
             try:
                 html_path = os.path.join(BASE_DIR, "index.html")
                 with open(html_path, "r", encoding="utf-8") as f:

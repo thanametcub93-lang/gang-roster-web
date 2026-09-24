@@ -1691,176 +1691,6 @@
       .form-grid-2 { grid-template-columns: 1fr; }
     }
 
-    /* ===================== NOCAPTCHA SECURITY GATE (SEPARATE FULLSCREEN) ===================== */
-    #captchaGateScreen {
-      position: fixed;
-      inset: 0;
-      width: 100vw;
-      height: 100vh;
-      background: radial-gradient(circle at 50% 35%, #18191f 0%, #0c0d11 60%, #000000 100%);
-      z-index: 100000;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-      box-sizing: border-box;
-      transition: opacity 0.45s ease, transform 0.45s ease;
-    }
-    .captcha-gate-card {
-      background: rgba(20, 22, 28, 0.94);
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      border-radius: 20px;
-      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.96), 0 0 50px rgba(225, 29, 72, 0.12);
-      padding: 38px 34px;
-      max-width: 440px;
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      box-sizing: border-box;
-      backdrop-filter: blur(12px);
-      animation: gateCardPop 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
-    }
-    @keyframes gateCardPop {
-      from { opacity: 0; transform: scale(0.92) translateY(20px); }
-      to   { opacity: 1; transform: scale(1) translateY(0); }
-    }
-    .gate-logo-wrap {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 16px;
-      box-shadow: 0 0 30px rgba(225, 29, 72, 0.25);
-    }
-    .gate-logo-img {
-      width: 56px;
-      height: 56px;
-      object-fit: contain;
-    }
-    .gate-title {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 30px;
-      letter-spacing: 5px;
-      color: #fff;
-      margin-bottom: 4px;
-      line-height: 1;
-    }
-    .gate-subtitle {
-      font-family: 'Kanit', sans-serif;
-      font-size: 13px;
-      color: #94a3b8;
-      margin-bottom: 22px;
-      line-height: 1.5;
-    }
-    .gate-recaptcha-box {
-      width: 304px;
-      height: 76px;
-      background: #222222;
-      border: 1px solid #3c3c3c;
-      border-radius: 5px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 14px;
-      box-sizing: border-box;
-      cursor: pointer;
-      user-select: none;
-      transition: all 0.2s ease;
-      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.6);
-    }
-    .gate-recaptcha-box:hover {
-      border-color: #555555;
-      background: #272727;
-    }
-    .gate-chk-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .gate-checkbox {
-      width: 28px;
-      height: 28px;
-      background: #ffffff;
-      border: 2px solid #c1c1c1;
-      border-radius: 3px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      transition: all 0.2s;
-    }
-    .gate-checkbox.verified {
-      background: #ffffff;
-      border-color: #0f9d58;
-    }
-    .gate-spinner {
-      display: none;
-      width: 20px;
-      height: 20px;
-      border: 3px solid #1a73e8;
-      border-top-color: transparent;
-      border-radius: 50%;
-      animation: gateSpin 0.75s linear infinite;
-    }
-    @keyframes gateSpin {
-      to { transform: rotate(360deg); }
-    }
-    .gate-checkmark {
-      display: none;
-      color: #0f9d58;
-      font-size: 20px;
-      font-weight: 900;
-      animation: checkPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-    @keyframes checkPop {
-      0% { transform: scale(0); opacity: 0; }
-      100% { transform: scale(1); opacity: 1; }
-    }
-    .gate-label {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Kanit", sans-serif;
-      font-size: 14px;
-      font-weight: 500;
-      color: #ffffff;
-      line-height: 1.2;
-    }
-    .gate-brand-col {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2px;
-      opacity: 0.85;
-    }
-    .gate-logo {
-      width: 30px;
-      height: 30px;
-      object-fit: contain;
-    }
-    .gate-brand-txt {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      font-size: 9px;
-      color: #9aa0a6;
-      font-weight: 600;
-    }
-    .gate-terms-txt {
-      font-size: 8px;
-      color: #70757a;
-    }
-    .gate-status-msg {
-      margin-top: 14px;
-      font-family: 'Kanit', sans-serif;
-      font-size: 12px;
-      color: #94a3b8;
-      min-height: 18px;
-      transition: color 0.2s;
-    }
-
     /* ===================== LANDING PAGE (SCROLL DOWN TO LOAD) ===================== */
     #landingPage {
       width: 100%;
@@ -2152,36 +1982,7 @@
 </head>
 <body>
 
-  <!-- ===== 1. DEDICATED NOCAPTCHA RECAPTCHA SECURITY GATE ===== -->
-  <div id="captchaGateScreen">
-    <div class="captcha-gate-card">
-      <div class="gate-logo-wrap">
-        <img src="/gang_logo.png" alt="SPONGEBOB" class="gate-logo-img">
-      </div>
-      <div class="gate-title">SPONGEBOB 577</div>
-      <div class="gate-subtitle">ระบบตรวจสอบความปลอดภัย • กรุณายืนยันตัวตนก่อนเข้าสู่เว็บแก๊ง</div>
-
-      <!-- Google Style NoCAPTCHA Box -->
-      <div class="gate-recaptcha-box" id="gateRecaptchaBox" onclick="verifyGateCaptcha(event)">
-        <div class="gate-chk-left">
-          <div class="gate-checkbox" id="gateCheckbox">
-            <div class="gate-spinner" id="gateSpinner"></div>
-            <i class="fa-solid fa-check gate-checkmark" id="gateCheckmark"></i>
-          </div>
-          <label class="gate-label" id="gateLabel">ฉันไม่ใช่โปรแกรมอัตโนมัติ (I'm not a robot)</label>
-        </div>
-        <div class="gate-brand-col">
-          <img src="https://www.gstatic.com/recaptcha/api2/logo_48.png" alt="reCAPTCHA" class="gate-logo" onerror="this.src='/gang_logo.png'">
-          <span class="gate-brand-txt">reCAPTCHA</span>
-          <span class="gate-terms-txt">Privacy - Terms</span>
-        </div>
-      </div>
-
-      <div class="gate-status-msg" id="gateStatusMsg">คลิกที่กล่องด้านบนเพื่อยืนยันตัวตน</div>
-    </div>
-  </div>
-
-  <!-- ===== 2. HERO LANDING PAGE (SCROLL DOWN TO LOAD) ===== -->
+  <!-- ===== HERO LANDING PAGE (SCROLL DOWN TO LOAD) ===== -->
   <div id="landingPage">
     <div class="landing-content">
       <!-- ── SECTION 1: HERO SCREEN (หน้าแรก เต็มจอ 100vh) ── -->
@@ -4462,101 +4263,8 @@
 
       let hasFinished = false;
       let hasStartedLoading = false;
-      const captchaGate = document.getElementById('captchaGateScreen');
-      let isGatePassed = document.cookie.includes('gang_human_verified=1');
-      let isGateVerifying = false;
 
-      // ── STEP 1: CAPTCHA GATE FLOW ──
-      function showLoadingScreen() {
-        if (captchaGate) {
-          captchaGate.style.opacity = '0';
-          captchaGate.style.transform = 'scale(1.04)';
-          setTimeout(() => {
-            captchaGate.style.display = 'none';
-          }, 450);
-        }
-        if (landing) {
-          landing.style.display = 'block';
-          landing.style.opacity = '0';
-          landing.scrollTop = 0;
-          requestAnimationFrame(() => {
-            landing.style.transition = 'opacity 0.4s ease';
-            landing.style.opacity = '1';
-          });
-        }
-      }
-
-      window.verifyGateCaptcha = async function(e) {
-        if (e && typeof e.stopPropagation === 'function') e.stopPropagation();
-        if (isGatePassed) {
-          showLoadingScreen();
-          return;
-        }
-        if (isGateVerifying) return;
-        isGateVerifying = true;
-
-        const spinner = document.getElementById('gateSpinner');
-        const checkmark = document.getElementById('gateCheckmark');
-        const chk = document.getElementById('gateCheckbox');
-        const label = document.getElementById('gateLabel');
-        const msg = document.getElementById('gateStatusMsg');
-
-        if (spinner) spinner.style.display = 'block';
-        if (checkmark) checkmark.style.display = 'none';
-        if (msg) msg.textContent = 'กำลังตรวจสอบความปลอดภัย (NoCAPTCHA Verification)...';
-
-        const telemetry = {
-          webdriver: !!navigator.webdriver,
-          hardwareConcurrency: navigator.hardwareConcurrency || 4,
-          screen: { w: screen.width, h: screen.height },
-          language: navigator.language,
-          cookieEnabled: navigator.cookieEnabled,
-          timestamp: Date.now()
-        };
-
-        try {
-          const res = await fetch('/api/security/verify_human', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ telemetry })
-          });
-          const data = await res.json();
-          if (data && data.success) {
-            isGatePassed = true;
-            if (spinner) spinner.style.display = 'none';
-            if (checkmark) checkmark.style.display = 'block';
-            if (chk) chk.classList.add('verified');
-            if (label) label.textContent = 'ฉันไม่ใช่โปรแกรมอัตโนมัติ (ยืนยันแล้ว)';
-            if (msg) {
-              msg.textContent = '✓ ยืนยันสำเร็จ กำลังเข้าสู่หน้าโหลด...';
-              msg.style.color = '#10b981';
-            }
-            setTimeout(showLoadingScreen, 600);
-          } else {
-            if (spinner) spinner.style.display = 'none';
-            if (msg) {
-              msg.textContent = '❌ ' + (data.error || 'การยืนยันล้มเหลว');
-              msg.style.color = '#ef4444';
-            }
-          }
-        } catch (err) {
-          isGatePassed = true;
-          showLoadingScreen();
-        } finally {
-          isGateVerifying = false;
-        }
-      };
-
-      // Initial Gate Check
-      if (isGatePassed) {
-        if (captchaGate) captchaGate.style.display = 'none';
-        if (landing) landing.style.display = 'block';
-      } else {
-        if (captchaGate) captchaGate.style.display = 'flex';
-        if (landing) landing.style.display = 'none';
-      }
-
-      // ── STEP 2: SCROLL DOWN TO LOAD FLOW ──
+      // ── SCROLL DOWN TO LOAD FLOW (ต้องเลื่อนลงมาก่อนถึงจะโหลด) ──
       function enterRoster() {
         if (hasFinished) return;
         hasFinished = true;
@@ -4608,11 +4316,10 @@
         requestAnimationFrame(step);
       }
 
-      // ตรวจจับเมื่อผู้ใช้เลื่อนหน้าเว็บลงมาด้านล่างเท่านั้นตามที่ต้องการ
+      // ตรวจจับเมื่อผู้ใช้เลื่อนหน้าเว็บลงมาด้านล่างเท่านั้นตามที่ต้องการ (ไม่โหลดเองตอนเข้าเว็บเด็ดขาด)
       function checkScrollVisibility() {
         if (hasStartedLoading || hasFinished || !landing) return;
-        const scrollPosition = landing.scrollTop;
-        if (scrollPosition > 180) {
+        if (landing.scrollTop > 180) {
           startBottomLoading();
         }
       }
@@ -4620,6 +4327,15 @@
       if (landing) {
         landing.addEventListener('scroll', checkScrollVisibility, { passive: true });
         
+        // คลิกที่ลูกศรหรือข้อความเลื่อนลง เพื่อเลื่อนลงมาด้านล่าง
+        const scrollGuide = document.querySelector('.landing-scroll-guide');
+        if (scrollGuide) {
+          scrollGuide.style.cursor = 'pointer';
+          scrollGuide.addEventListener('click', function() {
+            landing.scrollTo({ top: 380, behavior: 'smooth' });
+          });
+        }
+
         // คลิกที่กล่องโหลดด้านล่างก็เข้าได้เช่นกัน
         if (loaderBox) {
           loaderBox.addEventListener('click', function(e) {
@@ -4629,9 +4345,9 @@
         }
       }
 
-      // Enter / Space keys to enter immediately if gate already passed
+      // Enter / Space keys to enter immediately
       window.addEventListener('keydown', function(e) {
-        if (!hasFinished && isGatePassed && (e.key === 'Enter' || e.key === ' ')) {
+        if (!hasFinished && (e.key === 'Enter' || e.key === ' ')) {
           enterRoster();
         }
       });
