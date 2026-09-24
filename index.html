@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="th">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ทำเนียบสมาชิกแก๊ง • GANG ROSTER</title>
+  <title>รายชื่อแก็งแก๊ง • GANG ROSTER</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Kanit:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,700&family=Outfit:wght@400;600;700;800;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -1442,7 +1442,7 @@
             <img class="landing-emblem-img" src="/gang_logo.png" alt="SPONGEBOB" onerror="this.style.opacity='0'">
           </div>
           <div class="motto-badge">RESPECT &bull; LOYALTY &bull; BROTHERHOOD</div>
-          <p class="motto-desc">ทำเนียบรายชื่อสมาชิกแก๊งอย่างเป็นทางการ อัปเดตสถานะและข้อมูลสมาชิกแบบเรียลไทม์</p>
+          <p class="motto-desc">รายชื่อแก็งสมาชิกแก๊งอย่างเป็นทางการ อัปเดตสถานะและข้อมูลสมาชิกแบบเรียลไทม์</p>
         </div>
 
         <!-- 5. Bottom Loading (สไตล์รูปที่ 2: เส้นโหลดเงินบน + SPONGEBOB 577 + NEW GEN) -->
@@ -1588,7 +1588,7 @@
     <main class="roster-grid" id="rosterGrid">
       <div class="empty-state">
         <i class="fa-solid fa-spinner fa-spin"></i>
-        <p>กำลังโหลดทำเนียบสมาชิกแก๊ง...</p>
+        <p>กำลังโหลดรายชื่อแก็งแก๊ง...</p>
       </div>
     </main>
   </div>
@@ -2065,7 +2065,7 @@
       const logo = GANG_DATA.logo_url || "/gang_logo.png";
       const banner = GANG_DATA.banner_url || "/gang_banner.jpg";
 
-      document.title = tag ? `${name} [${tag}] • ทำเนียบรายชื่อแก๊ง` : `${name} • ทำเนียบรายชื่อแก๊ง`;
+      document.title = tag ? `${name} [${tag}] • รายชื่อแก็งแก๊ง` : `${name} • รายชื่อแก็งแก๊ง`;
       const navName = document.getElementById("navGangName");
       if (navName) navName.textContent = name;
       const navTag = document.getElementById("navGangTag");
@@ -2513,7 +2513,7 @@
       const m = (GANG_DATA.members || []).find(x => String(x.id) === String(memberId));
       const name = m ? m.name : "สมาชิกท่านนี้";
       
-      if (!confirm(`คุณต้องการลบ "${name}" ออกจากทำเนียบสมาชิกแก๊งใช่หรือไม่?`)) {
+      if (!confirm(`คุณต้องการลบ "${name}" ออกจากรายชื่อแก็งแก๊งใช่หรือไม่?`)) {
         return;
       }
 
@@ -2692,7 +2692,7 @@
       if (!container) return;
       const members = GANG_DATA.members || [];
       if (!members.length) {
-        container.innerHTML = `<div style="text-align:center; padding: 2rem; color: #94a3b8;">ยังไม่มีสมาชิกในทำเนียบแก๊ง</div>`;
+        container.innerHTML = `<div style="text-align:center; padding: 2rem; color: #94a3b8;">ยังไม่มีสมาชิกในรายชื่อแก็งแก๊ง</div>`;
         return;
       }
 
