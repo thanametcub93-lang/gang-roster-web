@@ -1,28 +1,19 @@
 {
-  "vis_test_router_probe": {
-    "visitor_id": "vis_test_router_probe",
-    "ip": "27.130.32.32",
-    "router_wan_ip": "27.130.32.32",
-    "router_lan_ip": "192.168.1.105",
-    "screen": null,
-    "language": null,
-    "user_agent": "Python-urllib/3.14",
-    "verified_human": true,
-    "first_seen": "2026-09-25 02:37:41",
-    "last_seen": "2026-09-25 02:37:41",
-    "visit_count": 1
-  },
   "vis_my_local_pc": {
     "visitor_id": "vis_my_local_pc",
-    "ip": "127.0.0.1",
-    "user_agent": "Mozilla/5.0 Chrome/120.0",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
     "verified_human": true,
     "first_seen": "2026-09-25 02:04:02",
-    "last_seen": "2026-09-25 02:51:16",
-    "visit_count": 24,
-    "is_my_pc": true,
-    "router_lan_ip": "192.168.1.101",
-    "gateway_ip": "192.168.1.1",
-    "router_wan_ip": "27.130.32.32"
+    "last_seen": "2026-09-25 03:00:00",
+    "visit_count": 26,
+    "is_my_pc": true
+  },
+  "vis_01df48d92b394f01": {
+    "visitor_id": "vis_01df48d92b394f01",
+    "user_agent": "Python-urllib/3.14",
+    "verified_human": false,
+    "first_seen": "2026-09-25 03:04:21",
+    "last_seen": "2026-09-25 03:04:21",
+    "visit_count": 1
   }
 }

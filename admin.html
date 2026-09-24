@@ -1239,7 +1239,7 @@
 
                 <div style="position: relative; width: 100%; max-width: 280px;">
                   <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 12px;"></i>
-                  <input type="text" id="visitorSearchInput" class="form-control" style="padding: 7px 12px 7px 32px; font-size: 0.84rem;" placeholder="ค้นหา IP, ID, เบราว์เซอร์..." oninput="handleVisitorSearch(this.value)">
+                  <input type="text" id="visitorSearchInput" class="form-control" style="padding: 7px 12px 7px 32px; font-size: 0.84rem;" placeholder="ค้นหา Cookie ID, อุปกรณ์, เบราว์เซอร์..." oninput="handleVisitorSearch(this.value)">
                 </div>
               </div>
 
@@ -1247,17 +1247,16 @@
                 <table class="custom-table">
                   <thead>
                     <tr>
-                      <th style="min-width: 140px;">Cookie ID</th>
+                      <th style="min-width: 170px;">Cookie ID</th>
                       <th style="min-width: 160px;">หมวดหมู่ (ที่มา)</th>
-                      <th style="min-width: 280px;">IP เร้าเตอร์, ที่อยู่ & แผนที่ปักหมุด (Google Maps)</th>
-                      <th style="min-width: 130px;">สถานะ NoCAPTCHA</th>
-                      <th style="min-width: 180px;">อุปกรณ์ / เบราว์เซอร์</th>
+                      <th style="min-width: 160px;">สถานะความปลอดภัย (NoCAPTCHA)</th>
+                      <th style="min-width: 220px;">อุปกรณ์ / ระบบ</th>
                       <th style="text-align: center; min-width: 90px;">จำนวนครั้ง</th>
-                      <th style="min-width: 140px;">เข้าล่าสุด</th>
+                      <th style="min-width: 150px;">เข้าชมล่าสุด</th>
                     </tr>
                   </thead>
                   <tbody id="visitorsTableBody">
-                    <tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 30px;">กำลังโหลดข้อมูล...</td></tr>
+                    <tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 30px;">กำลังโหลดข้อมูล...</td></tr>
                   </tbody>
                 </table>
               </div>
@@ -1735,25 +1734,24 @@
 
     function parseVisitorMeta(v) {
       const ua = (v.user_agent || "").toLowerCase();
-      const ip = (v.ip || "").trim();
 
       // Category detection
       let category = {
         type: "human",
-        label: "ผู้ใช้จริง (คน)",
+        label: "ผู้ใช้จริง (User)",
         badgeStyle: "background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid #10b981;",
         icon: "fa-solid fa-user-check"
       };
 
-      if (v.is_my_pc || ip === "127.0.0.1" || ip === "localhost" || v.visitor_id === "vis_my_local_pc") {
+      if (v.is_my_pc || v.visitor_id === "vis_my_local_pc") {
         category = {
           type: "human",
           isMyPc: true,
-          label: "💻 เครื่องเราเอง (คอมเครื่องนี้)",
+          label: "💻 เครื่องแอดมิน (เราเอง)",
           badgeStyle: "background: rgba(16, 185, 129, 0.25); color: #34d399; border: 1px solid #10b981; font-weight: 700;",
           icon: "fa-solid fa-laptop-code"
         };
-      } else if (ua.includes("discordbot") || ip.startsWith("104.196.") || ip.startsWith("35.196.") || ip.startsWith("35.231.")) {
+      } else if (ua.includes("discordbot")) {
         category = {
           type: "discord",
           label: "บอท Discord (พรีวิวลิงก์)",
@@ -1763,7 +1761,7 @@
       } else if (ua.includes("checker") || ua.includes("python") || ua.includes("curl") || ua.includes("postman")) {
         category = {
           type: "other",
-          label: "ระบบทดสอบ (Checker)",
+          label: "ระบบทดสอบ (Tool)",
           badgeStyle: "background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid #f59e0b;",
           icon: "fa-solid fa-robot"
         };
@@ -1784,48 +1782,16 @@
       } else if (ua.includes("go-http-client") || ua.includes("render")) {
         category = {
           type: "other",
-          label: "ระบบตรวจเซิร์ฟเวอร์ Render",
+          label: "Render Ping Probe",
           badgeStyle: "background: rgba(148, 163, 184, 0.15); color: #94a3b8; border: 1px solid #475569;",
           icon: "fa-solid fa-cloud"
         };
       }
 
-      // Location / ISP / Origin identification
-      const net = v.network_info || {};
-      let ispName = net.org || net.isp || "";
-      let geoParts = [net.city, net.region, net.country].filter(Boolean);
-      let geoText = geoParts.length > 0 ? geoParts.join(", ") : "";
-
-      let locationText = "ผู้ใช้งานทั่วไป (Client)";
-      let locationColor = "#38bdf8";
-      let locationIcon = "fa-location-dot";
-
-      if (category.isMyPc) {
-        locationText = "คอมพิวเตอร์ที่บ้าน (Local Machine)";
-        locationColor = "#34d399";
-        locationIcon = "fa-house-user";
-      } else if (category.type === "discord") {
-        locationText = "เซิร์ฟเวอร์ Discord (พรีวิวลิงก์)";
-        locationColor = "#a5b4fc";
-        locationIcon = "fa-server";
-      } else if (ip === "127.0.0.1" || ip === "localhost") {
-        locationText = "เครื่องตัวเอง (Localhost)";
-        locationColor = "#94a3b8";
-        locationIcon = "fa-desktop";
-      } else if (ispName || geoText) {
-        locationText = ispName ? `${ispName}${geoText ? ' • ' + geoText : ''}` : geoText;
-        locationColor = "#38bdf8";
-        locationIcon = "fa-tower-broadcast";
-      } else if (category.type === "other") {
-        locationText = "ระบบตรวจสอบอัตโนมัติ";
-        locationColor = "#fbbf24";
-        locationIcon = "fa-microchip";
-      }
-
       // Device / Platform
       let device = "เว็บเบราว์เซอร์";
       if (category.isMyPc) {
-        device = "💻 เครื่องคอมพิวเตอร์ของเรา (Admin PC)";
+        device = "💻 คอมพิวเตอร์แอดมิน (Admin PC)";
       } else if (category.type === "discord") {
         device = "🤖 Discord Bot Scraper";
       } else if (ua.includes("windows")) {
@@ -1838,18 +1804,11 @@
         device = "📱 มือถือ Android";
       } else if (ua.includes("macintosh") || ua.includes("mac os")) {
         device = "🍏 Mac OS";
+      } else if (ua.includes("linux")) {
+        device = "🐧 Linux";
       }
 
-      // Address & Maps pin identification
-      let addressParts = [];
-      if (net.city) addressParts.push(net.city);
-      if (net.region && net.region !== net.city) addressParts.push(net.region);
-      if (net.country) addressParts.push(net.country);
-      if (net.postal) addressParts.push(`(ปณ. ${net.postal})`);
-      let fullAddress = addressParts.length > 0 ? addressParts.join(", ") : (category.isMyPc ? "Bangkok, Thailand (ปณ. 10100)" : "");
-      let mapsUrl = net.maps_url || (net.latitude && net.longitude ? `https://www.google.com/maps?q=${net.latitude},${net.longitude}` : (category.isMyPc ? 'https://www.google.com/maps?q=13.7539755,100.5014403' : ''));
-
-      return { category, locationText, locationColor, locationIcon, device, net, fullAddress, mapsUrl };
+      return { category, device };
     }
 
     function setVisitorCategoryFilter(type) {
@@ -1877,11 +1836,11 @@
       const tbody = document.getElementById('visitorsTableBody');
       if (!tbody) return;
 
-      // Group & deduplicate by IP so each computer/connection appears only ONCE!
+      // Group & deduplicate by visitor_id so each cookie session appears once
       const groupedMap = new Map();
       cachedVisitorsList.forEach(v => {
-        const isMyMachine = v.is_my_pc || v.ip === '127.0.0.1' || v.visitor_id === 'vis_my_local_pc';
-        const key = isMyMachine ? 'my_pc' : (v.ip || v.visitor_id);
+        const isMyMachine = v.is_my_pc || v.visitor_id === 'vis_my_local_pc';
+        const key = isMyMachine ? 'my_pc' : (v.visitor_id || 'unknown');
         if (!groupedMap.has(key)) {
           groupedMap.set(key, { ...v });
         } else {
@@ -1889,10 +1848,7 @@
           item.visit_count = (item.visit_count || 1) + (v.visit_count || 1);
           if ((v.last_seen || '') > (item.last_seen || '')) item.last_seen = v.last_seen;
           if (v.verified_human) item.verified_human = true;
-          if (v.router_lan_ip && !item.router_lan_ip) item.router_lan_ip = v.router_lan_ip;
-          if (v.gateway_ip && !item.gateway_ip) item.gateway_ip = v.gateway_ip;
-          if (v.router_wan_ip && !item.router_wan_ip) item.router_wan_ip = v.router_wan_ip;
-          if (v.network_info && !item.network_info) item.network_info = v.network_info;
+          if (v.user_agent && !item.user_agent) item.user_agent = v.user_agent;
         }
       });
 
@@ -1907,146 +1863,53 @@
       if (visitorSearchQuery) {
         filtered = filtered.filter(v => {
           const id = (v.visitor_id || '').toLowerCase();
-          const ip = (v.ip || '').toLowerCase();
-          const wan = (v.router_wan_ip || '').toLowerCase();
-          const lan = (v.router_lan_ip || '').toLowerCase();
-          const gw = (v.gateway_ip || '').toLowerCase();
           const ua = (v.user_agent || '').toLowerCase();
-          const net = v.network_info || {};
-          const isp = (net.isp || '').toLowerCase();
-          const org = (net.org || '').toLowerCase();
           const meta = parseVisitorMeta(v);
           return id.includes(visitorSearchQuery) || 
-                 ip.includes(visitorSearchQuery) || 
-                 wan.includes(visitorSearchQuery) || 
-                 lan.includes(visitorSearchQuery) || 
-                 gw.includes(visitorSearchQuery) || 
-                 isp.includes(visitorSearchQuery) || 
-                 org.includes(visitorSearchQuery) || 
                  ua.includes(visitorSearchQuery) || 
-                 meta.fullAddress.toLowerCase().includes(visitorSearchQuery) || 
-                 meta.locationText.toLowerCase().includes(visitorSearchQuery) || 
+                 meta.category.label.toLowerCase().includes(visitorSearchQuery) || 
                  meta.device.toLowerCase().includes(visitorSearchQuery);
         });
       }
 
       if (filtered.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 30px;">ไม่มีข้อมูลที่ตรงกับเงื่อนไข</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 30px;">ไม่มีข้อมูลคุกกี้ที่ตรงกับเงื่อนไข</td></tr>';
         return;
       }
 
       tbody.innerHTML = filtered.map(v => {
         const meta = parseVisitorMeta(v);
-        const displayWanIp = v.router_wan_ip || v.ip || '127.0.0.1';
-        const isMyMachine = v.is_my_pc || v.ip === '127.0.0.1' || v.visitor_id === 'vis_my_local_pc';
+        const isMyMachine = v.is_my_pc || v.visitor_id === 'vis_my_local_pc';
 
         return `
           <tr ${isMyMachine ? 'style="background: rgba(16,185,129,0.04);"' : ''}>
-            <td><code style="background: rgba(255,255,255,0.06); padding: 3px 8px; border-radius: 4px; font-size: 11px;">${escapeHtml(v.visitor_id || '-')}</code></td>
+            <td>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-cookie-bite" style="color: #f59e0b; font-size: 13px;"></i>
+                <code style="background: rgba(255,255,255,0.06); padding: 3px 8px; border-radius: 4px; font-size: 11.5px; color: #38bdf8; font-weight: 600;">${escapeHtml(v.visitor_id || '-')}</code>
+              </div>
+            </td>
             <td>
               <span class="badge" style="${meta.category.badgeStyle}">
                 <i class="${meta.category.icon}"></i> ${meta.category.label}
               </span>
             </td>
             <td>
-              ${isMyMachine ? `
-                <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 8px; padding: 7px 10px;">
-                  <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
-                    <span style="font-size: 10.5px; font-weight: 700; color: #34d399;">
-                      <i class="fa-solid fa-laptop"></i> IP เครื่องคอมเราที่บ้าน:
-                    </span>
-                    <span style="font-family: monospace; font-size: 12.5px; font-weight: 800; color: #a3e635;">
-                      ${escapeHtml(v.router_lan_ip || '192.168.1.101')}
-                    </span>
-                  </div>
-                  <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 3px;">
-                    <span style="font-size: 10px; color: #94a3b8;">
-                      <i class="fa-solid fa-router"></i> IP เร้าเตอร์เน็ตบ้าน:
-                    </span>
-                    <span style="font-family: monospace; font-size: 12px; font-weight: 700; color: #38bdf8;">
-                      ${escapeHtml(v.gateway_ip || '192.168.1.1')} <span style="font-size: 9px; color: #64748b;">(Gateway)</span>
-                    </span>
-                  </div>
-                  <div style="border-top: 1px dashed rgba(255,255,255,0.12); margin-top: 5px; padding-top: 4px; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
-                    <span style="font-size: 10px; color: #94a3b8;">
-                      <i class="fa-solid fa-globe"></i> IP ขาออกเน็ตบ้าน (WAN):
-                    </span>
-                    <span style="font-family: monospace; font-size: 11px; color: #f59e0b;">
-                      ${escapeHtml(displayWanIp)} <span style="font-size: 9px; color: #94a3b8;">(${escapeHtml(meta.net?.org || meta.net?.isp || 'AIS Fibre')})</span>
-                    </span>
-                  </div>
-
-                  <!-- Location & Google Maps Pin Link -->
-                  <div style="margin-top: 6px; padding: 5px 8px; background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 6px;">
-                    <div style="font-size: 10.5px; color: #93c5fd; display: flex; align-items: center; gap: 5px; font-weight: 600;">
-                      <i class="fa-solid fa-map-pin" style="color: #ef4444;"></i>
-                      <span>ที่อยู่เน็ตบ้าน: ${escapeHtml(meta.fullAddress)}</span>
-                    </div>
-                    ${meta.mapsUrl ? `
-                      <div style="margin-top: 5px;">
-                        <a href="${meta.mapsUrl}" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; font-size: 10px; background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #fff; border-radius: 4px; text-decoration: none; font-weight: 700; box-shadow: 0 2px 6px rgba(37,99,235,0.4); border: 1px solid rgba(255,255,255,0.2);">
-                          <i class="fa-solid fa-location-dot" style="color: #fca5a5;"></i>
-                          <span>เปิดพิกัดปักหมุดใน Google Maps</span>
-                          <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 8.5px; opacity: 0.8;"></i>
-                        </a>
-                      </div>
-                    ` : ''}
-                  </div>
-                </div>
-              ` : `
-                <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-                  <span style="font-size: 10px; background: rgba(56, 189, 248, 0.15); color: #38bdf8; padding: 1px 6px; border-radius: 4px; font-weight: 700; border: 1px solid rgba(56, 189, 248, 0.3); display: inline-flex; align-items: center; gap: 4px;">
-                    <i class="fa-solid fa-wifi"></i> IP ขาออก (WAN)
-                  </span>
-                  <span style="font-weight: 700; color: #38bdf8; font-family: monospace; font-size: 13px;">${escapeHtml(displayWanIp)}</span>
-                </div>
-
-                ${v.router_lan_ip ? `
-                  <div style="display: flex; align-items: center; gap: 5px; margin-top: 4px; font-size: 11px; color: #a3e635; font-family: monospace;">
-                    <i class="fa-solid fa-network-wired" style="font-size: 10px;"></i>
-                    <span>IP เครื่องในบ้าน: ${escapeHtml(v.router_lan_ip)}</span>
-                  </div>
-                ` : ''}
-
-                ${v.gateway_ip ? `
-                  <div style="display: flex; align-items: center; gap: 5px; margin-top: 2px; font-size: 10.5px; color: #94a3b8; font-family: monospace;">
-                    <i class="fa-solid fa-router" style="font-size: 10px; color: #38bdf8;"></i>
-                    <span>เร้าเตอร์บ้าน: ${escapeHtml(v.gateway_ip)}</span>
-                  </div>
-                ` : ''}
-
-                <div style="font-size: 11px; color: ${meta.locationColor}; margin-top: 4px; line-height: 1.35;">
-                  <i class="fa-solid ${meta.locationIcon}"></i> ${escapeHtml(meta.locationText)}
-                </div>
-
-                ${meta.fullAddress ? `
-                  <div style="margin-top: 6px; padding: 5px 8px; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 6px;">
-                    <div style="font-size: 10.5px; color: #93c5fd; display: flex; align-items: center; gap: 5px; font-weight: 600;">
-                      <i class="fa-solid fa-map-pin" style="color: #ef4444;"></i>
-                      <span>ที่อยู่: ${escapeHtml(meta.fullAddress)}</span>
-                    </div>
-                    ${meta.mapsUrl ? `
-                      <div style="margin-top: 5px;">
-                        <a href="${meta.mapsUrl}" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; font-size: 10px; background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #fff; border-radius: 4px; text-decoration: none; font-weight: 700; box-shadow: 0 2px 6px rgba(37,99,235,0.4); border: 1px solid rgba(255,255,255,0.2);">
-                          <i class="fa-solid fa-location-dot" style="color: #fca5a5;"></i>
-                          <span>เปิดพิกัดปักหมุดใน Google Maps</span>
-                          <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 8.5px; opacity: 0.8;"></i>
-                        </a>
-                      </div>
-                    ` : ''}
-                  </div>
-                ` : ''}
-              `}
+              ${v.verified_human ? 
+                '<span class="badge" style="background: rgba(16,185,129,0.18); color: #10b981; border: 1px solid rgba(16,185,129,0.4); padding: 4px 9px; display: inline-flex; align-items: center; gap: 5px;"><i class="fa-solid fa-shield-check"></i> ยืนยันแล้ว (NoCAPTCHA ผ่าน)</span>' : 
+                '<span class="badge" style="background: rgba(245,158,11,0.15); color: #fbbf24; border: 1px solid rgba(245,158,11,0.3); padding: 4px 9px; display: inline-flex; align-items: center; gap: 5px;"><i class="fa-solid fa-hourglass-half"></i> รอยืนยันความปลอดภัย</span>'
+              }
             </td>
             <td>
-              ${v.verified_human ? '<span class="badge" style="background: rgba(16,185,129,0.2); color: #10b981; border: 1px solid #10b981;"><i class="fa-solid fa-check"></i> มนุษย์ (Verified)</span>' : '<span class="badge" style="background: rgba(148,163,184,0.15); color: #94a3b8;"><i class="fa-solid fa-clock"></i> รอตรวจสอบ</span>'}
+              <div style="font-size: 12px; font-weight: 600; color: #e2e8f0; display: flex; align-items: center; gap: 6px;">
+                <span>${meta.device}</span>
+              </div>
+              <div style="font-size: 11px; color: var(--text-muted); max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 2px;" title="${escapeHtml(v.user_agent || '')}">${escapeHtml(v.user_agent || '-')}</div>
             </td>
-            <td>
-              <div style="font-size: 12px; font-weight: 600; color: #e2e8f0;">${meta.device}</div>
-              <div style="font-size: 11px; color: var(--text-muted); max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${escapeHtml(v.user_agent || '')}">${escapeHtml(v.user_agent || '-')}</div>
+            <td style="font-weight: 700; text-align: center; color: #cbd5e1;">${v.visit_count || 1} ครั้ง</td>
+            <td style="font-size: 12px; color: var(--text-main); font-weight: 500;">
+              <i class="fa-regular fa-clock" style="font-size: 11px; color: #94a3b8; margin-right: 4px;"></i>${escapeHtml(v.last_seen || '-')}
             </td>
-            <td style="font-weight: 700; text-align: center;">${v.visit_count || 1} ครั้ง</td>
-            <td style="font-size: 12px; color: var(--text-main); font-weight: 500;">${escapeHtml(v.last_seen || '-')}</td>
           </tr>
         `;
       }).join('');
