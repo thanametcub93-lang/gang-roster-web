@@ -1,0 +1,38 @@
+[
+  {
+    "id": "att_1790259196566",
+    "timestamp": "2026-09-24 21:13:16",
+    "member_id": "1790186388549",
+    "member_name": "Lucifer Dekrew",
+    "nickname": "JK",
+    "rank": "🔰 Member",
+    "event_type": "⚔️ รวมพลวอร์แก๊ง (Gang War)",
+    "status": "present",
+    "note": "",
+    "checked_by": "Lucifer Dekrew"
+  },
+  {
+    "id": "att_1790186546574",
+    "timestamp": "2026-09-24 01:02:26",
+    "member_id": "1790186388549",
+    "member_name": "Lucifer Dekrew",
+    "nickname": "JK",
+    "rank": "🔰 Member",
+    "event_type": "⚔️ รวมพลวอร์แก๊ง (Gang War)",
+    "status": "present",
+    "note": "",
+    "checked_by": "Lucifer Dekrew"
+  },
+  {
+    "id": "att_1790185087940",
+    "timestamp": "2026-09-24 00:38:07",
+    "member_id": "",
+    "member_name": "SPONGEBOB Leader",
+    "nickname": "บอส",
+    "rank": "👑 หัวหน้าแก๊ง (Leader)",
+    "event_type": "⚔️ รวมพลวอร์แก๊ง",
+    "status": "present",
+    "note": "เตรียมพร้อมอาวุธครบมือ",
+    "checked_by": "SPONGEBOB Leader"
+  }
+]

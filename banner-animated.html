@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SPONGEBOB 577 - NEW GEN</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #000;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 60px;
+      padding: 40px 20px;
+      overflow-x: hidden;
+    }
+
+    /* ===================== PARTICLES ===================== */
+    #particles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .particle {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: rgba(180,180,180,0.4);
+      border-radius: 50%;
+      animation: floatUp linear infinite;
+    }
+
+    @keyframes floatUp {
+      0%   { transform: translateY(100vh) translateX(0) scale(1); opacity: 0; }
+      10%  { opacity: 1; }
+      90%  { opacity: 0.5; }
+      100% { transform: translateY(-100px) translateX(var(--drift)) scale(0.3); opacity: 0; }
+    }
+
+    /* ===================== BANNER ===================== */
+    .banner-section {
+      position: relative;
+      width: 100%;
+      max-width: 1200px;
+      z-index: 1;
+    }
+
+    .banner-wrapper {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16/9;
+      overflow: hidden;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.06);
+      background: #000;
+    }
+
+    /* Scan line overlay */
+    .banner-wrapper::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.08) 2px,
+        rgba(0,0,0,0.08) 4px
+      );
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .banner-hand {
+      position: absolute;
+      left: 4%;
+      bottom: 0;
+      height: 95%;
+      object-fit: contain;
+      transform-origin: bottom center;
+      animation: handEntrance 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards,
+                 handFloat 4s ease-in-out 1.4s infinite;
+      opacity: 0;
+      filter: drop-shadow(0 0 30px rgba(150,150,150,0.15));
+    }
+
+    @keyframes handEntrance {
+      0%   { opacity: 0; transform: translateY(80px) scale(0.85); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @keyframes handFloat {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      33%       { transform: translateY(-8px) rotate(0.5deg); }
+      66%       { transform: translateY(-4px) rotate(-0.3deg); }
+    }
+
+    .banner-text-wrap {
+      position: absolute;
+      left: 40%;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .banner-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(32px, 6vw, 80px);
+      color: #c8c8c8;
+      letter-spacing: 6px;
+      line-height: 1;
+      background: linear-gradient(180deg, #fff 0%, #888 50%, #555 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      opacity: 0;
+      animation: textReveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.8s forwards;
+      position: relative;
+    }
+
+    /* Shimmer sweep on title */
+    .banner-title::after {
+      content: 'SPONGEBOB 577';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        105deg,
+        transparent 40%,
+        rgba(255,255,255,0.5) 50%,
+        transparent 60%
+      );
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      background-size: 200% 100%;
+      animation: shimmer 3.5s ease-in-out 2s infinite;
+    }
+
+    @keyframes shimmer {
+      0%   { background-position: -200% center; }
+      100% { background-position: 200% center; }
+    }
+
+    @keyframes textReveal {
+      0%   { opacity: 0; transform: translateX(40px) skewX(-3deg); }
+      100% { opacity: 1; transform: translateX(0) skewX(0deg); }
+    }
+
+    .banner-sub {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: clamp(12px, 2vw, 22px);
+      letter-spacing: 10px;
+      color: #555;
+      opacity: 0;
+      animation: textReveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) 1.1s forwards;
+    }
+
+    /* Glitch flicker */
+    .glitch-layer {
+      position: absolute;
+      inset: 0;
+      background: transparent;
+      animation: glitch 8s infinite;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    @keyframes glitch {
+      0%, 94%, 100% { opacity: 0; }
+      95% { opacity: 1; background: rgba(200,200,200,0.02); clip-path: inset(30% 0 60% 0); transform: translateX(-4px); }
+      96% { opacity: 1; background: rgba(200,200,200,0.02); clip-path: inset(60% 0 20% 0); transform: translateX(4px); }
+      97% { opacity: 0; }
+    }
+
+    /* Red accent line at bottom */
+    .banner-line {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(150,150,150,0.4), transparent);
+      animation: linePulse 3s ease-in-out infinite;
+    }
+
+    @keyframes linePulse {
+      0%, 100% { opacity: 0.3; transform: scaleX(0.8); }
+      50%       { opacity: 1; transform: scaleX(1); }
+    }
+
+    /* ===================== LOGO ===================== */
+    .logo-section {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .logo-label {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 11px;
+      letter-spacing: 6px;
+      color: #333;
+      text-transform: uppercase;
+    }
+
+    .logo-container {
+      position: relative;
+      width: 280px;
+      height: 280px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Rotating ring */
+    .logo-ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 1px solid rgba(120,120,120,0.15);
+      animation: ringRotate 12s linear infinite;
+    }
+
+    .logo-ring::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: 50%;
+      width: 4px;
+      height: 4px;
+      background: rgba(180,180,180,0.6);
+      border-radius: 50%;
+      transform: translateX(-50%);
+      box-shadow: 0 0 8px rgba(200,200,200,0.5);
+    }
+
+    .logo-ring-2 {
+      inset: 12px;
+      border-color: rgba(90,90,90,0.1);
+      animation: ringRotate 18s linear infinite reverse;
+    }
+
+    @keyframes ringRotate {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+
+    /* Pulse glow behind logo */
+    .logo-glow {
+      position: absolute;
+      inset: 20px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(130,130,130,0.08) 0%, transparent 70%);
+      animation: glowPulse 2.5s ease-in-out infinite;
+    }
+
+    @keyframes glowPulse {
+      0%, 100% { opacity: 0.5; transform: scale(0.95); }
+      50%       { opacity: 1; transform: scale(1.05); }
+    }
+
+    .logo-img {
+      position: relative;
+      z-index: 2;
+      width: 200px;
+      height: 200px;
+      object-fit: contain;
+      filter: drop-shadow(0 0 20px rgba(120,120,120,0.2));
+      animation: logoFloat 4s ease-in-out infinite,
+                 logoEntrance 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    @keyframes logoEntrance {
+      0%   { opacity: 0; transform: scale(0.5) rotate(-10deg); }
+      100% { opacity: 1; transform: scale(1) rotate(0deg); }
+    }
+
+    @keyframes logoFloat {
+      0%, 100% { transform: translateY(0px) scale(1); filter: drop-shadow(0 0 20px rgba(120,120,120,0.2)); }
+      50%       { transform: translateY(-10px) scale(1.02); filter: drop-shadow(0 0 35px rgba(160,160,160,0.35)); }
+    }
+
+    /* Logo name text */
+    .logo-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 28px;
+      letter-spacing: 8px;
+      background: linear-gradient(180deg, #aaa 0%, #555 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: logoNameFade 1s ease 0.5s both;
+    }
+
+    @keyframes logoNameFade {
+      from { opacity: 0; letter-spacing: 20px; }
+      to   { opacity: 1; letter-spacing: 8px; }
+    }
+
+    /* ===================== CORNER DECO ===================== */
+    .corner {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      z-index: 10;
+    }
+    .corner::before, .corner::after {
+      content: '';
+      position: absolute;
+      background: rgba(150,150,150,0.4);
+    }
+    .corner::before { width: 100%; height: 1px; top: 0; }
+    .corner::after  { width: 1px; height: 100%; top: 0; }
+
+    .corner-tl { top: 10px; left: 10px; }
+    .corner-tl::after { left: 0; }
+
+    .corner-tr { top: 10px; right: 10px; transform: scaleX(-1); }
+    .corner-tr::after { left: 0; }
+
+    .corner-bl { bottom: 10px; left: 10px; transform: scaleY(-1); }
+    .corner-bl::after { left: 0; }
+
+    .corner-br { bottom: 10px; right: 10px; transform: scale(-1); }
+    .corner-br::after { left: 0; }
+  </style>
+</head>
+<body>
+
+  <!-- Floating particles -->
+  <div id="particles"></div>
+
+  <!-- ===== BANNER ===== -->
+  <div class="banner-section">
+    <div class="banner-wrapper">
+      <!-- Corner decorations -->
+      <div class="corner corner-tl"></div>
+      <div class="corner corner-tr"></div>
+      <div class="corner corner-bl"></div>
+      <div class="corner corner-br"></div>
+
+      <!-- Glitch overlay -->
+      <div class="glitch-layer"></div>
+
+      <!-- Background banner image -->
+      <img
+        src="./gang_banner.jpg"
+        alt="banner bg"
+        style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0.92;"
+        onerror="this.style.display='none'"
+      >
+
+      <!-- Skeletal hand (logo) -->
+      <img
+        class="banner-hand"
+        src="./gang_logo.png"
+        alt="SPONGEBOB hand"
+        onerror="this.style.display='none'"
+      >
+
+      <!-- Text -->
+      <div class="banner-text-wrap">
+        <div class="banner-title">SPONGEBOB 577</div>
+        <div class="banner-sub">N E W &nbsp; G E N</div>
+      </div>
+
+      <!-- Bottom accent line -->
+      <div class="banner-line"></div>
+    </div>
+  </div>
+
+  <!-- ===== LOGO ===== -->
+  <div class="logo-section">
+    <div class="logo-label">— Official Emblem —</div>
+    <div class="logo-container">
+      <div class="logo-ring logo-ring"></div>
+      <div class="logo-ring logo-ring-2"></div>
+      <div class="logo-glow"></div>
+      <img
+        class="logo-img"
+        src="./gang_logo.png"
+        alt="SPONGEBOB Logo"
+        onerror="this.style.opacity='0.3'"
+      >
+    </div>
+    <div class="logo-name">SPONGEBOB</div>
+  </div>
+
+  <script>
+    // Generate floating particles
+    const container = document.getElementById('particles');
+    for (let i = 0; i < 40; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      const size = Math.random() * 3 + 1;
+      p.style.cssText = `
+        left: ${Math.random() * 100}%;
+        bottom: -10px;
+        width: ${size}px;
+        height: ${size}px;
+        --drift: ${(Math.random() - 0.5) * 100}px;
+        animation-duration: ${Math.random() * 8 + 6}s;
+        animation-delay: ${Math.random() * 8}s;
+        opacity: ${Math.random() * 0.5 + 0.1};
+      `;
+      container.appendChild(p);
+    }
+
+    // Auto-set image paths from generated files
+    const handImg = document.querySelector('.banner-hand');
+    const logoImgs = document.querySelectorAll('.logo-img, .banner-hand');
+
+    // Try to load the actual generated banner as background
+    const bannerBg = document.querySelector('img[alt="banner bg"]');
+    // paths relative to where this HTML is served from
+
+    // Scroll to load transition into index.html
+    let isRedirecting = false;
+    function triggerRedirect() {
+      if (isRedirecting) return;
+      isRedirecting = true;
+
+      const overlay = document.getElementById('redirectLoadModal');
+      const bar = document.getElementById('redirectBarFill');
+      const num = document.getElementById('redirectNum');
+      if (overlay) overlay.style.display = 'flex';
+
+      let progress = 0;
+      const startTime = performance.now();
+      const duration = 1200;
+
+      function step(now) {
+        progress = Math.min(100, Math.round(((now - startTime) / duration) * 100));
+        if (bar) bar.style.width = progress + '%';
+        if (num) num.textContent = progress + '%';
+        if (progress < 100) {
+          requestAnimationFrame(step);
+        } else {
+          setTimeout(() => {
+            window.location.href = '/';
+          }, 200);
+        }
+      }
+      requestAnimationFrame(step);
+    }
+
+    window.addEventListener('scroll', () => { if (window.scrollY > 15) triggerRedirect(); }, { passive: true });
+    window.addEventListener('wheel', (e) => { if (e.deltaY > 5) triggerRedirect(); }, { passive: true });
+    window.addEventListener('touchmove', () => triggerRedirect(), { passive: true });
+    window.addEventListener('keydown', (e) => { if (['ArrowDown','PageDown','Space'].includes(e.code)) triggerRedirect(); });
+  </script>
+
+  <!-- Redirect Loading Modal -->
+  <div id="redirectLoadModal" style="position: fixed; inset: 0; background: rgba(0,0,0,0.95); backdrop-filter: blur(12px); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 999999;">
+    <div style="width: clamp(280px, 40vw, 400px); padding: 30px 24px; border-radius: 20px; background: rgba(18,18,18,0.96); border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 20px 50px rgba(0,0,0,0.9); display: flex; flex-direction: column; align-items: center; gap: 14px;">
+      <div style="font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: 5px; color: #fff;">SPONGEBOB 577</div>
+      <div style="display: flex; justify-content: space-between; width: 100%; font-family: 'Rajdhani', sans-serif; font-size: 13px; color: #ccc;">
+        <span>กำลังโหลดข้อมูลทำเนียบแก๊ง...</span>
+        <span id="redirectNum" style="color: #fff; font-weight: 700;">0%</span>
+      </div>
+      <div style="width: 100%; height: 5px; background: rgba(255,255,255,0.1); border-radius: 5px; overflow: hidden;">
+        <div id="redirectBarFill" style="height: 100%; width: 0%; background: linear-gradient(90deg, #888, #fff, #ddd); box-shadow: 0 0 10px #fff; transition: width 0.05s linear;"></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

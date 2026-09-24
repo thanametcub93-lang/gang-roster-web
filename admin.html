@@ -1,0 +1,2158 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ระบบจัดการหลังบ้าน • SPONGEBOB ADMIN DASHBOARD</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <style>
+    :root {
+      --bg-base: #060709;
+      --bg-surface: #0c0e14;
+      --bg-card: rgba(18, 22, 31, 0.85);
+      --bg-glass: rgba(22, 27, 38, 0.65);
+      --border-color: rgba(255, 255, 255, 0.08);
+      --border-accent: rgba(245, 158, 11, 0.3);
+      --primary: #f59e0b;
+      --primary-hover: #d97706;
+      --primary-glow: rgba(245, 158, 11, 0.25);
+      --danger: #ef4444;
+      --danger-hover: #dc2626;
+      --success: #10b981;
+      --info: #3b82f6;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --sidebar-width: 260px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      font-family: 'Kanit', 'Outfit', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(245, 158, 11, 0.04) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.03) 0%, transparent 40%),
+        radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.8) 0%, #060709 100%);
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 7px;
+      height: 7px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.4);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.28);
+    }
+
+    /* Common Button Styles */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 9px 18px;
+      border-radius: 8px;
+      font-weight: 500;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid transparent;
+      text-decoration: none;
+      font-family: inherit;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: #000;
+      font-weight: 600;
+      box-shadow: 0 4px 14px rgba(245, 158, 11, 0.3);
+    }
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #fbbf24, #f59e0b);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(245, 158, 11, 0.45);
+    }
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-main);
+      border-color: var(--border-color);
+    }
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.18);
+    }
+    .btn-danger {
+      background: rgba(239, 68, 68, 0.12);
+      color: #f87171;
+      border-color: rgba(239, 68, 68, 0.3);
+    }
+    .btn-danger:hover {
+      background: var(--danger);
+      color: #fff;
+    }
+    .btn-success {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border-color: rgba(16, 185, 129, 0.3);
+    }
+    .btn-success:hover {
+      background: var(--success);
+      color: #000;
+      font-weight: 600;
+    }
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 0.82rem;
+      border-radius: 6px;
+    }
+
+    /* Auth Gate Screen */
+    #authGate {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .auth-box {
+      width: 100%;
+      max-width: 420px;
+      background: rgba(15, 18, 26, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 36px 30px;
+      text-align: center;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 40px rgba(245, 158, 11, 0.1);
+      backdrop-filter: blur(20px);
+      position: relative;
+      overflow: hidden;
+    }
+    .auth-box::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--primary), transparent);
+    }
+    .auth-logo {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--primary);
+      margin: 0 auto 16px;
+      box-shadow: 0 0 25px rgba(245, 158, 11, 0.3);
+    }
+    .auth-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+    .auth-desc {
+      color: var(--text-muted);
+      font-size: 0.88rem;
+      margin-bottom: 24px;
+    }
+
+    /* Form Controls */
+    .form-group {
+      margin-bottom: 18px;
+      text-align: left;
+    }
+    .form-label {
+      display: block;
+      font-size: 0.86rem;
+      font-weight: 500;
+      color: #cbd5e1;
+      margin-bottom: 6px;
+    }
+    .form-control {
+      width: 100%;
+      padding: 10px 14px;
+      background: rgba(0, 0, 0, 0.45);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      color: #fff;
+      font-family: inherit;
+      font-size: 0.92rem;
+      transition: all 0.2s;
+    }
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+      background: rgba(0, 0, 0, 0.65);
+    }
+    .form-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .form-grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    /* Admin Dashboard Layout */
+    #adminDashboard {
+      display: none;
+      min-height: 100vh;
+    }
+    .admin-layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .admin-sidebar {
+      width: var(--sidebar-width);
+      background: rgba(10, 13, 18, 0.96);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      z-index: 100;
+      backdrop-filter: blur(15px);
+    }
+    .sidebar-brand {
+      padding: 22px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .sidebar-brand img {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: 2px solid var(--primary);
+      object-fit: cover;
+    }
+    .sidebar-brand-name {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 1.15rem;
+      letter-spacing: 0.5px;
+      line-height: 1.2;
+    }
+    .sidebar-badge {
+      display: inline-block;
+      font-size: 0.68rem;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: rgba(245, 158, 11, 0.18);
+      color: #fbbf24;
+      font-weight: 600;
+      letter-spacing: 0.8px;
+    }
+
+    .sidebar-nav {
+      padding: 16px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 14px;
+      border-radius: 8px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: all 0.18s;
+      cursor: pointer;
+      border: 1px solid transparent;
+    }
+    .nav-item i {
+      width: 20px;
+      font-size: 1.05rem;
+      text-align: center;
+    }
+    .nav-item:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.05);
+    }
+    .nav-item.active {
+      color: #000;
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      font-weight: 600;
+      box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+    }
+    .nav-item.active i {
+      color: #000;
+    }
+
+    .sidebar-footer {
+      padding: 16px 14px;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    /* Main Content Area */
+    .admin-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      background: transparent;
+    }
+
+    /* Top Bar */
+    .admin-topbar {
+      height: 68px;
+      padding: 0 28px;
+      border-bottom: 1px solid var(--border-color);
+      background: rgba(10, 13, 18, 0.7);
+      backdrop-filter: blur(16px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 90;
+    }
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .page-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* Content Body */
+    .admin-content {
+      padding: 28px;
+      flex: 1;
+      max-width: 1440px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    /* Tab Panes */
+    .tab-pane {
+      display: none;
+      animation: fadeIn 0.25s ease-out;
+    }
+    .tab-pane.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Metric Cards */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 18px;
+      margin-bottom: 26px;
+    }
+    .metric-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      transition: all 0.2s;
+    }
+    .metric-card:hover {
+      border-color: rgba(255, 255, 255, 0.15);
+      transform: translateY(-2px);
+    }
+    .metric-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+    }
+    .metric-info h4 {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+    .metric-info .value {
+      font-size: 1.65rem;
+      font-weight: 800;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    /* Content Cards */
+    .content-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 24px;
+      margin-bottom: 24px;
+      position: relative;
+    }
+    .card-header-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .card-title {
+      font-size: 1.15rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Table Styles */
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
+    .custom-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.9rem;
+    }
+    .custom-table th {
+      background: rgba(0, 0, 0, 0.45);
+      padding: 12px 16px;
+      font-weight: 600;
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .custom-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      vertical-align: middle;
+    }
+    .custom-table tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    /* Member Badge / Pill */
+    .member-avatar-cell {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .member-avatar-img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+    }
+    .status-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-right: 6px;
+    }
+    .status-dot.online { background: #10b981; box-shadow: 0 0 8px #10b981; }
+    .status-dot.offline { background: #64748b; }
+    .status-dot.busy { background: #f59e0b; box-shadow: 0 0 8px #f59e0b; }
+
+    /* Modals */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.78);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-overlay.active {
+      display: flex;
+      animation: fadeIn 0.2s ease-out;
+    }
+    .modal-card {
+      width: 100%;
+      max-width: 620px;
+      max-height: 90vh;
+      overflow-y: auto;
+      background: #0e121a;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 16px;
+      padding: 28px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9);
+      position: relative;
+    }
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .modal-close-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.3rem;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    .modal-close-btn:hover {
+      color: #fff;
+    }
+
+    /* Toast */
+    .admin-toast {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      background: #18202f;
+      border: 1px solid var(--border-color);
+      border-left: 4px solid var(--primary);
+      padding: 14px 22px;
+      border-radius: 8px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 9999;
+      font-size: 0.92rem;
+    }
+    .admin-toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    /* Live Preview Banner Box */
+    .banner-preview-box {
+      width: 100%;
+      aspect-ratio: 16/9;
+      max-height: 200px;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 8px;
+    }
+    .banner-preview-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    @media (max-width: 900px) {
+      .admin-sidebar {
+        width: 72px;
+      }
+      .sidebar-brand-name, .sidebar-badge, .nav-item span, .sidebar-footer span {
+        display: none;
+      }
+      .sidebar-brand {
+        justify-content: center;
+        padding: 16px 8px;
+      }
+      .nav-item {
+        justify-content: center;
+        padding: 12px;
+      }
+      .nav-item i {
+        font-size: 1.25rem;
+      }
+      .admin-content {
+        padding: 16px;
+      }
+      .form-grid-2, .form-grid-3 {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==================== AUTH GATE ==================== -->
+  <div id="authGate">
+    <div class="auth-box">
+      <img src="/gang_logo.png" alt="Logo" class="auth-logo" id="authLogo">
+      <h2 class="auth-title" id="authGangName">SPONGEBOB</h2>
+      <p class="auth-desc">ระบบจัดการหลังบ้าน (Admin Control Panel)</p>
+
+      <div class="form-group">
+        <label class="form-label">รหัสผ่านลับ Admin (Master Passcode)</label>
+        <div style="position: relative;">
+          <input type="password" id="authPassInput" class="form-control" placeholder="กรอกรหัสผ่านเพื่อเข้าใช้งาน..." onkeypress="if(event.key === 'Enter') adminLogin()">
+          <i class="fa-solid fa-eye" id="toggleAuthEye" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--text-muted);" onclick="toggleAuthEye()"></i>
+        </div>
+        <div id="authErrorMsg" style="color: #f87171; font-size: 0.85rem; margin-top: 8px; display: none;"></div>
+      </div>
+
+      <button class="btn btn-primary" style="width: 100%; margin-top: 10px;" id="authSubmitBtn" onclick="adminLogin()">
+        <i class="fa-solid fa-lock-open"></i> เข้าสู่ระบบจัดการหลังบ้าน
+      </button>
+
+      <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border-color); font-size: 0.82rem;">
+        <a href="/" style="color: var(--text-muted); text-decoration: none;">
+          <i class="fa-solid fa-arrow-left"></i> กลับไปยังหน้าเว็บรายชื่อหลัก
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== ADMIN DASHBOARD ==================== -->
+  <div id="adminDashboard">
+    <div class="admin-layout">
+      
+      <!-- Sidebar -->
+      <aside class="admin-sidebar">
+        <div class="sidebar-brand">
+          <img src="/gang_logo.png" alt="Logo" id="sideLogo">
+          <div>
+            <div class="sidebar-brand-name" id="sideGangName">SPONGEBOB</div>
+            <span class="sidebar-badge">ADMIN PANEL</span>
+          </div>
+        </div>
+
+        <nav class="sidebar-nav">
+          <div class="nav-item active" onclick="switchTab('tabOverview')">
+            <i class="fa-solid fa-chart-pie"></i>
+            <span>ภาพรวม (Overview)</span>
+          </div>
+          <div class="nav-item" onclick="switchTab('tabMembers')">
+            <i class="fa-solid fa-users"></i>
+            <span>จัดการสมาชิก</span>
+          </div>
+          <div class="nav-item" onclick="switchTab('tabAttendance')">
+            <i class="fa-solid fa-calendar-check"></i>
+            <span>เช็คชื่อรวมพล</span>
+          </div>
+          <div class="nav-item" onclick="switchTab('tabRoles')">
+            <i class="fa-solid fa-medal"></i>
+            <span>ยศและตำแหน่ง</span>
+          </div>
+          <div class="nav-item" onclick="switchTab('tabSettings')">
+            <i class="fa-solid fa-sliders"></i>
+            <span>ตั้งค่าแก๊ง & ข้อมูล</span>
+          </div>
+          <div class="nav-item" onclick="switchTab('tabMusic')">
+            <i class="fa-solid fa-music"></i>
+            <span>เพลงประจำแก๊ง</span>
+          </div>
+          <div class="nav-item" onclick="switchTab('tabDiscord')">
+            <i class="fa-brands fa-discord"></i>
+            <span>Discord Webhook</span>
+          </div>
+          <div class="nav-item" onclick="switchTab('tabBackup')">
+            <i class="fa-solid fa-database"></i>
+            <span>สำรองข้อมูล & รหัส</span>
+          </div>
+        </nav>
+
+        <div class="sidebar-footer">
+          <a href="/" target="_blank" class="btn btn-secondary btn-sm" style="width: 100%;">
+            <i class="fa-solid fa-globe"></i> <span>ดูหน้าเว็บหลัก</span>
+          </a>
+          <button class="btn btn-danger btn-sm" onclick="adminLogout()" style="width: 100%;">
+            <i class="fa-solid fa-right-from-bracket"></i> <span>ออกจากระบบ</span>
+          </button>
+        </div>
+      </aside>
+
+      <!-- Main Container -->
+      <main class="admin-main">
+        <!-- Topbar -->
+        <header class="admin-topbar">
+          <div class="topbar-left">
+            <div class="page-title" id="pageTitleText">
+              <i class="fa-solid fa-chart-pie" style="color: var(--primary);"></i>
+              <span>ภาพรวมระบบ (Overview)</span>
+            </div>
+          </div>
+          <div class="topbar-right">
+            <button class="btn btn-secondary btn-sm" onclick="refreshAdminData()">
+              <i class="fa-solid fa-rotate"></i> รีเฟรชข้อมูล
+            </button>
+            <a href="/" class="btn btn-primary btn-sm">
+              <i class="fa-solid fa-arrow-up-right-from-square"></i> เปิดหน้าเว็บรายชื่อ
+            </a>
+          </div>
+        </header>
+
+        <!-- Dynamic Content Body -->
+        <div class="admin-content">
+
+          <!-- ================= TAB 1: OVERVIEW ================= -->
+          <div class="tab-pane active" id="tabOverview">
+            <div class="metrics-grid">
+              <div class="metric-card">
+                <div class="metric-icon" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b;">
+                  <i class="fa-solid fa-users"></i>
+                </div>
+                <div class="metric-info">
+                  <h4>สมาชิกทั้งหมด</h4>
+                  <div class="value" id="kpiTotalMembers">0</div>
+                </div>
+              </div>
+
+              <div class="metric-card">
+                <div class="metric-icon" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">
+                  <i class="fa-solid fa-circle-check"></i>
+                </div>
+                <div class="metric-info">
+                  <h4>ออนไลน์ปัจจุบัน</h4>
+                  <div class="value" id="kpiOnlineMembers">0</div>
+                </div>
+              </div>
+
+              <div class="metric-card">
+                <div class="metric-icon" style="background: rgba(59, 130, 246, 0.15); color: #3b82f6;">
+                  <i class="fa-solid fa-crown"></i>
+                </div>
+                <div class="metric-info">
+                  <h4>ตำแหน่งผู้นำ / เจ้าหน้าที่</h4>
+                  <div class="value" id="kpiLeaders">0</div>
+                </div>
+              </div>
+
+              <div class="metric-card">
+                <div class="metric-icon" style="background: rgba(168, 85, 247, 0.15); color: #a855f7;">
+                  <i class="fa-solid fa-clipboard-list"></i>
+                </div>
+                <div class="metric-info">
+                  <h4>ประวัติรวมพล</h4>
+                  <div class="value" id="kpiAttendanceCount">0</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quick Action Cards -->
+            <div class="content-card">
+              <div class="card-header-bar">
+                <div class="card-title">
+                  <i class="fa-solid fa-bolt" style="color: var(--primary);"></i> การดำเนินการด่วน (Quick Actions)
+                </div>
+              </div>
+              <div style="display: flex; flex-wrap: wrap; gap: 12px;">
+                <button class="btn btn-primary" onclick="openAddMemberModal()">
+                  <i class="fa-solid fa-user-plus"></i> เพิ่มสมาชิกใหม่
+                </button>
+                <button class="btn btn-secondary" onclick="switchTab('tabAttendance'); openStartRollCallModal()">
+                  <i class="fa-solid fa-calendar-check"></i> เริ่มเช็คชื่อรวมพล
+                </button>
+                <button class="btn btn-secondary" onclick="switchTab('tabSettings')">
+                  <i class="fa-solid fa-sliders"></i> แก้ไขข้อมูลแก๊ง & แบนเนอร์
+                </button>
+                <button class="btn btn-secondary" onclick="switchTab('tabDiscord')">
+                  <i class="fa-brands fa-discord"></i> ทดสอบ Discord Webhook
+                </button>
+              </div>
+            </div>
+
+            <!-- Gang Identity Preview -->
+            <div class="content-card">
+              <div class="card-header-bar">
+                <div class="card-title">
+                  <i class="fa-solid fa-id-card" style="color: var(--primary);"></i> ป้ายแบนเนอร์ & ข้อมูลแก๊งปัจจุบัน
+                </div>
+                <button class="btn btn-secondary btn-sm" onclick="switchTab('tabSettings')">
+                  <i class="fa-solid fa-pen"></i> แก้ไข
+                </button>
+              </div>
+              <div style="display: flex; gap: 20px; align-items: center; flex-wrap: wrap;">
+                <img src="/gang_logo.png" alt="Logo" id="overviewLogo" style="width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--primary); object-fit: cover;">
+                <div>
+                  <h3 style="font-size: 1.4rem; font-weight: 700; margin-bottom: 4px;" id="overviewName">SPONGEBOB</h3>
+                  <div style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 6px;" id="overviewSlogan">NEW GEN</div>
+                  <div style="display: flex; gap: 8px;">
+                    <span class="sidebar-badge" id="overviewTagBadge" style="display: none;"></span>
+                    <span style="font-size: 0.85rem; color: #10b981;"><i class="fa-solid fa-circle" style="font-size: 0.6rem;"></i> ระบบออนไลน์ปกติ</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ================= TAB 2: MEMBERS ================= -->
+          <div class="tab-pane" id="tabMembers">
+            <div class="content-card">
+              <div class="card-header-bar">
+                <div class="card-title">
+                  <i class="fa-solid fa-users" style="color: var(--primary);"></i> รายชื่อสมาชิกในแก๊งทั้งหมด
+                </div>
+                <button class="btn btn-primary btn-sm" onclick="openAddMemberModal()">
+                  <i class="fa-solid fa-user-plus"></i> เพิ่มสมาชิกใหม่
+                </button>
+              </div>
+
+              <!-- Filter Bar -->
+              <div style="display: flex; gap: 12px; margin-bottom: 18px; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 220px; position: relative;">
+                  <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted);"></i>
+                  <input type="text" id="memberSearchInput" class="form-control" style="padding-left: 38px;" placeholder="ค้นหาตามชื่อ, ชื่อเล่น, เบอร์โทร..." oninput="filterMembersTable()">
+                </div>
+                <select id="memberRankFilter" class="form-control" style="width: auto; min-width: 170px;" onchange="filterMembersTable()">
+                  <option value="">ทุกยศ / ทุกตำแหน่ง</option>
+                </select>
+                <select id="memberStatusFilter" class="form-control" style="width: auto; min-width: 140px;" onchange="filterMembersTable()">
+                  <option value="">ทุกสถานะ</option>
+                  <option value="online">🟢 ออนไลน์</option>
+                  <option value="offline">⚪ ออฟไลน์</option>
+                  <option value="busy">🟡 ไม่ว่าง / ติดภารกิจ</option>
+                </select>
+              </div>
+
+              <!-- Member Table -->
+              <div class="table-container">
+                <table class="custom-table" id="membersTable">
+                  <thead>
+                    <tr>
+                      <th style="width: 60px;">#</th>
+                      <th>สมาชิก</th>
+                      <th>ตำแหน่ง / ยศ</th>
+                      <th>เบอร์โทร</th>
+                      <th>Discord ID</th>
+                      <th>สถานะ</th>
+                      <th style="text-align: right;">การจัดการ</th>
+                    </tr>
+                  </thead>
+                  <tbody id="membersTableBody">
+                    <!-- Dynamic Rows -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- ================= TAB 3: ATTENDANCE ================= -->
+          <div class="tab-pane" id="tabAttendance">
+            <div class="content-card">
+              <div class="card-header-bar">
+                <div class="card-title">
+                  <i class="fa-solid fa-calendar-check" style="color: var(--primary);"></i> ระบบเช็คชื่อรวมพลแก๊ง
+                </div>
+                <button class="btn btn-primary btn-sm" onclick="openStartRollCallModal()">
+                  <i class="fa-solid fa-clipboard-check"></i> เริ่มบันทึกรวมพลรอบใหม่
+                </button>
+              </div>
+
+              <!-- Historical Attendance Table -->
+              <div class="table-container">
+                <table class="custom-table">
+                  <thead>
+                    <tr>
+                      <th>เวลา</th>
+                      <th>กิจกรรม</th>
+                      <th>สมาชิก</th>
+                      <th>สถานะ</th>
+                      <th>ผู้ตรวจเช็ค</th>
+                      <th>หมายเหตุ</th>
+                    </tr>
+                  </thead>
+                  <tbody id="attendanceHistoryBody">
+                    <!-- Dynamic Rows -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- ================= TAB 4: ROLES ================= -->
+          <div class="tab-pane" id="tabRoles">
+            <div class="content-card">
+              <div class="card-header-bar">
+                <div class="card-title">
+                  <i class="fa-solid fa-medal" style="color: var(--primary);"></i> ลำดับยศและตำแหน่งในแก๊ง
+                </div>
+                <button class="btn btn-primary btn-sm" onclick="openAddRoleModal()">
+                  <i class="fa-solid fa-plus"></i> เพิ่มยศใหม่
+                </button>
+              </div>
+
+              <div class="table-container">
+                <table class="custom-table">
+                  <thead>
+                    <tr>
+                      <th style="width: 80px;">ลำดับ (Priority)</th>
+                      <th>ชื่อยศ / ตำแหน่ง</th>
+                      <th>สีป้ายยศ</th>
+                      <th>ตัวอย่าง Badge</th>
+                      <th style="text-align: right;">การจัดการ</th>
+                    </tr>
+                  </thead>
+                  <tbody id="rolesTableBody">
+                    <!-- Dynamic Roles -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- ================= TAB 5: SETTINGS ================= -->
+          <div class="tab-pane" id="tabSettings">
+            <div class="content-card">
+              <div class="card-header-bar">
+                <div class="card-title">
+                  <i class="fa-solid fa-sliders" style="color: var(--primary);"></i> ตั้งค่าข้อมูลแก๊ง & อัตลักษณ์
+                </div>
+                <button class="btn btn-primary btn-sm" onclick="saveGangConfig()">
+                  <i class="fa-solid fa-floppy-disk"></i> บันทึกการเปลี่ยนแปลง
+                </button>
+              </div>
+
+              <div class="form-grid-2">
+                <div class="form-group">
+                  <label class="form-label">ชื่อแก๊ง (Gang Name)</label>
+                  <input type="text" id="cfgGangName" class="form-control" placeholder="เช่น SPONGEBOB">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">แท็กย่อแก๊ง (Gang Tag) <span style="color: var(--text-muted); font-size: 0.8rem; font-weight: normal;">(ไม่บังคับ / เว้นว่างได้)</span></label>
+                  <input type="text" id="cfgGangTag" class="form-control" placeholder="เช่น 577 (เว้นว่างไว้ถ้าไม่มี)">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">สโลแกน / คำขวัญแก๊ง (Slogan)</label>
+                <input type="text" id="cfgSlogan" class="form-control" placeholder="เช่น NEW GEN">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">ข้อความประกาศประจำแก๊ง (Announcement)</label>
+                <input type="text" id="cfgAnnouncement" class="form-control" placeholder="ประกาศแก๊ง...">
+              </div>
+
+              <div class="form-grid-2">
+                <div class="form-group">
+                  <label class="form-label">URL รูปโลโก้แก๊ง (Logo URL)</label>
+                  <input type="text" id="cfgLogoUrl" class="form-control" placeholder="/gang_logo.png" oninput="updatePreviewLogo(this.value)">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">URL รูปแบนเนอร์หลัก 16:9 (Banner URL)</label>
+                  <input type="text" id="cfgBannerUrl" class="form-control" placeholder="/gang_banner.jpg" oninput="updatePreviewBanner(this.value)">
+                </div>
+              </div>
+
+              <!-- Banner Preview Box -->
+              <div class="form-group">
+                <label class="form-label">ภาพตัวอย่างแบนเนอร์ (Banner Preview 16:9)</label>
+                <div class="banner-preview-box">
+                  <img src="/gang_banner.jpg" id="cfgBannerPreview" alt="Banner Preview">
+                </div>
+              </div>
+
+              <div style="margin-top: 20px;">
+                <button class="btn btn-primary" onclick="saveGangConfig()">
+                  <i class="fa-solid fa-floppy-disk"></i> บันทึกการตั้งค่าทั้งหมด
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- ================= TAB 6: MUSIC ================= -->
+          <div class="tab-pane" id="tabMusic">
+            <div class="content-card">
+              <div class="card-header-bar">
+                <div class="card-title">
+                  <i class="fa-solid fa-music" style="color: var(--primary);"></i> เพลงประจำแก๊ง & การเล่นเสียง
+                </div>
+                <button class="btn btn-primary btn-sm" onclick="saveGangConfig()">
+                  <i class="fa-solid fa-floppy-disk"></i> บันทึกเพลง
+                </button>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">URL เพลงประจำแก๊ง (รองรับลิงก์ YouTube หรือไฟล์เสียง .mp3)</label>
+                <input type="text" id="cfgSongUrl" class="form-control" placeholder="https://www.youtube.com/watch?v=...">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">ชื่อเพลง / ศิลปิน (Song Title)</label>
+                <input type="text" id="cfgSongTitle" class="form-control" placeholder="เช่น Lana Del Rey - Cinnamon Girl">
+              </div>
+
+              <div class="form-group" style="display: flex; align-items: center; gap: 10px; margin-top: 14px;">
+                <input type="checkbox" id="cfgSongAutoplay" style="width: 18px; height: 18px; accent-color: var(--primary);">
+                <label for="cfgSongAutoplay" style="cursor: pointer; font-size: 0.95rem;">เล่นเพลงอัตโนมัติเมื่อเข้าหน้าเว็บ (Autoplay)</label>
+              </div>
+
+              <div style="margin-top: 20px;">
+                <button class="btn btn-primary" onclick="saveGangConfig()">
+                  <i class="fa-solid fa-floppy-disk"></i> บันทึกการตั้งค่าเพลง
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- ================= TAB 7: DISCORD ================= -->
+          <div class="tab-pane" id="tabDiscord">
+            <div class="content-card">
+              <div class="card-header-bar">
+                <div class="card-title">
+                  <i class="fa-brands fa-discord" style="color: #5865f2;"></i> การเชื่อมต่อ Discord Webhook
+                </div>
+                <button class="btn btn-primary btn-sm" onclick="saveGangConfig()">
+                  <i class="fa-solid fa-floppy-disk"></i> บันทึก Webhook
+                </button>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Discord Webhook URL (สำหรับการแจ้งเตือนบันทึกการรวมพล)</label>
+                <input type="text" id="cfgDiscordWebhook" class="form-control" placeholder="https://discord.com/api/webhooks/...">
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 6px;">ระบบจะส่ง Embed สรุปการเช็คชื่อเข้าช่อง Discord ตาม Webhook นี้อัตโนมัติ</p>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Discord Bot Token (ไม่บังคับ - สำหรับดึงรูปโปรไฟล์กรณี API ฟรีติดจำกัด)</label>
+                <input type="password" id="cfgDiscordToken" class="form-control" placeholder="Bot Token...">
+              </div>
+
+              <div style="display: flex; gap: 10px; margin-top: 18px;">
+                <button class="btn btn-primary" onclick="saveGangConfig()">
+                  <i class="fa-solid fa-floppy-disk"></i> บันทึกการตั้งค่า Discord
+                </button>
+                <button class="btn btn-secondary" onclick="testDiscordWebhook()">
+                  <i class="fa-solid fa-paper-plane"></i> ทดสอบส่งข้อความเข้า Webhook
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- ================= TAB 8: BACKUP ================= -->
+          <div class="tab-pane" id="tabBackup">
+            <div class="content-card">
+              <div class="card-header-bar">
+                <div class="card-title">
+                  <i class="fa-solid fa-key" style="color: var(--primary);"></i> เปลี่ยนรหัสผ่าน Admin ลับ
+                </div>
+              </div>
+
+              <div class="form-grid-2">
+                <div class="form-group">
+                  <label class="form-label">รหัสผ่านเดิม</label>
+                  <input type="password" id="cfgOldPass" class="form-control" placeholder="กรอกรหัสเดิม...">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">รหัสผ่านใหม่ (อย่างน้อย 3 ตัวอักษร)</label>
+                  <input type="password" id="cfgNewPass" class="form-control" placeholder="กรอกรหัสใหม่...">
+                </div>
+              </div>
+
+              <button class="btn btn-danger btn-sm" onclick="changeAdminPasscode()">
+                <i class="fa-solid fa-shield-halved"></i> ยืนยันเปลี่ยนรหัสผ่าน
+              </button>
+            </div>
+
+            <div class="content-card">
+              <div class="card-header-bar">
+                <div class="card-title">
+                  <i class="fa-solid fa-database" style="color: var(--primary);"></i> สำรอง & กู้คืนข้อมูล (JSON Backup)
+                </div>
+              </div>
+
+              <div style="display: flex; gap: 14px; flex-wrap: wrap;">
+                <button class="btn btn-secondary" onclick="downloadBackupJson()">
+                  <i class="fa-solid fa-download"></i> ดาวน์โหลดไฟล์สำรอง (Backup JSON)
+                </button>
+                <button class="btn btn-secondary" onclick="document.getElementById('restoreFileInput').click()">
+                  <i class="fa-solid fa-upload"></i> กู้คืนข้อมูลจากไฟล์สำรอง (Restore)
+                </button>
+                <input type="file" id="restoreFileInput" accept=".json" style="display: none;" onchange="handleRestoreBackup(event)">
+              </div>
+            </div>
+          </div>
+
+        </div> <!-- End admin-content -->
+      </main>
+    </div>
+  </div> <!-- End adminDashboard -->
+
+  <!-- ==================== MODAL: ADD / EDIT MEMBER ==================== -->
+  <div class="modal-overlay" id="memberModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="memberModalTitle" style="font-size: 1.2rem; font-weight: 700;">
+          <i class="fa-solid fa-user-plus" style="color: var(--primary);"></i> เพิ่มสมาชิกใหม่
+        </h3>
+        <button class="modal-close-btn" onclick="closeModal('memberModal')">&times;</button>
+      </div>
+
+      <input type="hidden" id="memEditId">
+
+      <div class="form-grid-2">
+        <div class="form-group">
+          <label class="form-label">ชื่อสมาชิกในแก๊ง (Full Name / IC) *</label>
+          <input type="text" id="memNameInput" class="form-control" placeholder="เช่น John Wick">
+        </div>
+        <div class="form-group">
+          <label class="form-label">ชื่อเล่น (Nickname)</label>
+          <input type="text" id="memNicknameInput" class="form-control" placeholder="เช่น จอห์น">
+        </div>
+      </div>
+
+      <div class="form-grid-2">
+        <div class="form-group">
+          <label class="form-label">ตำแหน่ง / ยศ (Rank) *</label>
+          <select id="memRankInput" class="form-control">
+            <!-- Dynamic Role Options -->
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">สถานะ (Status)</label>
+          <select id="memStatusInput" class="form-control">
+            <option value="online">🟢 ออนไลน์</option>
+            <option value="offline">⚪ ออฟไลน์</option>
+            <option value="busy">🟡 ไม่ว่าง / ปฏิบัติภารกิจ</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Discord ID (17-19 หลัก) สำหรับดึงรูปโปรไฟล์</label>
+        <div style="display: flex; gap: 8px;">
+          <input type="text" id="memDiscordIdInput" class="form-control" placeholder="เช่น 1499880829055144107">
+          <button class="btn btn-secondary btn-sm" onclick="fetchMemberDiscordInfo()" type="button" style="white-space: nowrap;">
+            <i class="fa-brands fa-discord"></i> ดึงรูป & ชื่อ
+          </button>
+        </div>
+      </div>
+
+      <div class="form-grid-2">
+        <div class="form-group">
+          <label class="form-label">URL รูปโปรไฟล์ (Avatar URL)</label>
+          <input type="text" id="memAvatarInput" class="form-control" placeholder="https://...">
+        </div>
+        <div class="form-group">
+          <label class="form-label">เบอร์โทรศัพท์ในเมือง (Phone)</label>
+          <input type="text" id="memPhoneInput" class="form-control" placeholder="เช่น 577-999-9999">
+        </div>
+      </div>
+
+      <div class="form-grid-2">
+        <div class="form-group">
+          <label class="form-label">อาวุธถนัด / หน้าที่พิเศษ (Specialty)</label>
+          <input type="text" id="memWeaponInput" class="form-control" placeholder="เช่น Heavy Rifle / สไนเปอร์">
+        </div>
+        <div class="form-group">
+          <label class="form-label">วันที่เข้าแก๊ง (Joined Date)</label>
+          <input type="date" id="memJoinedInput" class="form-control">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">คำอธิบายหน้าที่ / บันทึกเพิ่มเติม (Role Description / Note)</label>
+        <textarea id="memRoleDescInput" class="form-control" rows="2" placeholder="ระบุรายละเอียดหน้าที่หรือโน้ตเพิ่มเติม..."></textarea>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+        <button class="btn btn-secondary" onclick="closeModal('memberModal')">ยกเลิก</button>
+        <button class="btn btn-primary" onclick="saveMemberData()">
+          <i class="fa-solid fa-floppy-disk"></i> บันทึกข้อมูลสมาชิก
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL: START ROLL CALL ==================== -->
+  <div class="modal-overlay" id="rollCallModal">
+    <div class="modal-card" style="max-width: 780px;">
+      <div class="modal-header">
+        <h3 style="font-size: 1.2rem; font-weight: 700;">
+          <i class="fa-solid fa-clipboard-check" style="color: var(--primary);"></i> บันทึกการเช็คชื่อรวมพลรอบใหม่
+        </h3>
+        <button class="modal-close-btn" onclick="closeModal('rollCallModal')">&times;</button>
+      </div>
+
+      <div class="form-grid-2">
+        <div class="form-group">
+          <label class="form-label">ประเภทกิจกรรมรวมพล</label>
+          <select id="rollCallEventType" class="form-control">
+            <option value="รวมพลใหญ่ประจำสัปดาห์">🏰 รวมพลใหญ่ประจำสัปดาห์</option>
+            <option value="ตีสตอรี่ / วอร์แก๊ง">⚔️ ตีสตอรี่ / วอร์แก๊ง</option>
+            <option value="ซ้อมยิงปืน / ประลอง">🔫 ซ้อมยิงปืน / ประลองฝีมือ</option>
+            <option value="ประชุมแก๊ง">📢 ประชุมแก๊ง</option>
+            <option value="ลาดตระเวนเมือง">🚗 ลาดตระเวนเมือง</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">ผู้บันทึกเช็คชื่อ (Checked By)</label>
+          <input type="text" id="rollCallCheckedBy" class="form-control" placeholder="ชื่อผู้ตรวจเช็ค...">
+        </div>
+      </div>
+
+      <div class="table-container" style="max-height: 380px; overflow-y: auto; margin-bottom: 16px;">
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th>สมาชิก</th>
+              <th>ยศ</th>
+              <th>สถานะเช็คชื่อ</th>
+              <th>หมายเหตุ</th>
+            </tr>
+          </thead>
+          <tbody id="rollCallChecklistBody">
+            <!-- Dynamic Member Checklist -->
+          </tbody>
+        </table>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+        <span style="font-size: 0.85rem; color: var(--text-muted);">
+          * ระบบจะบันทึกลงระบบและส่งแจ้งเตือนเข้า Discord Webhook อัตโนมัติ
+        </span>
+        <div style="display: flex; gap: 10px;">
+          <button class="btn btn-secondary" onclick="closeModal('rollCallModal')">ยกเลิก</button>
+          <button class="btn btn-primary" onclick="submitRollCallAttendance()">
+            <i class="fa-solid fa-paper-plane"></i> บันทึกผลและส่งสรุป
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL: ADD / EDIT ROLE ==================== -->
+  <div class="modal-overlay" id="roleModal">
+    <div class="modal-card" style="max-width: 440px;">
+      <div class="modal-header">
+        <h3 id="roleModalTitle" style="font-size: 1.15rem; font-weight: 700;">
+          <i class="fa-solid fa-medal" style="color: var(--primary);"></i> เพิ่มยศใหม่
+        </h3>
+        <button class="modal-close-btn" onclick="closeModal('roleModal')">&times;</button>
+      </div>
+
+      <input type="hidden" id="roleEditIndex" value="-1">
+
+      <div class="form-group">
+        <label class="form-label">ชื่อยศ / ตำแหน่ง *</label>
+        <input type="text" id="roleNameInput" class="form-control" placeholder="เช่น 👑 Leader">
+      </div>
+
+      <div class="form-grid-2">
+        <div class="form-group">
+          <label class="form-label">สียศ (HEX Color)</label>
+          <div style="display: flex; gap: 8px;">
+            <input type="color" id="roleColorPicker" value="#f59e0b" style="width: 44px; height: 38px; border: none; border-radius: 6px; cursor: pointer; background: transparent;" onchange="document.getElementById('roleColorInput').value = this.value">
+            <input type="text" id="roleColorInput" class="form-control" value="#f59e0b" oninput="document.getElementById('roleColorPicker').value = this.value">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">ลำดับความสำคัญ (1 = สูงสุด)</label>
+          <input type="number" id="rolePriorityInput" class="form-control" value="1" min="1" max="99">
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px;">
+        <button class="btn btn-secondary" onclick="closeModal('roleModal')">ยกเลิก</button>
+        <button class="btn btn-primary" onclick="saveRoleData()">
+          <i class="fa-solid fa-floppy-disk"></i> บันทึกยศ
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Element -->
+  <div class="admin-toast" id="adminToast">
+    <i class="fa-solid fa-circle-check" style="color: var(--success); font-size: 1.2rem;"></i>
+    <span id="toastText">บันทึกข้อมูลเรียบร้อยแล้ว</span>
+  </div>
+
+  <!-- ==================== JAVASCRIPT ==================== -->
+  <script>
+    let GANG_DATA = {};
+    let ATTENDANCE_LOGS = [];
+    let currentPasscode = localStorage.getItem("sb577_admin_pass") || "";
+
+    // On Load
+    document.addEventListener("DOMContentLoaded", () => {
+      checkInitialAuth();
+    });
+
+    function toggleAuthEye() {
+      const input = document.getElementById("authPassInput");
+      const icon = document.getElementById("toggleAuthEye");
+      if (input.type === "password") {
+        input.type = "text";
+        icon.className = "fa-solid fa-eye-slash";
+      } else {
+        input.type = "password";
+        icon.className = "fa-solid fa-eye";
+      }
+    }
+
+    async function checkInitialAuth() {
+      await fetchGangData();
+      if (currentPasscode) {
+        // Test auth
+        try {
+          const res = await fetch("/api/gang/auth", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ passcode: currentPasscode })
+          });
+          const json = await res.json();
+          if (json.success && json.is_admin) {
+            showDashboard();
+            return;
+          }
+        } catch (e) {
+          console.warn("Auth check failed:", e);
+        }
+      }
+      showAuthGate();
+    }
+
+    function showAuthGate() {
+      document.getElementById("authGate").style.display = "flex";
+      document.getElementById("adminDashboard").style.display = "none";
+      if (GANG_DATA.gang_name) {
+        document.getElementById("authGangName").textContent = GANG_DATA.gang_name;
+      }
+      if (GANG_DATA.logo_url) {
+        document.getElementById("authLogo").src = GANG_DATA.logo_url;
+      }
+    }
+
+    function showDashboard() {
+      document.getElementById("authGate").style.display = "none";
+      document.getElementById("adminDashboard").style.display = "block";
+      populateAllData();
+      fetchAttendanceLogs();
+    }
+
+    async function adminLogin() {
+      const pass = document.getElementById("authPassInput").value.trim();
+      const err = document.getElementById("authErrorMsg");
+      const btn = document.getElementById("authSubmitBtn");
+
+      if (!pass) {
+        err.textContent = "กรุณากรอกรหัสผ่าน Admin";
+        err.style.display = "block";
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> กำลังตรวจสอบ...`;
+      err.style.display = "none";
+
+      try {
+        const res = await fetch("/api/gang/auth", {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({ passcode: pass })
+        });
+        const json = await res.json();
+
+        if (json.success && json.is_admin) {
+          currentPasscode = pass;
+          localStorage.setItem("sb577_admin_pass", pass);
+          showToast("👑 ยืนยันสิทธิ์ Admin เรียบร้อย ยินดีต้อนรับสู่ระบบหลังบ้าน!");
+          showDashboard();
+        } else {
+          err.textContent = json.error || "รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง";
+          err.style.display = "block";
+        }
+      } catch (e) {
+        err.textContent = "ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้";
+        err.style.display = "block";
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fa-solid fa-lock-open"></i> เข้าสู่ระบบจัดการหลังบ้าน`;
+      }
+    }
+
+    function adminLogout() {
+      currentPasscode = "";
+      localStorage.removeItem("sb577_admin_pass");
+      showToast("🔒 ออกจากระบบเรียบร้อย");
+      showAuthGate();
+    }
+
+    // Data Fetching
+    async function fetchGangData() {
+      try {
+        const res = await fetch("/api/gang/data");
+        if (res.ok) {
+          const json = await res.json();
+          if (json.success && json.data) {
+            GANG_DATA = json.data;
+          }
+        }
+      } catch (e) {
+        console.error("Failed to load gang data:", e);
+      }
+    }
+
+    async function fetchAttendanceLogs() {
+      try {
+        const res = await fetch("/api/gang/attendance");
+        if (res.ok) {
+          const json = await res.json();
+          if (json.success && json.logs) {
+            ATTENDANCE_LOGS = json.logs;
+            renderAttendanceTable();
+            document.getElementById("kpiAttendanceCount").textContent = ATTENDANCE_LOGS.length;
+          }
+        }
+      } catch (e) {
+        console.warn("Failed to load attendance logs:", e);
+      }
+    }
+
+    async function refreshAdminData() {
+      await fetchGangData();
+      await fetchAttendanceLogs();
+      populateAllData();
+      showToast("🔄 รีเฟรชข้อมูลล่าสุดเรียบร้อย!");
+    }
+
+    // Populate UI
+    function populateAllData() {
+      const name = GANG_DATA.gang_name || "SPONGEBOB";
+      const tag = (GANG_DATA.gang_tag || "").trim();
+      const slogan = GANG_DATA.slogan || "NEW GEN";
+      const logo = GANG_DATA.logo_url || "/gang_logo.png";
+      const banner = GANG_DATA.banner_url || "/gang_banner.jpg";
+
+      // Brand headers
+      document.getElementById("sideGangName").textContent = name;
+      document.getElementById("sideLogo").src = logo;
+      document.getElementById("overviewName").textContent = name;
+      document.getElementById("overviewSlogan").textContent = slogan;
+      document.getElementById("overviewLogo").src = logo;
+
+      const tagBadge = document.getElementById("overviewTagBadge");
+      if (tag) {
+        tagBadge.textContent = tag;
+        tagBadge.style.display = "inline-block";
+      } else {
+        tagBadge.style.display = "none";
+      }
+
+      // KPIs
+      const members = GANG_DATA.members || [];
+      document.getElementById("kpiTotalMembers").textContent = members.length;
+      document.getElementById("kpiOnlineMembers").textContent = members.filter(m => m.status === "online").length;
+      document.getElementById("kpiLeaders").textContent = members.filter(m => m.rank && (m.rank.includes("Leader") || m.rank.includes("Officer") || m.rank.includes("หัวหน้า"))).length;
+
+      // Render Tables
+      renderMembersTable();
+      renderRolesTable();
+      populateSettingsForm();
+    }
+
+    function populateSettingsForm() {
+      document.getElementById("cfgGangName").value = GANG_DATA.gang_name || "";
+      document.getElementById("cfgGangTag").value = GANG_DATA.gang_tag || "";
+      document.getElementById("cfgSlogan").value = GANG_DATA.slogan || "";
+      document.getElementById("cfgAnnouncement").value = GANG_DATA.announcement || "";
+      document.getElementById("cfgLogoUrl").value = GANG_DATA.logo_url || "";
+      document.getElementById("cfgBannerUrl").value = GANG_DATA.banner_url || "";
+      document.getElementById("cfgBannerPreview").src = GANG_DATA.banner_url || "/gang_banner.jpg";
+
+      document.getElementById("cfgSongUrl").value = GANG_DATA.song_url || "";
+      document.getElementById("cfgSongTitle").value = GANG_DATA.song_title || "";
+      document.getElementById("cfgSongAutoplay").checked = !!GANG_DATA.song_autoplay;
+
+      document.getElementById("cfgDiscordWebhook").value = GANG_DATA.discord_webhook || "";
+      document.getElementById("cfgDiscordToken").value = GANG_DATA.discord_bot_token || "";
+    }
+
+    function updatePreviewLogo(url) {
+      if (url) document.getElementById("overviewLogo").src = url;
+    }
+    function updatePreviewBanner(url) {
+      if (url) document.getElementById("cfgBannerPreview").src = url;
+    }
+
+    // Tab Switching
+    function switchTab(tabId) {
+      document.querySelectorAll(".tab-pane").forEach(p => p.classList.remove("active"));
+      document.querySelectorAll(".nav-item").forEach(i => i.classList.remove("active"));
+
+      const targetPane = document.getElementById(tabId);
+      if (targetPane) targetPane.classList.add("active");
+
+      // Update Nav active
+      const tabs = ['tabOverview', 'tabMembers', 'tabAttendance', 'tabRoles', 'tabSettings', 'tabMusic', 'tabDiscord', 'tabBackup'];
+      const idx = tabs.indexOf(tabId);
+      if (idx !== -1) {
+        const navItems = document.querySelectorAll(".sidebar-nav .nav-item");
+        if (navItems[idx]) navItems[idx].classList.add("active");
+      }
+
+      // Title
+      const titles = {
+        tabOverview: { icon: 'fa-chart-pie', text: 'ภาพรวมระบบ (Overview)' },
+        tabMembers: { icon: 'fa-users', text: 'จัดการสมาชิก (Member Management)' },
+        tabAttendance: { icon: 'fa-calendar-check', text: 'เช็คชื่อรวมพล (Attendance & Roll Call)' },
+        tabRoles: { icon: 'fa-medal', text: 'ยศและตำแหน่ง (Roles & Ranks)' },
+        tabSettings: { icon: 'fa-sliders', text: 'ตั้งค่าแก๊ง & อัตลักษณ์ (Gang Settings)' },
+        tabMusic: { icon: 'fa-music', text: 'เพลงประจำแก๊ง (Gang Music)' },
+        tabDiscord: { icon: 'fa-brands fa-discord', text: 'Discord Webhook & การแจ้งเตือน' },
+        tabBackup: { icon: 'fa-database', text: 'สำรองข้อมูล & รหัสผ่าน (Backup & Security)' }
+      };
+      if (titles[tabId]) {
+        document.getElementById("pageTitleText").innerHTML = `<i class="fa-solid ${titles[tabId].icon}" style="color: var(--primary);"></i> <span>${titles[tabId].text}</span>`;
+      }
+    }
+
+    // ================= MEMBERS TABLE & CRUD =================
+    function renderMembersTable(filterText = "", rankFilter = "", statusFilter = "") {
+      const tbody = document.getElementById("membersTableBody");
+      const members = GANG_DATA.members || [];
+      const roles = GANG_DATA.roles || [];
+
+      // Update Rank Filter dropdown
+      const rankSelect = document.getElementById("memberRankFilter");
+      if (rankSelect.options.length <= 1) {
+        roles.forEach(r => {
+          const opt = document.createElement("option");
+          opt.value = r.name;
+          opt.textContent = r.name;
+          rankSelect.appendChild(opt);
+        });
+      }
+
+      let filtered = members.filter(m => {
+        const nameMatch = (m.name || "").toLowerCase().includes(filterText.toLowerCase()) ||
+                          (m.nickname || "").toLowerCase().includes(filterText.toLowerCase()) ||
+                          (m.phone || "").includes(filterText) ||
+                          (m.discord_id || "").includes(filterText);
+        const rankMatch = !rankFilter || m.rank === rankFilter;
+        const statusMatch = !statusFilter || m.status === statusFilter;
+        return nameMatch && rankMatch && statusMatch;
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 30px; color: var(--text-muted);"><i class="fa-solid fa-user-slash" style="font-size: 1.8rem; margin-bottom: 8px; display: block;"></i> ไม่พบรายชื่อสมาชิกที่ตรงกับเงื่อนไข</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map((m, idx) => {
+        const roleObj = roles.find(r => r.name === m.rank) || { color: "#94a3b8" };
+        const statusColor = m.status === "online" ? "#10b981" : (m.status === "busy" ? "#f59e0b" : "#64748b");
+        const statusLabel = m.status === "online" ? "ออนไลน์" : (m.status === "busy" ? "ไม่ว่าง" : "ออฟไลน์");
+
+        return `
+          <tr>
+            <td style="color: var(--text-muted); font-size: 0.85rem;">${idx + 1}</td>
+            <td>
+              <div class="member-avatar-cell">
+                <img src="${m.avatar || '/gang_logo.png'}" class="member-avatar-img" onerror="this.src='/gang_logo.png'">
+                <div>
+                  <div style="font-weight: 600; color: #fff;">${m.name}</div>
+                  <div style="font-size: 0.8rem; color: var(--text-muted);">${m.nickname ? 'ฉายา: ' + m.nickname : ''}</div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span style="display: inline-block; padding: 4px 10px; border-radius: 6px; font-size: 0.82rem; font-weight: 600; background: ${roleObj.color}22; color: ${roleObj.color}; border: 1px solid ${roleObj.color}44;">
+                ${m.rank}
+              </span>
+            </td>
+            <td style="font-family: monospace; font-size: 0.88rem;">${m.phone || '-'}</td>
+            <td style="font-family: monospace; font-size: 0.84rem; color: var(--text-muted);">${m.discord_id || '-'}</td>
+            <td>
+              <span class="status-dot ${m.status || 'offline'}"></span>
+              <span style="font-size: 0.85rem; color: ${statusColor}; cursor: pointer;" onclick="toggleMemberStatus('${m.id}')" title="คลิกเพื่อสลับสถานะ">
+                ${statusLabel} <i class="fa-solid fa-arrows-rotate" style="font-size: 0.7rem; opacity: 0.5;"></i>
+              </span>
+            </td>
+            <td style="text-align: right;">
+              <div style="display: inline-flex; gap: 6px;">
+                <button class="btn btn-secondary btn-sm" onclick="openEditMemberModal('${m.id}')" title="แก้ไข">
+                  <i class="fa-solid fa-pen-to-square"></i>
+                </button>
+                <button class="btn btn-danger btn-sm" onclick="deleteMember('${m.id}')" title="ลบ">
+                  <i class="fa-solid fa-trash-can"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function filterMembersTable() {
+      const q = document.getElementById("memberSearchInput").value;
+      const rank = document.getElementById("memberRankFilter").value;
+      const status = document.getElementById("memberStatusFilter").value;
+      renderMembersTable(q, rank, status);
+    }
+
+    function openAddMemberModal() {
+      document.getElementById("memberModalTitle").innerHTML = `<i class="fa-solid fa-user-plus" style="color: var(--primary);"></i> เพิ่มสมาชิกใหม่`;
+      document.getElementById("memEditId").value = "";
+      document.getElementById("memNameInput").value = "";
+      document.getElementById("memNicknameInput").value = "";
+      document.getElementById("memPhoneInput").value = "";
+      document.getElementById("memDiscordIdInput").value = "";
+      document.getElementById("memAvatarInput").value = "";
+      document.getElementById("memWeaponInput").value = "";
+      document.getElementById("memJoinedInput").value = new Date().toISOString().slice(0, 10);
+      document.getElementById("memRoleDescInput").value = "";
+      document.getElementById("memStatusInput").value = "online";
+
+      populateRoleSelectOptions();
+      openModal("memberModal");
+    }
+
+    function openEditMemberModal(id) {
+      const m = (GANG_DATA.members || []).find(x => x.id === id);
+      if (!m) return;
+
+      document.getElementById("memberModalTitle").innerHTML = `<i class="fa-solid fa-user-pen" style="color: var(--primary);"></i> แก้ไขข้อมูล: ${m.name}`;
+      document.getElementById("memEditId").value = m.id;
+      document.getElementById("memNameInput").value = m.name || "";
+      document.getElementById("memNicknameInput").value = m.nickname || "";
+      document.getElementById("memPhoneInput").value = m.phone || "";
+      document.getElementById("memDiscordIdInput").value = m.discord_id || "";
+      document.getElementById("memAvatarInput").value = m.avatar || "";
+      document.getElementById("memWeaponInput").value = m.weapon || "";
+      document.getElementById("memJoinedInput").value = m.joined_date || new Date().toISOString().slice(0, 10);
+      document.getElementById("memRoleDescInput").value = m.role_desc || "";
+      document.getElementById("memStatusInput").value = m.status || "online";
+
+      populateRoleSelectOptions(m.rank);
+      openModal("memberModal");
+    }
+
+    function populateRoleSelectOptions(selectedRank = "") {
+      const sel = document.getElementById("memRankInput");
+      sel.innerHTML = "";
+      (GANG_DATA.roles || []).forEach(r => {
+        const opt = document.createElement("option");
+        opt.value = r.name;
+        opt.textContent = r.name;
+        if (r.name === selectedRank) opt.selected = true;
+        sel.appendChild(opt);
+      });
+    }
+
+    async function fetchMemberDiscordInfo() {
+      const did = document.getElementById("memDiscordIdInput").value.trim();
+      if (!did) {
+        showToast("⚠️ กรุณาระบุ Discord ID ก่อนดึงข้อมูล", "warning");
+        return;
+      }
+      try {
+        const res = await fetch(`/api/discord/user?id=${did}`);
+        const json = await res.json();
+        if (json.success && json.avatar) {
+          document.getElementById("memAvatarInput").value = json.avatar;
+          if (!document.getElementById("memNicknameInput").value) {
+            document.getElementById("memNicknameInput").value = json.display_name || json.username;
+          }
+          showToast(`✅ ดึงรูป Discord ของ ${json.display_name || json.username} สำเร็จ!`);
+        } else {
+          showToast(json.error || "ไม่พบผู้ใช้ Discord รายนี้", "warning");
+        }
+      } catch (e) {
+        showToast("ดึงข้อมูล Discord ล้มเหลว", "warning");
+      }
+    }
+
+    async function saveMemberData() {
+      const id = document.getElementById("memEditId").value;
+      const name = document.getElementById("memNameInput").value.trim();
+      if (!name) {
+        alert("กรุณาระบุชื่อสมาชิก");
+        return;
+      }
+
+      if (!GANG_DATA.members) GANG_DATA.members = [];
+
+      const memberObj = {
+        id: id || `m_${Date.now()}`,
+        name: name,
+        nickname: document.getElementById("memNicknameInput").value.trim(),
+        rank: document.getElementById("memRankInput").value,
+        phone: document.getElementById("memPhoneInput").value.trim(),
+        discord_id: document.getElementById("memDiscordIdInput").value.trim(),
+        avatar: document.getElementById("memAvatarInput").value.trim() || "/gang_logo.png",
+        weapon: document.getElementById("memWeaponInput").value.trim(),
+        joined_date: document.getElementById("memJoinedInput").value,
+        role_desc: document.getElementById("memRoleDescInput").value.trim(),
+        status: document.getElementById("memStatusInput").value
+      };
+
+      if (id) {
+        const idx = GANG_DATA.members.findIndex(x => x.id === id);
+        if (idx !== -1) GANG_DATA.members[idx] = memberObj;
+      } else {
+        GANG_DATA.members.push(memberObj);
+      }
+
+      closeModal("memberModal");
+      await syncDataToServer();
+      populateAllData();
+      showToast("💾 บันทึกข้อมูลสมาชิกเรียบร้อย!");
+    }
+
+    async function toggleMemberStatus(id) {
+      const m = (GANG_DATA.members || []).find(x => x.id === id);
+      if (!m) return;
+      m.status = m.status === "online" ? "offline" : (m.status === "offline" ? "busy" : "online");
+      await syncDataToServer();
+      renderMembersTable();
+      document.getElementById("kpiOnlineMembers").textContent = GANG_DATA.members.filter(x => x.status === "online").length;
+      showToast(`🔄 อัปเดตสถานะของ ${m.name} เป็น ${m.status}`);
+    }
+
+    async function deleteMember(id) {
+      const m = (GANG_DATA.members || []).find(x => x.id === id);
+      if (!m) return;
+      if (!confirm(`คุณแน่ใจหรือไม่ว่าต้องการลบสมาชิก "${m.name}" ออกจากทำเนียบแก๊ง?`)) return;
+
+      GANG_DATA.members = GANG_DATA.members.filter(x => x.id !== id);
+      await syncDataToServer();
+      populateAllData();
+      showToast(`🗑️ ลบสมาชิก ${m.name} เรียบร้อยแล้ว`);
+    }
+
+    // ================= ROLES & RANKS =================
+    function renderRolesTable() {
+      const tbody = document.getElementById("rolesTableBody");
+      const roles = GANG_DATA.roles || [];
+
+      tbody.innerHTML = roles.map((r, idx) => `
+        <tr>
+          <td style="font-family: monospace; font-weight: 700; color: var(--primary);">${r.priority || (idx + 1)}</td>
+          <td style="font-weight: 600;">${r.name}</td>
+          <td>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="display: inline-block; width: 18px; height: 18px; border-radius: 4px; background: ${r.color}; border: 1px solid rgba(255,255,255,0.2);"></span>
+              <span style="font-family: monospace; font-size: 0.85rem;">${r.color}</span>
+            </div>
+          </td>
+          <td>
+            <span style="display: inline-block; padding: 4px 12px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; background: ${r.color}22; color: ${r.color}; border: 1px solid ${r.color}44;">
+              ${r.name}
+            </span>
+          </td>
+          <td style="text-align: right;">
+            <div style="display: inline-flex; gap: 6px;">
+              <button class="btn btn-secondary btn-sm" onclick="openEditRoleModal(${idx})" title="แก้ไข">
+                <i class="fa-solid fa-pen-to-square"></i>
+              </button>
+              <button class="btn btn-danger btn-sm" onclick="deleteRole(${idx})" title="ลบ">
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      `).join("");
+    }
+
+    function openAddRoleModal() {
+      document.getElementById("roleModalTitle").innerHTML = `<i class="fa-solid fa-medal" style="color: var(--primary);"></i> เพิ่มยศใหม่`;
+      document.getElementById("roleEditIndex").value = "-1";
+      document.getElementById("roleNameInput").value = "";
+      document.getElementById("roleColorInput").value = "#f59e0b";
+      document.getElementById("roleColorPicker").value = "#f59e0b";
+      document.getElementById("rolePriorityInput").value = (GANG_DATA.roles || []).length + 1;
+      openModal("roleModal");
+    }
+
+    function openEditRoleModal(idx) {
+      const r = (GANG_DATA.roles || [])[idx];
+      if (!r) return;
+      document.getElementById("roleModalTitle").innerHTML = `<i class="fa-solid fa-medal" style="color: var(--primary);"></i> แก้ไขยศ: ${r.name}`;
+      document.getElementById("roleEditIndex").value = idx;
+      document.getElementById("roleNameInput").value = r.name;
+      document.getElementById("roleColorInput").value = r.color;
+      document.getElementById("roleColorPicker").value = r.color;
+      document.getElementById("rolePriorityInput").value = r.priority || (idx + 1);
+      openModal("roleModal");
+    }
+
+    async function saveRoleData() {
+      const idx = parseInt(document.getElementById("roleEditIndex").value);
+      const name = document.getElementById("roleNameInput").value.trim();
+      const color = document.getElementById("roleColorInput").value.trim() || "#f59e0b";
+      const priority = parseInt(document.getElementById("rolePriorityInput").value) || 1;
+
+      if (!name) {
+        alert("กรุณากรอกชื่อยศ");
+        return;
+      }
+
+      if (!GANG_DATA.roles) GANG_DATA.roles = [];
+
+      const roleObj = { name, color, priority };
+      if (idx >= 0 && idx < GANG_DATA.roles.length) {
+        GANG_DATA.roles[idx] = roleObj;
+      } else {
+        GANG_DATA.roles.push(roleObj);
+      }
+
+      // Sort by priority
+      GANG_DATA.roles.sort((a, b) => (a.priority || 99) - (b.priority || 99));
+
+      closeModal("roleModal");
+      await syncDataToServer();
+      renderRolesTable();
+      showToast("🎖️ บันทึกยศเรียบร้อย!");
+    }
+
+    async function deleteRole(idx) {
+      const r = (GANG_DATA.roles || [])[idx];
+      if (!r) return;
+      if (!confirm(`คุณแน่ใจว่าต้องการลบยศ "${r.name}" หรือไม่?`)) return;
+
+      GANG_DATA.roles.splice(idx, 1);
+      await syncDataToServer();
+      renderRolesTable();
+      showToast(`🗑️ ลบยศ ${r.name} เรียบร้อย`);
+    }
+
+    // ================= ATTENDANCE & ROLL CALL =================
+    function renderAttendanceTable() {
+      const tbody = document.getElementById("attendanceHistoryBody");
+      if (!ATTENDANCE_LOGS || ATTENDANCE_LOGS.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 28px; color: var(--text-muted);"><i class="fa-solid fa-clipboard" style="font-size: 1.6rem; margin-bottom: 6px; display: block;"></i> ยังไม่มีประวัติการเช็คชื่อรวมพล</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = ATTENDANCE_LOGS.map(log => {
+        let badgeColor = "#10b981";
+        let statusText = "🟢 มาตรงเวลา";
+        if (log.status === "late") { badgeColor = "#f59e0b"; statusText = "🟡 มาสาย"; }
+        else if (log.status === "leave") { badgeColor = "#3b82f6"; statusText = "🔵 ลา"; }
+        else if (log.status === "absent") { badgeColor = "#ef4444"; statusText = "🔴 ขาด"; }
+
+        return `
+          <tr>
+            <td style="font-size: 0.85rem; color: var(--text-muted); font-family: monospace;">${log.timestamp || '-'}</td>
+            <td><strong style="color: #fff;">${log.event_type || 'รวมพลแก๊ง'}</strong></td>
+            <td>${log.member_name} ${log.nickname ? `(${log.nickname})` : ''}</td>
+            <td>
+              <span style="display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 0.82rem; font-weight: 600; color: ${badgeColor}; background: ${badgeColor}22; border: 1px solid ${badgeColor}44;">
+                ${statusText}
+              </span>
+            </td>
+            <td style="font-size: 0.85rem; color: var(--text-muted);">${log.checked_by || 'Admin'}</td>
+            <td style="font-size: 0.85rem; color: var(--text-muted);">${log.note || '-'}</td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function openStartRollCallModal() {
+      const tbody = document.getElementById("rollCallChecklistBody");
+      const members = GANG_DATA.members || [];
+
+      if (members.length === 0) {
+        alert("ยังไม่มีสมาชิกในระบบ กรุณาเพิ่มสมาชิกก่อนเริ่มเช็คชื่อ");
+        return;
+      }
+
+      tbody.innerHTML = members.map((m, idx) => `
+        <tr data-member-id="${m.id}" data-member-name="${m.name}" data-nickname="${m.nickname || ''}" data-rank="${m.rank || ''}">
+          <td style="font-weight: 600;">${m.name} ${m.nickname ? `(${m.nickname})` : ''}</td>
+          <td style="font-size: 0.85rem; color: var(--text-muted);">${m.rank || '-'}</td>
+          <td>
+            <div style="display: flex; gap: 8px;">
+              <label style="cursor: pointer; display: flex; align-items: center; gap: 4px; font-size: 0.82rem;">
+                <input type="radio" name="att_status_${m.id}" value="present" checked style="accent-color: #10b981;"> มา
+              </label>
+              <label style="cursor: pointer; display: flex; align-items: center; gap: 4px; font-size: 0.82rem;">
+                <input type="radio" name="att_status_${m.id}" value="late" style="accent-color: #f59e0b;"> สาย
+              </label>
+              <label style="cursor: pointer; display: flex; align-items: center; gap: 4px; font-size: 0.82rem;">
+                <input type="radio" name="att_status_${m.id}" value="leave" style="accent-color: #3b82f6;"> ลา
+              </label>
+              <label style="cursor: pointer; display: flex; align-items: center; gap: 4px; font-size: 0.82rem;">
+                <input type="radio" name="att_status_${m.id}" value="absent" style="accent-color: #ef4444;"> ขาด
+              </label>
+            </div>
+          </td>
+          <td>
+            <input type="text" class="form-control att-note-input" style="padding: 4px 8px; font-size: 0.82rem;" placeholder="หมายเหตุ...">
+          </td>
+        </tr>
+      `).join("");
+
+      openModal("rollCallModal");
+    }
+
+    async function submitRollCallAttendance() {
+      const eventType = document.getElementById("rollCallEventType").value;
+      const checkedBy = document.getElementById("rollCallCheckedBy").value.trim() || "หัวหน้าแก๊ง";
+      const rows = document.querySelectorAll("#rollCallChecklistBody tr");
+
+      const records = [];
+      rows.forEach(tr => {
+        const mid = tr.getAttribute("data-member-id");
+        const mname = tr.getAttribute("data-member-name");
+        const mnick = tr.getAttribute("data-nickname");
+        const mrank = tr.getAttribute("data-rank");
+        const status = tr.querySelector(`input[name="att_status_${mid}"]:checked`)?.value || "present";
+        const note = tr.querySelector(".att-note-input")?.value.trim() || "";
+
+        records.push({
+          member_id: mid,
+          member_name: mname,
+          nickname: mnick,
+          rank: mrank,
+          status: status,
+          note: note
+        });
+      });
+
+      try {
+        const res = await fetch("/api/gang/attendance/checkin", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            type: "batch",
+            event_type: eventType,
+            checked_by: checkedBy,
+            records: records
+          })
+        });
+        const json = await res.json();
+        if (json.success) {
+          closeModal("rollCallModal");
+          await fetchAttendanceLogs();
+          showToast("📋 บันทึกการรวมพลและส่ง Discord สำเร็จเรียบร้อย!");
+        } else {
+          alert(json.error || "เกิดข้อผิดพลาดในการบันทึก");
+        }
+      } catch (e) {
+        alert("ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้");
+      }
+    }
+
+    // ================= SETTINGS & SYNC =================
+    async function saveGangConfig() {
+      GANG_DATA.gang_name = document.getElementById("cfgGangName").value.trim() || "SPONGEBOB";
+      GANG_DATA.gang_tag = document.getElementById("cfgGangTag").value.trim(); // can be empty!
+      GANG_DATA.slogan = document.getElementById("cfgSlogan").value.trim();
+      GANG_DATA.announcement = document.getElementById("cfgAnnouncement").value.trim();
+      GANG_DATA.logo_url = document.getElementById("cfgLogoUrl").value.trim() || "/gang_logo.png";
+      GANG_DATA.banner_url = document.getElementById("cfgBannerUrl").value.trim() || "/gang_banner.jpg";
+
+      GANG_DATA.song_url = document.getElementById("cfgSongUrl").value.trim();
+      GANG_DATA.song_title = document.getElementById("cfgSongTitle").value.trim() || "เพลงประจำแก๊ง";
+      GANG_DATA.song_autoplay = document.getElementById("cfgSongAutoplay").checked;
+
+      GANG_DATA.discord_webhook = document.getElementById("cfgDiscordWebhook").value.trim();
+      GANG_DATA.discord_bot_token = document.getElementById("cfgDiscordToken").value.trim();
+
+      await syncDataToServer();
+      populateAllData();
+      showToast("💾 บันทึกการตั้งค่าแก๊งสำเร็จเรียบร้อย!");
+    }
+
+    async function syncDataToServer() {
+      try {
+        const res = await fetch("/api/gang/update", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            passcode: currentPasscode,
+            gang_data: GANG_DATA
+          })
+        });
+        const json = await res.json();
+        if (!json.success) {
+          showToast(json.error || "บันทึกข้อมูลล้มเหลว", "warning");
+        }
+      } catch (e) {
+        console.error("Sync error:", e);
+        showToast("ไม่สามารถซิงค์ข้อมูลกับเซิร์ฟเวอร์ได้", "warning");
+      }
+    }
+
+    // ================= DISCORD WEBHOOK TEST =================
+    async function testDiscordWebhook() {
+      const url = document.getElementById("cfgDiscordWebhook").value.trim();
+      if (!url) {
+        alert("กรุณากรอก Discord Webhook URL ก่อนกดทดสอบ");
+        return;
+      }
+      try {
+        const res = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            embeds: [{
+              title: "🔔 ทดสอบระบบแจ้งเตือน Webhook",
+              description: `ทดสอบการส่งข้อความจากระบบจัดการหลังบ้านแก๊ง **${GANG_DATA.gang_name || 'SPONGEBOB'}** สำเร็จสมบูรณ์!`,
+              color: 0xf59e0b,
+              footer: { text: "SPONGEBOB Admin Panel" },
+              timestamp: new Date().toISOString()
+            }]
+          })
+        });
+        if (res.ok) {
+          showToast("🚀 ส่งข้อความทดสอบเข้า Discord สำเร็จแล้ว! ตรวจสอบที่ห้อง Discord ได้เลย");
+        } else {
+          showToast("⚠️ Discord ปฏิเสธ Webhook (สถานะ " + res.status + ")", "warning");
+        }
+      } catch (e) {
+        showToast("ไม่สามารถส่งข้อมูลเข้า Webhook ได้ ตรวจสอบ URL อีกครั้ง", "warning");
+      }
+    }
+
+    // ================= CHANGE PASSCODE =================
+    async function changeAdminPasscode() {
+      const oldPass = document.getElementById("cfgOldPass").value.trim();
+      const newPass = document.getElementById("cfgNewPass").value.trim();
+
+      if (!oldPass || !newPass) {
+        alert("กรุณากรอกทั้งรหัสผ่านเดิมและรหัสผ่านใหม่");
+        return;
+      }
+      if (newPass.length < 3) {
+        alert("รหัสผ่านใหม่ต้องมีความยาวอย่างน้อย 3 ตัวอักษร");
+        return;
+      }
+
+      try {
+        const res = await fetch("/api/gang/change_pass", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            old_passcode: oldPass,
+            new_passcode: newPass
+          })
+        });
+        const json = await res.json();
+        if (json.success) {
+          currentPasscode = newPass;
+          localStorage.setItem("sb577_admin_pass", newPass);
+          document.getElementById("cfgOldPass").value = "";
+          document.getElementById("cfgNewPass").value = "";
+          showToast("🔑 เปลี่ยนรหัสผ่าน Admin ลับเรียบร้อยแล้ว!");
+        } else {
+          alert(json.error || "เปลี่ยนรหัสผ่านไม่สำเร็จ");
+        }
+      } catch (e) {
+        alert("เชื่อมต่อเซิร์ฟเวอร์ล้มเหลว");
+      }
+    }
+
+    // ================= BACKUP & RESTORE =================
+    function downloadBackupJson() {
+      const exportData = JSON.stringify(GANG_DATA, null, 2);
+      const blob = new Blob([exportData], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `gang_backup_${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast("📥 ดาวน์โหลดไฟล์สำรองข้อมูลเรียบร้อย");
+    }
+
+    function handleRestoreBackup(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = async (evt) => {
+        try {
+          const parsed = JSON.parse(evt.target.result);
+          if (parsed && parsed.members) {
+            GANG_DATA = parsed;
+            await syncDataToServer();
+            populateAllData();
+            showToast("♻️ กู้คืนข้อมูลจากไฟล์สำรองสำเร็จสมบูรณ์!");
+          } else {
+            alert("รูปแบบไฟล์ JSON ไม่ถูกต้อง");
+          }
+        } catch (err) {
+          alert("ไม่สามารถอ่านไฟล์ JSON ได้: " + err.message);
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    // ================= HELPERS =================
+    function openModal(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.add("active");
+    }
+
+    function closeModal(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.remove("active");
+    }
+
+    let toastTimer = null;
+    function showToast(msg, type = "success") {
+      const t = document.getElementById("adminToast");
+      const txt = document.getElementById("toastText");
+      txt.textContent = msg;
+      t.classList.add("show");
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        t.classList.remove("show");
+      }, 3500);
+    }
+  </script>
+</body>
+</html>

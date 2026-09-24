@@ -1,6 +1,6 @@
 {
   "gang_name": "SPONGEBOB",
-  "gang_tag": "",
+  "gang_tag": ".",
   "slogan": "NEW GEN",
   "announcement": "ยินดีต้อนรับสู่ทำเนียบสมาชิกแก๊ง SPONGEBOB [577] อย่างเป็นทางการ",
   "logo_url": "/gang_logo.png",
@@ -16,7 +16,7 @@
       "priority": 1
     },
     {
-      "name": "⚔️ Co-Leader",
+      "name": "⚔️ รองหัวหน้า",
       "color": "#ef4444",
       "priority": 2
     },
@@ -38,33 +38,33 @@
       "weapon": "soon",
       "joined_date": "0001-01-01",
       "note": "",
-      "status": "offline"
+      "status": "online"
     },
     {
       "id": "1790186224433",
       "name": "Jeff Lnwrainam",
       "nickname": "white497",
-      "rank": "⚔️ Co-Leader",
+      "rank": "⚔️ รองหัวหน้า",
       "avatar": "https://cdn.discordapp.com/avatars/1509208692111970416/48dd1667185589e469a0ddd396d63798.png?size=512",
       "phone": "00000",
       "discord_id": "1509208692111970416",
       "weapon": "pool",
       "joined_date": "0001-01-01",
       "note": "",
-      "status": "offline"
+      "status": "online"
     },
     {
       "id": "1790186300418",
       "name": "Rchi Playtwowin",
       "nickname": "ichi_sss.",
-      "rank": "⚔️ Co-Leader",
+      "rank": "⚔️ รองหัวหน้า",
       "avatar": "https://cdn.discordapp.com/avatars/1535644838073204806/a550edab5ffbc6c7cf6803d12b8f6cc2.png?size=512",
       "phone": "00000",
       "discord_id": "1535644838073204806",
       "weapon": "pool",
       "joined_date": "0001-01-01",
       "note": "",
-      "status": "offline"
+      "status": "online"
     },
     {
       "id": "1790186388549",
@@ -80,6 +80,6 @@
       "status": "online"
     }
   ],
-  "discord_webhook": "https://discord.com/api/webhooks/1552684176497578014/du--3vPt4dEFEGSnVK_QYMR12K8zOXpeEnzkUCkeikJQBc_LECyqen8t6WtdxHo2TgCi",
+  "discord_webhook": "",
   "passcode": "gang123"
 }

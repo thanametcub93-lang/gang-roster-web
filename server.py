@@ -220,6 +220,9 @@ class GangRequestHandler(SimpleHTTPRequestHandler):
         if clean_path in ["", "/gang"]:
             self.path = "/index.html"
             return super().do_GET()
+        elif clean_path in ["/admin", "/manage", "/dashboard"]:
+            self.path = "/admin.html"
+            return super().do_GET()
         
         elif clean_path == "/api/gang/data":
             self.send_response(200)
