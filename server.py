@@ -29,7 +29,7 @@ def load_gang_data():
             "gang_name": "SPONGEBOB",
             "gang_tag": "577",
             "slogan": "NEW GEN",
-            "announcement": "ยินดีต้อนรับสู่ทำเนียบสมาชิกแก๊ง SPONGEBOB [577] อย่างเป็นทางการ",
+            "announcement": "ยินดีต้อนรับสู่เว็ปรายชื่อแก๊ง SPONGEBOB [577] อย่างเป็นทางการ",
             "logo_url": "https://cdn.discordapp.com/embed/avatars/0.png",
             "banner_url": "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=1600&auto=format&fit=crop&q=80",
             "theme_color": "#e11d48",
@@ -241,7 +241,7 @@ class GangRequestHandler(SimpleHTTPRequestHandler):
 
                 tag_display = f" [{gtag}]" if (gtag and gtag.strip() and gtag.strip() != ".") else ""
                 og_title = f"{gname}{tag_display} • GANG ROSTER"
-                og_desc = f"ทำเนียบสมาชิกแก๊ง {gname} {gslogan} อย่างเป็นทางการ • OFFICIAL FIVEM GANG ROSTER"
+                og_desc = f"เว็ปรายชื่อ {gname}"
 
                 html = html.replace("__BASE_URL__", base_url)
                 html = html.replace("__OG_IMAGE__", banner_url)
