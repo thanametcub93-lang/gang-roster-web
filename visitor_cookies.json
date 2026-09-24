@@ -138,7 +138,7 @@
     "visitor_id": "vis_1f95c5e37dea408b",
     "ip": "127.0.0.1",
     "user_agent": "Mozilla/5.0",
-    "verified_human": true,
+    "verified_human": false,
     "first_seen": "2026-09-25 02:08:08",
     "last_seen": "2026-09-25 02:08:08",
     "visit_count": 1

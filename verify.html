@@ -211,6 +211,31 @@
       transition: color 0.2s;
     }
 
+    .enter-btn {
+      display: none;
+      margin-top: 16px;
+      width: 100%;
+      max-width: 304px;
+      padding: 12px 18px;
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #fff;
+      font-family: 'Kanit', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      border: 1px solid #34d399;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 4px 18px rgba(16, 185, 129, 0.4);
+      animation: checkPop 0.35s ease forwards;
+      transition: all 0.2s ease;
+    }
+    .enter-btn:hover {
+      background: linear-gradient(135deg, #059669, #047857);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 22px rgba(16, 185, 129, 0.6);
+    }
+
     .footer-note {
       margin-top: 24px;
       font-size: 11px;
@@ -246,7 +271,8 @@
       </div>
     </div>
 
-    <div class="verify-status" id="verifyStatus">คลิกที่กล่องด้านบนเพื่อยืนยันตัวตน</div>
+    <button id="continueBtn" class="enter-btn" onclick="window.location.replace('/')">เข้าสู่หน้าเว็บหลัก ➜</button>
+    <div class="verify-status" id="verifyStatus">คลิกที่ช่องสี่เหลี่ยมด้านบนเพื่อยืนยันตัวตน</div>
   </div>
 
   <div class="footer-note">SPONGEBOB 577 NEW GEN &bull; OFFICIAL SECURITY</div>
@@ -254,16 +280,22 @@
   <script>
     let isVerifying = false;
 
-    // Show status if user was already verified earlier
-    window.addEventListener('DOMContentLoaded', () => {
-      if (document.cookie.includes('gang_human_verified=1')) {
-        const status = document.getElementById('verifyStatus');
-        if (status) {
-          status.innerHTML = '✓ บัญชีของคุณได้รับการยืนยันแล้ว • <a href="/" style="color:#38bdf8;text-decoration:underline;font-weight:600;">คลิกที่นี่เพื่อเข้าสู่หน้าหลัก</a><br><span style="font-size:11px;color:#64748b;">(สามารถคลิกกล่องด้านบนเพื่อทดสอบการทำงานของ NoCAPTCHA ได้ตลอดเวลา)</span>';
-          status.style.color = '#10b981';
-        }
-      }
-    });
+    function playSuccessChime() {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(587.33, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.15);
+        gain.gain.setValueAtTime(0.12, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.35);
+      } catch (e) {}
+    }
 
     async function executeCaptchaVerification(e) {
       if (e && typeof e.stopPropagation === 'function') e.stopPropagation();
@@ -275,11 +307,15 @@
       const chk = document.getElementById('recaptchaCheckbox');
       const label = document.getElementById('recaptchaLabel');
       const status = document.getElementById('verifyStatus');
+      const continueBtn = document.getElementById('continueBtn');
 
       spinner.style.display = 'block';
       checkmark.style.display = 'none';
-      status.textContent = 'กำลังตรวจสอบความปลอดภัย (NoCAPTCHA Verification)...';
+      status.textContent = 'กำลังตรวจสอบพฤติกรรม (NoCAPTCHA Verification)...';
       status.style.color = '#38bdf8';
+
+      // Realistic human verification spin delay (1.1 seconds)
+      await new Promise(resolve => setTimeout(resolve, 1100));
 
       const telemetry = {
         webdriver: !!navigator.webdriver,
@@ -303,12 +339,14 @@
           checkmark.style.display = 'block';
           chk.classList.add('verified');
           label.textContent = 'ฉันไม่ใช่โปรแกรมอัตโนมัติ (ยืนยันแล้ว)';
-          status.textContent = '✓ ยืนยันความปลอดภัยสำเร็จ กำลังเข้าสู่หน้าเว็บ...';
+          status.textContent = '✓ ยืนยันความปลอดภัยสำเร็จ!';
           status.style.color = '#10b981';
+          if (continueBtn) continueBtn.style.display = 'block';
+          playSuccessChime();
 
           setTimeout(() => {
             window.location.replace('/');
-          }, 600);
+          }, 1400);
         } else {
           spinner.style.display = 'none';
           status.textContent = '❌ ' + (data.error || 'การยืนยันล้มเหลว กรุณาลองใหม่');
@@ -320,11 +358,14 @@
         spinner.style.display = 'none';
         checkmark.style.display = 'block';
         chk.classList.add('verified');
-        status.textContent = '✓ ยืนยันสำเร็จ กำลังเข้าสู่หน้าเว็บ...';
+        status.textContent = '✓ ยืนยันสำเร็จ!';
         status.style.color = '#10b981';
+        if (continueBtn) continueBtn.style.display = 'block';
+        playSuccessChime();
+
         setTimeout(() => {
           window.location.replace('/');
-        }, 500);
+        }, 1200);
       }
     }
   </script>
