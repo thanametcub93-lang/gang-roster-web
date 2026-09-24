@@ -722,57 +722,80 @@
       gap: 16px;
     }
 
-    /* Member Card Cover Image — Profile Card Style */
-    .member-cover-area {
+    /* ===== FULL PROFILE CARD STYLE ===== */
+    .card-cover-area {
       width: calc(100% + 2.8rem);
       margin: -1.4rem -1.4rem 0 -1.4rem;
-      position: relative;
-      height: 80px;
+      height: 90px;
       border-radius: 20px 20px 0 0;
       overflow: hidden;
+      position: relative;
       flex-shrink: 0;
     }
-    .member-cover-area img.cover-img,
-    .member-cover-area .cover-placeholder {
+    .card-cover-bg {
       width: 100%;
       height: 100%;
       object-fit: cover;
       display: block;
     }
-    .member-cover-area .cover-placeholder {
-      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    .card-cover-placeholder {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
     }
-    /* Avatar overlapping the cover */
-    .card-avatar-overlap {
-      position: absolute;
-      bottom: -22px;
-      left: 14px;
-      width: 52px;
-      height: 52px;
-      border-radius: 50%;
-      border: 3px solid #07090e;
-      object-fit: cover;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.6);
+    /* Avatar centered, overlapping cover */
+    .card-profile-center {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: -38px;
+      margin-bottom: 10px;
+      position: relative;
       z-index: 2;
     }
-    .card-status-dot {
+    .card-avatar-full {
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid rgba(225, 29, 72, 0.6);
+      box-shadow: 0 4px 18px rgba(0,0,0,0.7);
+      background: #111;
+    }
+    .card-status-badge {
       position: absolute;
-      bottom: -16px;
-      left: 48px;
-      width: 12px;
-      height: 12px;
+      bottom: 2px;
+      right: calc(50% - 46px);
+      width: 13px;
+      height: 13px;
       border-radius: 50%;
       border: 2px solid #07090e;
-      z-index: 3;
     }
-    /* Space for overlapping avatar */
-    .member-header {
-      display: flex;
-      align-items: flex-end;
-      gap: 10px;
-      margin-top: 28px;
-      margin-bottom: 0.8rem;
-      padding-left: 74px;
+    .card-name {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #fff;
+      margin-top: 8px;
+      text-align: center;
+    }
+    .card-nickname {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-align: center;
+      margin-top: 2px;
+    }
+    .card-rank-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 8px;
+      margin-top: 6px;
+      background: rgba(225, 29, 72, 0.15);
+      color: #fda4af;
+      border: 1px solid rgba(225, 29, 72, 0.3);
     }
     /* Discord ID fix */
     .discord-id-val {
@@ -783,6 +806,8 @@
       display: inline-block;
       vertical-align: middle;
     }
+    /* old .member-header kept for compat */
+    .member-header { display: none; }
 
     /* Member Card */
     .member-card {
@@ -2205,29 +2230,23 @@
         const statusClass = m.status === 'online' ? 'status-online' : (m.status === 'busy' ? 'status-busy' : 'status-offline');
         const avatarUrl = m.avatar || "https://cdn.discordapp.com/embed/avatars/0.png";
         const animDelay = (Math.min(idx * 0.045, 0.75) + 0.55).toFixed(2);
-        const coverHtml = m.cover_url
-          ? `<img src="${escapeHtml(m.cover_url)}" class="member-cover" alt="cover" onerror="this.style.display='none'">`
-          : `<div class="member-cover-placeholder"></div>`;
+        const coverContent = m.cover_url
+          ? `<img src="${escapeHtml(m.cover_url)}" class="card-cover-bg" alt="cover" onerror="this.outerHTML='<div class=card-cover-placeholder></div>'">`
+          : `<div class="card-cover-placeholder"></div>`;
 
         cardsHtml += `
           <div class="member-card" id="member_card_${m.id}" style="animation-delay: ${animDelay}s;">
-            <div class="member-cover-area">
-              ${m.cover_url
-                ? `<img src="${escapeHtml(m.cover_url)}" class="cover-img" alt="cover" onerror="this.className='cover-placeholder'">`
-                : `<div class="cover-placeholder"></div>`
-              }
-              <img src="${escapeHtml(avatarUrl)}" alt="${escapeHtml(m.name)}" class="card-avatar-overlap" onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'">
-              <div class="card-status-dot ${statusClass}" title="สถานะ: ${m.status || 'offline'}"></div>
-            </div>
 
-            <div class="member-header">
-              <div class="member-info">
-                <div class="member-ic-name" title="${escapeHtml(m.name)}">${escapeHtml(m.name)}</div>
-                <div class="member-nickname">(${escapeHtml(m.nickname || 'ไม่มีชื่อเล่น')})</div>
-                <div class="member-role-badge">
-                  <span>${escapeHtml(m.rank || 'สมาชิกแก๊ง')}</span>
-                </div>
+            <div class="card-cover-area">${coverContent}</div>
+
+            <div class="card-profile-center">
+              <div style="position:relative;display:inline-block;">
+                <img src="${escapeHtml(avatarUrl)}" alt="${escapeHtml(m.name)}" class="card-avatar-full" onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'">
+                <div class="card-status-badge ${statusClass}" title="${m.status || 'offline'}"></div>
               </div>
+              <div class="card-name">${escapeHtml(m.name)}</div>
+              <div class="card-nickname">(${escapeHtml(m.nickname || 'ไม่มีชื่อเล่น')})</div>
+              <div class="card-rank-badge">${escapeHtml(m.rank || 'สมาชิกแก๊ง')}</div>
             </div>
 
             <div class="member-details">
