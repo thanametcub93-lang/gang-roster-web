@@ -241,7 +241,7 @@ class GangRequestHandler(SimpleHTTPRequestHandler):
 
                 tag_display = f" [{gtag}]" if (gtag and gtag.strip() and gtag.strip() != ".") else ""
                 og_title = f"{gname}{tag_display} • GANG ROSTER"
-                og_desc = f"เว็ปรายชื่อ {gname}"
+                og_desc = "LIST SPONGEBOB NEWGEN"
 
                 html = html.replace("__BASE_URL__", base_url)
                 html = html.replace("__OG_IMAGE__", banner_url)
