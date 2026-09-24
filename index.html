@@ -41,13 +41,128 @@
       padding: 0;
     }
 
-    /* ===================== PURE PITCH BLACK BACKGROUND ===================== */
-    .bg-mesh {
+    /* ===================== INFINITE SCROLLING TICKER BACKGROUND (BLACK & WHITE GANG TAPE) ===================== */
+    .gang-ticker-bg {
       position: fixed;
       inset: 0;
       pointer-events: none;
       z-index: 0;
-      background: #000000;
+      overflow: hidden;
+      background: #050608;
+    }
+
+    .gang-ticker-overlay {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0.88) 100%);
+      pointer-events: none;
+      z-index: 4;
+    }
+
+    .ticker-ribbon {
+      position: absolute;
+      left: -25%;
+      width: 150%;
+      height: 48px;
+      background: #ffffff;
+      display: flex;
+      align-items: center;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.9);
+      overflow: hidden;
+      user-select: none;
+      opacity: 0.38;
+      z-index: 2;
+      will-change: transform;
+    }
+
+    /* Crisscrossing diagonal tape angles matching reference image */
+    .ticker-ribbon.ribbon-1 {
+      top: 6%;
+      transform: rotate(-11deg);
+      z-index: 2;
+    }
+    .ticker-ribbon.ribbon-2 {
+      top: 25%;
+      transform: rotate(8deg);
+      z-index: 3;
+    }
+    .ticker-ribbon.ribbon-3 {
+      top: 48%;
+      transform: rotate(-6deg);
+      z-index: 2;
+    }
+    .ticker-ribbon.ribbon-4 {
+      top: 70%;
+      transform: rotate(15deg);
+      z-index: 3;
+    }
+    .ticker-ribbon.ribbon-5 {
+      top: 90%;
+      transform: rotate(-12deg);
+      z-index: 2;
+    }
+
+    .ticker-track {
+      display: flex;
+      width: max-content;
+      white-space: nowrap;
+      will-change: transform;
+    }
+    .ticker-track.scroll-left {
+      animation: tickerScrollLeft 26s linear infinite;
+    }
+    .ticker-track.scroll-right {
+      animation: tickerScrollRight 30s linear infinite;
+    }
+    .ticker-ribbon.ribbon-3 .ticker-track.scroll-left {
+      animation-duration: 22s;
+    }
+    .ticker-ribbon.ribbon-4 .ticker-track.scroll-right {
+      animation-duration: 34s;
+    }
+
+    @keyframes tickerScrollLeft {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    @keyframes tickerScrollRight {
+      0% { transform: translateX(-50%); }
+      100% { transform: translateX(0); }
+    }
+
+    .ticker-content {
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .ticker-text {
+      font-family: 'Outfit', 'Kanit', sans-serif;
+      font-size: 1.35rem;
+      font-weight: 900;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      line-height: 1;
+    }
+
+    .ticker-text.solid {
+      color: #000000;
+      -webkit-text-fill-color: #000000;
+    }
+
+    .ticker-text.outline {
+      color: transparent;
+      -webkit-text-fill-color: transparent;
+      -webkit-text-stroke: 1.7px #000000;
+    }
+
+    .ticker-sep {
+      color: #000000;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 900;
+      font-size: 1.3rem;
+      margin: 0 16px;
+      line-height: 1;
     }
 
     /* Top Navbar */
@@ -1869,7 +1984,15 @@
   <!-- ===== MAIN ROSTER APPLICATION ===== -->
   <div id="mainRosterApp">
 
-  <div class="bg-mesh"></div>
+  <!-- ===================== INFINITE SCROLLING TICKER BACKGROUND (BLACK & WHITE GANG TAPE) ===================== -->
+  <div class="gang-ticker-bg" id="gangTickerBg">
+    <div class="ticker-ribbon ribbon-1" data-speed="26" data-dir="left"></div>
+    <div class="ticker-ribbon ribbon-2" data-speed="32" data-dir="right"></div>
+    <div class="ticker-ribbon ribbon-3" data-speed="22" data-dir="left"></div>
+    <div class="ticker-ribbon ribbon-4" data-speed="34" data-dir="right"></div>
+    <div class="ticker-ribbon ribbon-5" data-speed="28" data-dir="left"></div>
+    <div class="gang-ticker-overlay"></div>
+  </div>
 
   <!-- Navbar -->
   <nav class="navbar">
@@ -2432,9 +2555,48 @@
     }
 
     function renderAll() {
+      renderGangTickerBg();
       renderHeader();
       renderStats();
       renderRoster();
+    }
+
+    function renderGangTickerBg() {
+      const bg = document.getElementById("gangTickerBg");
+      if (!bg) return;
+      const gangName = (GANG_DATA && GANG_DATA.gang_name) || "SPONGEBOB";
+      const rawTag = (GANG_DATA && GANG_DATA.gang_tag !== undefined) ? String(GANG_DATA.gang_tag).trim() : "";
+      const gangTag = (rawTag && rawTag !== ".") ? rawTag : "577";
+      const slogan = (GANG_DATA && GANG_DATA.slogan) || "NEW GEN";
+
+      const pattern = [
+        { text: gangName, type: "solid" },
+        { text: gangName, type: "outline" },
+        { text: gangTag, type: "solid" },
+        { text: slogan, type: "outline" },
+        { text: gangName, type: "solid" },
+        { text: gangTag, type: "outline" },
+        { text: slogan, type: "solid" },
+        { text: gangName, type: "outline" },
+        { text: gangTag, type: "solid" },
+        { text: slogan, type: "outline" }
+      ];
+
+      let singleChunk = '<div class="ticker-content">';
+      for (let i = 0; i < 3; i++) {
+        pattern.forEach(item => {
+          singleChunk += `<span class="ticker-text ${item.type}">${item.text}</span><span class="ticker-sep">-</span>`;
+        });
+      }
+      singleChunk += '</div>';
+
+      const trackInnerHtml = singleChunk + singleChunk.replace('class="ticker-content"', 'class="ticker-content" aria-hidden="true"');
+
+      bg.querySelectorAll(".ticker-ribbon").forEach(ribbon => {
+        const dir = ribbon.dataset.dir || "left";
+        const speed = ribbon.dataset.speed || "28";
+        ribbon.innerHTML = `<div class="ticker-track scroll-${dir}" style="animation-duration: ${speed}s;">${trackInnerHtml}</div>`;
+      });
     }
 
     function renderHeader() {
