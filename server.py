@@ -6,6 +6,8 @@ import urllib.parse
 import urllib.request
 import datetime
 import time
+import threading
+from collections import defaultdict
 from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 
 # Fix Windows console encoding
@@ -199,6 +201,110 @@ def fetch_discord_user(user_id, bot_token=None):
 
     return {"success": False, "error": "ไม่สามารถดึงข้อมูล Discord ได้ กรุณาตรวจสอบ Discord ID หรือลองใหม่อีกครั้ง"}
 
+# ==============================================================================
+# 🛡️ ANTI-DDOS, ANTI-BOT & RATE LIMITING SHIELD
+# ==============================================================================
+class SecurityShield:
+    def __init__(self):
+        self.lock = threading.Lock()
+        self.requests = defaultdict(list)
+        self.auth_requests = defaultdict(list)
+        self.banned_ips = {}
+        
+        # Configuration Thresholds
+        self.WINDOW_SECONDS = 5
+        self.MAX_PAGE_REQS = 50        # Max 50 reqs / 5s for normal page / static asset loading
+        self.MAX_API_REQS = 20         # Max 20 reqs / 5s for API endpoints
+        self.MAX_AUTH_REQS = 6         # Max 6 auth reqs / 10s (prevents brute force)
+        self.BAN_FLOOD_THRESHOLD = 85  # Over 85 reqs in 5s triggers 3-minute temporary jail
+        self.BAN_DURATION = 180        # 180 seconds ban
+
+        # Malicious Attack Scanner / Bot User-Agents
+        self.MALICIOUS_UA = [
+            "sqlmap", "nikto", "masscan", "nmap", "gobuster", 
+            "dirbuster", "wpscan", "havij", "zgrab", "attack"
+        ]
+
+        # Whitelisted Social / Search Crawlers (Never blocked so embeds always work)
+        self.WHITELISTED_CRAWLERS = [
+            "discordbot", "facebookexternalhit", "twitterbot",
+            "googlebot", "bingbot", "slackbot", "line"
+        ]
+
+    def get_real_ip(self, handler) -> str:
+        # 1. Cloudflare Client IP (Highest priority when proxied through Cloudflare)
+        cf_ip = handler.headers.get("CF-Connecting-IP")
+        if cf_ip and cf_ip.strip():
+            return cf_ip.strip()
+        # 2. X-Forwarded-For (Render / Proxy)
+        xff = handler.headers.get("X-Forwarded-For")
+        if xff and xff.strip():
+            return xff.split(",")[0].strip()
+        # 3. Direct socket IP
+        try:
+            return handler.client_address[0]
+        except Exception:
+            return "127.0.0.1"
+
+    def is_crawler(self, user_agent: str) -> bool:
+        ua = (user_agent or "").lower()
+        return any(c in ua for c in self.WHITELISTED_CRAWLERS)
+
+    def is_malicious(self, user_agent: str) -> bool:
+        ua = (user_agent or "").lower()
+        return any(m in ua for m in self.MALICIOUS_UA)
+
+    def verify(self, handler, is_api=False, is_auth=False):
+        ua = handler.headers.get("User-Agent", "")
+        # Social crawlers bypass limits so link preview cards in Discord always render
+        if self.is_crawler(ua):
+            return True, 200, None, 0
+
+        # Block known vulnerability scanners & flood tools immediately
+        if self.is_malicious(ua):
+            return False, 403, "Forbidden: Security policy violation (Blocked Bot)", 0
+
+        ip = self.get_real_ip(handler)
+        now = time.time()
+
+        with self.lock:
+            # 1. Check if IP is currently banned/jailed
+            ban_until = self.banned_ips.get(ip, 0)
+            if now < ban_until:
+                remaining = max(1, int(ban_until - now))
+                return False, 429, f"🚨 IP ของคุณถูกระงับชั่วคราวเนื่องจากตรวจพบการโจมตีหรือส่งคำขอถี่เกินไป (เหลือ {remaining} วิ)", remaining
+            elif ip in self.banned_ips:
+                del self.banned_ips[ip]
+
+            # 2. General request tracking
+            cutoff = now - self.WINDOW_SECONDS
+            self.requests[ip] = [t for t in self.requests[ip] if t > cutoff]
+            self.requests[ip].append(now)
+            req_count = len(self.requests[ip])
+
+            # 3. Check for massive flood -> Auto-Jail for 3 minutes
+            if req_count > self.BAN_FLOOD_THRESHOLD:
+                self.banned_ips[ip] = now + self.BAN_DURATION
+                print(f"[SECURITY SHIELD] 🚨 IP {ip} BANNED for {self.BAN_DURATION}s (Sent {req_count} reqs in {self.WINDOW_SECONDS}s)", flush=True)
+                return False, 429, "🚨 ตรวจพบพฤติกรรมโจมตีระบบ (HTTP Flood Attack) IP ถูกบล็อกชั่วคราว 3 นาที", self.BAN_DURATION
+
+            # 4. Check normal rate limit
+            limit = self.MAX_API_REQS if is_api else self.MAX_PAGE_REQS
+            if req_count > limit:
+                return False, 429, "⚠️ ส่งคำขอถี่เกินไป กรุณารอสักครู่ (Rate Limited)", 5
+
+            # 5. Check auth rate limit (anti-brute force)
+            if is_auth:
+                auth_cutoff = now - 10
+                self.auth_requests[ip] = [t for t in self.auth_requests[ip] if t > auth_cutoff]
+                self.auth_requests[ip].append(now)
+                if len(self.auth_requests[ip]) > self.MAX_AUTH_REQS:
+                    return False, 429, "⚠️ ป้อนรหัสผ่านถี่เกินไป กรุณารอ 15 วินาที", 15
+
+        return True, 200, None, 0
+
+shield = SecurityShield()
+
 class GangRequestHandler(SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=BASE_DIR, **kwargs)
@@ -208,15 +314,91 @@ class GangRequestHandler(SimpleHTTPRequestHandler):
         self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
         self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization")
         self.send_header("Cache-Control", "no-cache, no-store, must-revalidate")
+        self.send_header("X-Content-Type-Options", "nosniff")
+        self.send_header("X-Frame-Options", "SAMEORIGIN")
+        self.send_header("X-XSS-Protection", "1; mode=block")
         super().end_headers()
 
     def do_OPTIONS(self):
         self.send_response(200)
         self.end_headers()
 
+    def do_HEAD(self):
+        allowed, status, err_msg, retry = shield.verify(self, is_api=False, is_auth=False)
+        if not allowed:
+            self.send_response(status)
+            self.send_header("Retry-After", str(retry))
+            self.end_headers()
+            return
+        return super().do_HEAD()
+
+    def send_shield_page(self, retry_seconds, msg):
+        self.send_response(429)
+        self.send_header("Content-Type", "text/html; charset=utf-8")
+        self.send_header("Retry-After", str(retry_seconds))
+        self.end_headers()
+        html = f"""<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>429 • SPONGEBOB SHIELD ACTIVE</title>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <style>
+    body {{ background: #060709; color: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Kanit", sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; text-align: center; }}
+    .shield-card {{ background: rgba(15, 18, 26, 0.96); border: 1.5px solid rgba(225, 29, 72, 0.5); box-shadow: 0 0 50px rgba(225, 29, 72, 0.25), 0 20px 60px rgba(0, 0, 0, 0.95); border-radius: 18px; max-width: 500px; padding: 42px 32px; animation: shieldPulse 2s infinite alternate; }}
+    @keyframes shieldPulse {{ from {{ box-shadow: 0 0 30px rgba(225, 29, 72, 0.2); }} to {{ box-shadow: 0 0 60px rgba(225, 29, 72, 0.45); }} }}
+    .icon {{ font-size: 58px; margin-bottom: 16px; filter: drop-shadow(0 0 20px rgba(225, 29, 72, 0.6)); }}
+    h1 {{ font-size: 1.6rem; color: #ff3b68; margin-bottom: 12px; letter-spacing: 1px; font-weight: 800; }}
+    p {{ color: #94a3b8; font-size: 0.95rem; line-height: 1.6; margin-bottom: 24px; }}
+    .countdown-box {{ font-size: 2.2rem; font-weight: 900; color: #f59e0b; margin-bottom: 20px; font-family: monospace; background: rgba(0,0,0,0.6); padding: 14px; border-radius: 12px; border: 1px solid rgba(245, 158, 11, 0.35); }}
+    .brand {{ font-size: 0.8rem; color: #64748b; letter-spacing: 2px; text-transform: uppercase; }}
+  </style>
+</head>
+<body>
+  <div class="shield-card">
+    <div class="icon">🛡️</div>
+    <h1>ANTI-DDOS & BOT SHIELD</h1>
+    <p>{msg}</p>
+    <div class="countdown-box" id="timer">{retry_seconds}s</div>
+    <div class="brand">SPONGEBOB 577 • SECURITY SYSTEM</div>
+  </div>
+  <script>
+    let sec = {retry_seconds};
+    const t = document.getElementById("timer");
+    const iv = setInterval(() => {{
+      sec--;
+      if (sec <= 0) {{
+        clearInterval(iv);
+        window.location.reload();
+      }} else {{
+        t.innerText = sec + "s";
+      }}
+    }}, 1000);
+  </script>
+</body>
+</html>"""
+        self.wfile.write(html.encode("utf-8"))
+
     def do_GET(self):
         parsed = urllib.parse.urlparse(self.path)
         clean_path = parsed.path.rstrip("/")
+        is_api = clean_path.startswith("/api/")
+
+        # Security & Rate Limiting Check
+        allowed, status, err_msg, retry = shield.verify(self, is_api=is_api, is_auth=False)
+        if not allowed:
+            if is_api:
+                self.send_response(status)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Retry-After", str(retry))
+                self.end_headers()
+                self.wfile.write(json.dumps({"success": False, "error": err_msg, "retry_after": retry}, ensure_ascii=False).encode("utf-8"))
+                return
+            else:
+                self.send_shield_page(retry, err_msg)
+                return
+
         if clean_path in ["", "/gang", "/index.html"]:
             try:
                 html_path = os.path.join(BASE_DIR, "index.html")
@@ -303,6 +485,18 @@ class GangRequestHandler(SimpleHTTPRequestHandler):
     def do_POST(self):
         parsed = urllib.parse.urlparse(self.path)
         clean_path = parsed.path.rstrip("/")
+        is_auth = clean_path in ["/api/gang/auth", "/api/gang/change_pass"]
+
+        # Security & Rate Limiting Check for POST requests
+        allowed, status, err_msg, retry = shield.verify(self, is_api=True, is_auth=is_auth)
+        if not allowed:
+            self.send_response(status)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Retry-After", str(retry))
+            self.end_headers()
+            self.wfile.write(json.dumps({"success": False, "error": err_msg, "retry_after": retry}, ensure_ascii=False).encode("utf-8"))
+            return
+
         content_length = int(self.headers.get("Content-Length", 0))
         body_bytes = self.rfile.read(content_length) if content_length > 0 else b""
         try:

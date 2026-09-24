@@ -4368,8 +4368,23 @@
         if (loaderFill) loaderFill.style.width = '0%';
         window.scrollTo({ top: 0, behavior: 'instant' });
       };
+    // ===== CLIENT-SIDE ANTI-F5 FLOOD & SPAM GUARD =====
+    (function() {
+      let reloadKeyStrokes = [];
+      window.addEventListener('keydown', function(e) {
+        if (e.key === 'F5' || ((e.ctrlKey || e.metaKey) && (e.key === 'r' || e.key === 'R'))) {
+          const now = Date.now();
+          reloadKeyStrokes = reloadKeyStrokes.filter(t => now - t < 3000);
+          reloadKeyStrokes.push(now);
+          if (reloadKeyStrokes.length >= 4) {
+            e.preventDefault();
+            if (typeof showToast === 'function') {
+              showToast("⚠️ กรุณาอย่ากดรีเฟรชรัวๆ เพื่อป้องกันระบบ Anti-DDoS บล็อก IP ของท่าน");
+            }
+          }
+        }
+      });
     })();
-
   </script>
 
 </body>
