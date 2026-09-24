@@ -1163,75 +1163,97 @@
 
           <!-- TAB: VISITORS & COOKIES (NoCAPTCHA LOGS) -->
           <div class="tab-pane" id="tabVisitors">
-            <div class="stats-grid" style="margin-bottom: 24px;">
-              <div class="stat-card">
-                <div class="stat-icon-wrap" style="background: rgba(245, 158, 11, 0.15); color: var(--primary);">
+            <!-- 4 Modern Metric Cards -->
+            <div class="metrics-grid">
+              <div class="metric-card">
+                <div class="metric-icon" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b;">
                   <i class="fa-solid fa-cookie-bite"></i>
                 </div>
-                <div class="stat-info">
-                  <div class="stat-val" id="statTotalCookies">0</div>
-                  <div class="stat-lbl">Cookies ผู้เข้าชมทั้งหมด</div>
+                <div class="metric-info">
+                  <h4>Cookies ผู้เข้าชมทั้งหมด</h4>
+                  <div class="value" id="statTotalCookies">0</div>
                 </div>
               </div>
-              <div class="stat-card">
-                <div class="stat-icon-wrap" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">
+
+              <div class="metric-card">
+                <div class="metric-icon" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">
                   <i class="fa-solid fa-user-check"></i>
                 </div>
-                <div class="stat-info">
-                  <div class="stat-val" id="statVerifiedHumans">0</div>
-                  <div class="stat-lbl">ผ่าน NoCAPTCHA (มนุษย์)</div>
+                <div class="metric-info">
+                  <h4>ผ่าน NoCAPTCHA (คนจริง)</h4>
+                  <div class="value" id="statVerifiedHumans" style="color: #10b981;">0</div>
                 </div>
               </div>
-              <div class="stat-card">
-                <div class="stat-icon-wrap" style="background: rgba(59, 130, 246, 0.15); color: #3b82f6;">
-                  <i class="fa-solid fa-shield-halved"></i>
+
+              <div class="metric-card">
+                <div class="metric-icon" style="background: rgba(88, 101, 242, 0.18); color: #818cf8;">
+                  <i class="fa-brands fa-discord"></i>
                 </div>
-                <div class="stat-info">
-                  <div class="stat-val" id="statTotalVisits">0</div>
-                  <div class="stat-lbl">ยอดการเข้าชมสะสม</div>
+                <div class="metric-info">
+                  <h4>บอท Discord (พรีวิว)</h4>
+                  <div class="value" id="statDiscordBots" style="color: #818cf8;">0</div>
+                </div>
+              </div>
+
+              <div class="metric-card">
+                <div class="metric-icon" style="background: rgba(59, 130, 246, 0.15); color: #3b82f6;">
+                  <i class="fa-solid fa-chart-line"></i>
+                </div>
+                <div class="metric-info">
+                  <h4>ยอดเปิดชมสะสม</h4>
+                  <div class="value" id="statTotalVisits">0</div>
                 </div>
               </div>
             </div>
 
-            <div class="card" style="margin-bottom: 24px;">
-              <div class="card-header-bar">
+            <!-- Content Card with Search & Filters -->
+            <div class="content-card">
+              <div class="card-header-bar" style="margin-bottom: 16px;">
                 <div class="card-title">
-                  <i class="fa-solid fa-table-list" style="color: var(--primary);"></i> บันทึก Cookie ผู้เข้าชมเว็บ (Visitor Cookies Log)
+                  <i class="fa-solid fa-shield-halved" style="color: #10b981;"></i> บันทึก Cookie ผู้เข้าชม & ตรวจจับ NoCAPTCHA
                 </div>
-                <div style="display: flex; gap: 8px;">
+                <div style="display: flex; gap: 8px; align-items: center;">
+                  <span id="visitorLastSyncTime" style="font-size: 11px; color: var(--text-muted);">อัปเดตล่าสุด: กำลังโหลด...</span>
                   <button class="btn btn-secondary btn-sm" onclick="loadVisitorCookies()">
-                    <i class="fa-solid fa-rotate-right"></i> รีเฟรชข้อมูล
+                    <i class="fa-solid fa-rotate-right" id="visitorRefreshIcon"></i> รีเฟรช
                   </button>
                 </div>
               </div>
 
-              <!-- หมวดหมู่ตัวกรอง (แยกประเภทคนจริง / บอทดิส / อื่นๆ) -->
-              <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; padding: 0 4px;">
-                <button class="filter-visitor-btn active" id="vFilterAll" onclick="setVisitorCategoryFilter('all')">
-                  <i class="fa-solid fa-layer-group"></i> ทั้งหมด (<span id="countFilterAll">0</span>)
-                </button>
-                <button class="filter-visitor-btn" id="vFilterHuman" onclick="setVisitorCategoryFilter('human')">
-                  <i class="fa-solid fa-user-check" style="color: #10b981;"></i> ผู้ใช้จริง (คน) (<span id="countFilterHuman">0</span>)
-                </button>
-                <button class="filter-visitor-btn" id="vFilterDiscord" onclick="setVisitorCategoryFilter('discord')">
-                  <i class="fa-brands fa-discord" style="color: #5865F2;"></i> บอท Discord (<span id="countFilterDiscord">0</span>)
-                </button>
-                <button class="filter-visitor-btn" id="vFilterOther" onclick="setVisitorCategoryFilter('other')">
-                  <i class="fa-solid fa-robot" style="color: #f59e0b;"></i> ระบบ/อื่นๆ (<span id="countFilterOther">0</span>)
-                </button>
+              <!-- หมวดหมู่ตัวกรอง + กล่องค้นหา -->
+              <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 16px;">
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                  <button class="filter-visitor-btn active" id="vFilterAll" onclick="setVisitorCategoryFilter('all')">
+                    <i class="fa-solid fa-layer-group"></i> ทั้งหมด (<span id="countFilterAll">0</span>)
+                  </button>
+                  <button class="filter-visitor-btn" id="vFilterHuman" onclick="setVisitorCategoryFilter('human')">
+                    <i class="fa-solid fa-user-check" style="color: #10b981;"></i> ผู้ใช้จริง (คน) (<span id="countFilterHuman">0</span>)
+                  </button>
+                  <button class="filter-visitor-btn" id="vFilterDiscord" onclick="setVisitorCategoryFilter('discord')">
+                    <i class="fa-brands fa-discord" style="color: #5865F2;"></i> บอท Discord (<span id="countFilterDiscord">0</span>)
+                  </button>
+                  <button class="filter-visitor-btn" id="vFilterOther" onclick="setVisitorCategoryFilter('other')">
+                    <i class="fa-solid fa-robot" style="color: #f59e0b;"></i> ระบบ/อื่นๆ (<span id="countFilterOther">0</span>)
+                  </button>
+                </div>
+
+                <div style="position: relative; width: 100%; max-width: 280px;">
+                  <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 12px;"></i>
+                  <input type="text" id="visitorSearchInput" class="form-control" style="padding: 7px 12px 7px 32px; font-size: 0.84rem;" placeholder="ค้นหา IP, ID, เบราว์เซอร์..." oninput="handleVisitorSearch(this.value)">
+                </div>
               </div>
 
               <div class="table-container">
                 <table class="custom-table">
                   <thead>
                     <tr>
-                      <th>Cookie ID</th>
-                      <th>หมวดหมู่ (ที่มา)</th>
-                      <th>IP Address & แหล่งที่อยู่</th>
-                      <th>สถานะ NoCAPTCHA</th>
-                      <th>อุปกรณ์ / เบราว์เซอร์</th>
-                      <th style="text-align: center;">จำนวนครั้ง</th>
-                      <th>เข้าล่าสุด</th>
+                      <th style="min-width: 140px;">Cookie ID</th>
+                      <th style="min-width: 160px;">หมวดหมู่ (ที่มา)</th>
+                      <th style="min-width: 180px;">IP Address & แหล่งที่อยู่</th>
+                      <th style="min-width: 130px;">สถานะ NoCAPTCHA</th>
+                      <th style="min-width: 180px;">อุปกรณ์ / เบราว์เซอร์</th>
+                      <th style="text-align: center; min-width: 90px;">จำนวนครั้ง</th>
+                      <th style="min-width: 140px;">เข้าล่าสุด</th>
                     </tr>
                   </thead>
                   <tbody id="visitorsTableBody">
@@ -1805,20 +1827,41 @@
       renderVisitorsTable();
     }
 
+    let visitorSearchQuery = '';
+
+    function handleVisitorSearch(query) {
+      visitorSearchQuery = (query || '').toLowerCase().trim();
+      renderVisitorsTable();
+    }
+
     function renderVisitorsTable() {
       const tbody = document.getElementById('visitorsTableBody');
       if (!tbody) return;
 
       let filtered = cachedVisitorsList;
       if (visitorFilterType !== 'all') {
-        filtered = cachedVisitorsList.filter(v => {
+        filtered = filtered.filter(v => {
           const meta = parseVisitorMeta(v);
           return meta.category.type === visitorFilterType;
         });
       }
 
+      if (visitorSearchQuery) {
+        filtered = filtered.filter(v => {
+          const id = (v.visitor_id || '').toLowerCase();
+          const ip = (v.ip || '').toLowerCase();
+          const ua = (v.user_agent || '').toLowerCase();
+          const meta = parseVisitorMeta(v);
+          return id.includes(visitorSearchQuery) || 
+                 ip.includes(visitorSearchQuery) || 
+                 ua.includes(visitorSearchQuery) || 
+                 meta.locationText.toLowerCase().includes(visitorSearchQuery) || 
+                 meta.device.toLowerCase().includes(visitorSearchQuery);
+        });
+      }
+
       if (filtered.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 30px;">ไม่มีข้อมูลในหมวดหมู่นี้</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 30px;">ไม่มีข้อมูลที่ตรงกับเงื่อนไข</td></tr>';
         return;
       }
 
@@ -1855,6 +1898,9 @@
     async function loadVisitorCookies() {
       const passcode = currentPasscode || localStorage.getItem('sb577_admin_pass') || localStorage.getItem('gang_admin_passcode') || 'gang123';
       const tbody = document.getElementById('visitorsTableBody');
+      const icon = document.getElementById('visitorRefreshIcon');
+      if (icon) icon.classList.add('fa-spin');
+
       if (!tbody) return;
       try {
         const res = await fetch(`/api/admin/visitors?passcode=${encodeURIComponent(passcode)}`);
@@ -1883,10 +1929,15 @@
           const elHuman = document.getElementById('countFilterHuman');
           const elDiscord = document.getElementById('countFilterDiscord');
           const elOther = document.getElementById('countFilterOther');
+          const elBotStat = document.getElementById('statDiscordBots');
+          const elSync = document.getElementById('visitorLastSyncTime');
+
           if (elAll) elAll.textContent = cachedVisitorsList.length;
           if (elHuman) elHuman.textContent = humanCount;
           if (elDiscord) elDiscord.textContent = discordCount;
           if (elOther) elOther.textContent = otherCount;
+          if (elBotStat) elBotStat.textContent = discordCount;
+          if (elSync) elSync.textContent = 'อัปเดตล่าสุด: ' + new Date().toLocaleTimeString('th-TH');
 
           renderVisitorsTable();
         } else {
@@ -1895,6 +1946,8 @@
       } catch (e) {
         console.error("loadVisitorCookies error:", e);
         tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #ef4444; padding: 20px;">เกิดข้อผิดพลาดในการโหลดข้อมูล: ${escapeHtml(e.message || 'Error')}</td></tr>`;
+      } finally {
+        if (icon) icon.classList.remove('fa-spin');
       }
     }
 
