@@ -147,9 +147,6 @@ def track_and_get_visitor(handler):
         is_verified = True
 
     visitors = load_visitor_cookies()
-    if not is_verified and visitor_id in visitors:
-        if visitors[visitor_id].get("verified_human"):
-            is_verified = True
 
     real_ip = shield.get_real_ip(handler)
     user_agent = handler.headers.get("User-Agent", "Unknown")
@@ -486,6 +483,13 @@ class GangRequestHandler(SimpleHTTPRequestHandler):
             else:
                 self.send_shield_page(retry, err_msg)
                 return
+
+        if clean_path in ["/reset-captcha", "/test-captcha"]:
+            self.send_response(302)
+            self.send_header("Set-Cookie", "gang_human_verified=; Path=/; Max-Age=0")
+            self.send_header("Location", "/verify.html")
+            self.end_headers()
+            return
 
         # Standalone NoCAPTCHA verification page route
         if clean_path in ["/verify", "/verify.html"]:

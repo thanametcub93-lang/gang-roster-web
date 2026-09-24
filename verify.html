@@ -254,10 +254,16 @@
   <script>
     let isVerifying = false;
 
-    // If user is already verified, redirect immediately to website
-    if (document.cookie.includes('gang_human_verified=1')) {
-      window.location.replace('/');
-    }
+    // Show status if user was already verified earlier
+    window.addEventListener('DOMContentLoaded', () => {
+      if (document.cookie.includes('gang_human_verified=1')) {
+        const status = document.getElementById('verifyStatus');
+        if (status) {
+          status.innerHTML = '✓ บัญชีของคุณได้รับการยืนยันแล้ว • <a href="/" style="color:#38bdf8;text-decoration:underline;font-weight:600;">คลิกที่นี่เพื่อเข้าสู่หน้าหลัก</a><br><span style="font-size:11px;color:#64748b;">(สามารถคลิกกล่องด้านบนเพื่อทดสอบการทำงานของ NoCAPTCHA ได้ตลอดเวลา)</span>';
+          status.style.color = '#10b981';
+        }
+      }
+    });
 
     async function executeCaptchaVerification(e) {
       if (e && typeof e.stopPropagation === 'function') e.stopPropagation();

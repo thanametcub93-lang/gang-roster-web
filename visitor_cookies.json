@@ -30,7 +30,7 @@
     "visitor_id": "vis_05d52740bcc54b42",
     "ip": "127.0.0.1",
     "user_agent": "Mozilla/5.0 Chrome/120.0",
-    "verified_human": true,
+    "verified_human": false,
     "first_seen": "2026-09-25 02:04:02",
     "last_seen": "2026-09-25 02:04:02",
     "visit_count": 1
@@ -84,9 +84,63 @@
     "visitor_id": "vis_7600c6c7a2524b98",
     "ip": "127.0.0.1",
     "user_agent": "Mozilla/5.0 Chrome/120.0",
-    "verified_human": true,
+    "verified_human": false,
     "first_seen": "2026-09-25 02:04:34",
     "last_seen": "2026-09-25 02:04:34",
+    "visit_count": 1
+  },
+  "vis_952fec3c1ca34243": {
+    "visitor_id": "vis_952fec3c1ca34243",
+    "ip": "127.0.0.1",
+    "user_agent": "Mozilla/5.0",
+    "verified_human": false,
+    "first_seen": "2026-09-25 02:07:43",
+    "last_seen": "2026-09-25 02:07:43",
+    "visit_count": 1
+  },
+  "vis_acc515bd872d4129": {
+    "visitor_id": "vis_acc515bd872d4129",
+    "ip": "127.0.0.1",
+    "user_agent": "Mozilla/5.0",
+    "verified_human": false,
+    "first_seen": "2026-09-25 02:07:43",
+    "last_seen": "2026-09-25 02:07:43",
+    "visit_count": 1
+  },
+  "vis_1b91007b45ca49c3": {
+    "visitor_id": "vis_1b91007b45ca49c3",
+    "ip": "127.0.0.1",
+    "user_agent": "Mozilla/5.0",
+    "verified_human": false,
+    "first_seen": "2026-09-25 02:08:08",
+    "last_seen": "2026-09-25 02:08:08",
+    "visit_count": 1
+  },
+  "vis_d89fdd36ed3d4d0d": {
+    "visitor_id": "vis_d89fdd36ed3d4d0d",
+    "ip": "127.0.0.1",
+    "user_agent": "Mozilla/5.0",
+    "verified_human": false,
+    "first_seen": "2026-09-25 02:08:08",
+    "last_seen": "2026-09-25 02:08:08",
+    "visit_count": 1
+  },
+  "vis_c5f716fa606a410a": {
+    "visitor_id": "vis_c5f716fa606a410a",
+    "ip": "127.0.0.1",
+    "user_agent": "Mozilla/5.0",
+    "verified_human": false,
+    "first_seen": "2026-09-25 02:08:08",
+    "last_seen": "2026-09-25 02:08:08",
+    "visit_count": 1
+  },
+  "vis_1f95c5e37dea408b": {
+    "visitor_id": "vis_1f95c5e37dea408b",
+    "ip": "127.0.0.1",
+    "user_agent": "Mozilla/5.0",
+    "verified_human": true,
+    "first_seen": "2026-09-25 02:08:08",
+    "last_seen": "2026-09-25 02:08:08",
     "visit_count": 1
   }
 }
