@@ -714,15 +714,55 @@
       background: rgba(225, 29, 72, 0.7);
     }
 
-    /* Roster Grid — single wide column for hover cards */
+    /* Roster Grid — 2 columns */
     .roster-grid {
       margin-top: 1.8rem;
       display: flex;
       flex-direction: column;
+      gap: 28px;
+    }
+    .rank-section {
+      display: flex;
+      flex-direction: column;
       gap: 10px;
-      max-width: 640px;
-      margin-left: auto;
-      margin-right: auto;
+    }
+    .rank-section-cards {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+    @media (max-width: 720px) {
+      .rank-section-cards { grid-template-columns: 1fr; }
+    }
+    /* Section header */
+    .rank-section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 4px;
+    }
+    .rank-section-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+    }
+    .rank-section-line {
+      flex: 1;
+      height: 1px;
+      background: rgba(255,255,255,0.07);
+    }
+    .rank-section-count {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 2px 10px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.05);
+      color: var(--text-muted);
     }
 
     /* ===== HOVER CARD STYLE ===== */
@@ -763,14 +803,17 @@
       border-width: 0 2px 2px 0;
       border-radius: 0 0 3px 0;
     }
-    .member-card:hover {
+    .member-card:hover,
+    .member-card.is-active {
       background: rgba(20, 14, 20, 0.98);
       border-color: rgba(225, 29, 72, 0.55);
       box-shadow: 0 8px 32px rgba(225, 29, 72, 0.18);
-      transform: translateX(4px);
+      transform: translateY(-2px);
     }
     .member-card:hover::before,
-    .member-card:hover::after {
+    .member-card:hover::after,
+    .member-card.is-active::before,
+    .member-card.is-active::after {
       border-color: rgba(225, 29, 72, 0.9);
     }
     @keyframes cardFadeUp {
@@ -788,7 +831,8 @@
       box-shadow: 0 0 14px rgba(225,29,72,0.25);
       transition: border-color 0.3s;
     }
-    .member-card:hover .card-avatar-full {
+    .member-card:hover .card-avatar-full,
+    .member-card.is-active .card-avatar-full {
       border-color: rgba(225,29,72,0.9);
     }
     /* Card main body */
@@ -825,8 +869,9 @@
       opacity: 0;
       margin-top: 0;
     }
-    .member-card:hover .card-hover-info {
-      max-height: 200px;
+    .member-card:hover .card-hover-info,
+    .member-card.is-active .card-hover-info {
+      max-height: 220px;
       opacity: 1;
       margin-top: 10px;
     }
@@ -2280,42 +2325,39 @@
         return;
       }
 
-      let cardsHtml = "";
-      members.forEach((m, idx) => {
+      // ---- helper: build one card HTML ----
+      function buildCardHtml(m, idx) {
         const statusClass = m.status === 'online' ? 'status-online' : (m.status === 'busy' ? 'status-busy' : 'status-offline');
         const avatarUrl = m.avatar || "https://cdn.discordapp.com/embed/avatars/0.png";
         const animDelay = (Math.min(idx * 0.045, 0.75) + 0.55).toFixed(2);
-        const coverContent = m.cover_url
-          ? `<img src="${escapeHtml(m.cover_url)}" class="card-cover-bg" alt="cover" onerror="this.outerHTML='<div class=card-cover-placeholder></div>'">`
-          : `<div class="card-cover-placeholder"></div>`;
+        const roles = GANG_DATA.roles || [];
+        const roleObj = roles.find(x => x.name === m.rank);
+        const rankColor = roleObj ? (roleObj.color || '#e11d48') : '#e11d48';
 
-        cardsHtml += `
-          <div class="member-card" id="member_card_${m.id}" style="animation-delay: ${animDelay}s; flex-direction: column; align-items: stretch;">
-
-            <!-- Compact row: avatar + name + rank + discord btn -->
+        return `
+          <div class="member-card" id="member_card_${m.id}" onclick="this.classList.toggle('is-active')" style="animation-delay: ${animDelay}s; flex-direction: column; align-items: stretch;">
+            <!-- Top row: Avatar + Name & Rank + Status & Discord Copy -->
             <div style="display:flex; align-items:center; gap:14px;">
               <img src="${escapeHtml(avatarUrl)}" alt="${escapeHtml(m.name)}" class="card-avatar-full" onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'">
-
               <div class="card-body">
                 <div class="card-name">${escapeHtml(m.name)} <span style="font-size:0.78rem;color:var(--text-muted);font-weight:400;">(${escapeHtml(m.nickname || '')})</span></div>
-                <div class="card-rank-badge">${escapeHtml(m.rank || 'สมาชิกแก๊ง')}</div>
+                <div class="card-rank-badge" style="background:${rankColor}18; color:${rankColor}; border-color:${rankColor}45;">${escapeHtml(m.rank || 'สมาชิกแก๊ง')}</div>
               </div>
-
               <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
                 <div class="card-status-dot ${statusClass}" title="${m.status || 'offline'}"></div>
-                ${m.discord_id ? `<div class="card-discord-btn" title="คัดลอก Discord ID" onclick="copyToClipboard('${escapeHtml(m.discord_id)}','คัดลอก Discord ID แล้ว')"><i class="fa-brands fa-discord"></i></div>` : ''}
+                ${m.discord_id ? `<div class="card-discord-btn" title="คัดลอก Discord ID" onclick="event.stopPropagation(); copyToClipboard('${escapeHtml(m.discord_id)}','คัดลอก Discord ID แล้ว')"><i class="fa-brands fa-discord"></i></div>` : ''}
               </div>
             </div>
 
-            <!-- Hover info panel -->
+            <!-- Hover / Active info panel -->
             <div class="card-hover-info">
               <div class="hover-info-row">
                 <span class="hover-info-label"><i class="fa-solid fa-phone" style="color:#f59e0b;"></i> เบอร์โทร IC</span>
-                <span class="hover-info-val" onclick="copyToClipboard('${escapeHtml(m.phone || 'ไม่มี')}','คัดลอกเบอร์แล้ว')">${escapeHtml(m.phone || 'ไม่มี')} <i class="fa-regular fa-copy" style="font-size:0.7rem;"></i></span>
+                <span class="hover-info-val" onclick="event.stopPropagation(); copyToClipboard('${escapeHtml(m.phone || 'ไม่มี')}','คัดลอกเบอร์แล้ว')">${escapeHtml(m.phone || 'ไม่มี')} <i class="fa-regular fa-copy" style="font-size:0.7rem;"></i></span>
               </div>
               <div class="hover-info-row">
                 <span class="hover-info-label"><i class="fa-brands fa-discord" style="color:#6366f1;"></i> Discord ID</span>
-                <span class="hover-info-val" title="${escapeHtml(m.discord_id || 'ไม่มี')}" onclick="copyToClipboard('${escapeHtml(m.discord_id || '')}','คัดลอก Discord ID แล้ว')"><span class="discord-id-val">${escapeHtml(m.discord_id || 'ไม่มี')}</span> <i class="fa-regular fa-copy" style="font-size:0.7rem;"></i></span>
+                <span class="hover-info-val" title="${escapeHtml(m.discord_id || 'ไม่มี')}" onclick="event.stopPropagation(); copyToClipboard('${escapeHtml(m.discord_id || '')}','คัดลอก Discord ID แล้ว')"><span class="discord-id-val">${escapeHtml(m.discord_id || 'ไม่มี')}</span> <i class="fa-regular fa-copy" style="font-size:0.7rem;"></i></span>
               </div>
               ${m.weapon ? `
               <div class="hover-info-row">
@@ -2328,12 +2370,55 @@
                 <span class="hover-info-val">${escapeHtml(m.joined_date)}</span>
               </div>` : ''}
             </div>
+          </div>`;
+      }
 
-          </div>
-        `;
+      // ---- group by role priority ----
+      const roles = GANG_DATA.roles || [];
+      function getRolePriority(rankName) {
+        if (!rankName) return 99;
+        const clean = rankName.toLowerCase();
+        if (clean.includes('leader') && !clean.includes('co-') && !clean.includes('co ') && !clean.includes('รอง')) return 1;
+        if (clean.includes('co-') || clean.includes('co ') || clean.includes('รอง') || clean.includes('coleader')) return 2;
+        const r = roles.find(x => x.name === rankName);
+        return r ? (r.priority || 3) : 3;
+      }
+
+      // Define display groups: Leader, Co-Leader, Member
+      const GROUPS = [
+        { key: 'leader',    label: '👑 LEADER',       icon: 'fa-crown',         color: '#fbbf24', match: r => r <= 1 },
+        { key: 'colead',    label: '⚔️ CO-LEADER',    icon: 'fa-shield-halved', color: '#f87171', match: r => r === 2 },
+        { key: 'member',    label: '🔰 MEMBER',       icon: 'fa-users',         color: '#60a5fa', match: r => r >= 3 },
+      ];
+
+      let gridHtml = '';
+      let anyRendered = false;
+
+      GROUPS.forEach(group => {
+        const groupMembers = members.filter(m => group.match(getRolePriority(m.rank)));
+        if (groupMembers.length === 0) return;
+        anyRendered = true;
+
+        const cardsHtml = groupMembers.map((m, i) => buildCardHtml(m, i)).join('');
+        gridHtml += `
+          <div class="rank-section">
+            <div class="rank-section-header">
+              <span class="rank-section-title" style="color: ${group.color};">
+                <i class="fa-solid ${group.icon}" style="margin-right: 8px;"></i>${group.label}
+              </span>
+              <div class="rank-section-line" style="background: linear-gradient(90deg, ${group.color}40, transparent);"></div>
+              <span class="rank-section-count" style="border: 1px solid ${group.color}35; color: ${group.color};">${groupMembers.length} คน</span>
+            </div>
+            <div class="rank-section-cards">${cardsHtml}</div>
+          </div>`;
       });
 
-      grid.innerHTML = cardsHtml;
+      grid.innerHTML = anyRendered ? gridHtml : `
+        <div class="empty-state">
+          <i class="fa-solid fa-user-slash"></i>
+          <h3 style="color:#fff;margin-bottom:6px;">ไม่พบรายชื่อสมาชิก</h3>
+          <p>ลองค้นหาด้วยคำอื่น</p>
+        </div>`;
     }
 
     // ==================== AUTH & ADMIN SYSTEM ====================
