@@ -1987,6 +1987,127 @@
       color: rgba(255, 255, 255, 0.9);
     }
 
+    /* ===================== NOCAPTCHA RECAPTCHA WIDGET ===================== */
+    .nocaptcha-container {
+      margin-top: 12px;
+      margin-bottom: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      z-index: 10;
+      position: relative;
+    }
+    .nocaptcha-card {
+      width: 304px;
+      height: 74px;
+      background: #18191c;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 6px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 14px;
+      box-sizing: border-box;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.25s ease;
+    }
+    .nocaptcha-card:hover {
+      border-color: rgba(255, 255, 255, 0.4);
+      background: #202226;
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.85);
+    }
+    .nocaptcha-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .nocaptcha-checkbox {
+      width: 28px;
+      height: 28px;
+      background: #2b2d31;
+      border: 2px solid #585c65;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    .nocaptcha-card:hover .nocaptcha-checkbox {
+      border-color: #888d98;
+    }
+    .nocaptcha-checkbox.verified {
+      background: rgba(16, 185, 129, 0.15) !important;
+      border-color: #10b981 !important;
+    }
+    .nocaptcha-spinner {
+      display: none;
+      width: 20px;
+      height: 20px;
+      border: 3px solid #3b82f6;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: captchaSpin 0.7s linear infinite;
+    }
+    @keyframes captchaSpin {
+      to { transform: rotate(360deg); }
+    }
+    .nocaptcha-checkmark {
+      display: none;
+      color: #10b981;
+      font-size: 19px;
+      font-weight: 900;
+      animation: checkmarkPop 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    @keyframes checkmarkPop {
+      0% { transform: scale(0); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .nocaptcha-label {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Kanit", sans-serif;
+      font-size: 13.5px;
+      font-weight: 500;
+      color: #f1f5f9;
+      line-height: 1.2;
+      cursor: pointer;
+    }
+    .nocaptcha-right {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      cursor: default;
+      opacity: 0.85;
+    }
+    .nocaptcha-logo {
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
+    }
+    .nocaptcha-brand {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-size: 9.5px;
+      font-weight: 600;
+      color: #94a3b8;
+      letter-spacing: 0.2px;
+    }
+    .nocaptcha-terms {
+      font-size: 8px;
+      color: #64748b;
+    }
+    .nocaptcha-msg {
+      font-family: 'Kanit', sans-serif;
+      font-size: 11.5px;
+      letter-spacing: 0.5px;
+      color: #94a3b8;
+      text-align: center;
+      transition: color 0.2s;
+    }
+
     /* Main Roster Container */
     #mainRosterApp {
       display: none;
@@ -2052,6 +2173,25 @@
         <div class="landing-header">
           <h1 class="landing-title">SPONGEBOB 577</h1>
           <div class="landing-subtitle">N E W &nbsp; G E N &nbsp;&bull;&nbsp; OFFICIAL FIVEM GANG</div>
+        </div>
+
+        <!-- NoCAPTCHA reCAPTCHA Security Check & Cookie Tracker -->
+        <div class="nocaptcha-container" id="noCaptchaContainer" onclick="event.stopPropagation()">
+          <div class="nocaptcha-card" id="noCaptchaCard" onclick="verifyCaptchaHuman(event)">
+            <div class="nocaptcha-left">
+              <div class="nocaptcha-checkbox" id="noCaptchaCheckbox">
+                <div class="nocaptcha-spinner" id="noCaptchaSpinner"></div>
+                <i class="fa-solid fa-check nocaptcha-checkmark" id="noCaptchaCheckmark"></i>
+              </div>
+              <div class="nocaptcha-label" id="noCaptchaLabel">ฉันไม่ใช่โปรแกรมอัตโนมัติ (I'm not a robot)</div>
+            </div>
+            <div class="nocaptcha-right">
+              <img src="https://www.gstatic.com/recaptcha/api2/logo_48.png" alt="reCAPTCHA" class="nocaptcha-logo" onerror="this.src='/gang_logo.png'">
+              <div class="nocaptcha-brand">reCAPTCHA</div>
+              <div class="nocaptcha-terms">Privacy - Terms</div>
+            </div>
+          </div>
+          <div class="nocaptcha-msg" id="noCaptchaMsg">ระบบป้องกัน NoCAPTCHA • บันทึก Cookie ผู้เข้าชมเรียบร้อย</div>
         </div>
 
         <!-- 3. FiveM Bottom Loading Bar (โหลดอัตโนมัติ 0% -> 100% ทันทีที่เข้าเว็บ) -->
@@ -4345,6 +4485,81 @@
         requestAnimationFrame(step);
       }
 
+      // ===== NOCAPTCHA RECAPTCHA VERIFICATION =====
+      let isVerifying = false;
+      let isVerified = document.cookie.includes('gang_human_verified=1');
+
+      function markCaptchaVerified() {
+        isVerified = true;
+        const chk = document.getElementById('noCaptchaCheckbox');
+        const spinner = document.getElementById('noCaptchaSpinner');
+        const checkmark = document.getElementById('noCaptchaCheckmark');
+        const label = document.getElementById('noCaptchaLabel');
+        const msg = document.getElementById('noCaptchaMsg');
+
+        if (spinner) spinner.style.display = 'none';
+        if (checkmark) checkmark.style.display = 'block';
+        if (chk) chk.classList.add('verified');
+        if (label) label.textContent = 'ฉันไม่ใช่โปรแกรมอัตโนมัติ (ยืนยันแล้ว)';
+        if (msg) {
+          msg.textContent = '✓ ยืนยันตัวตนสำเร็จ • บันทึก Cookie ผู้เข้าชมเรียบร้อย';
+          msg.style.color = '#10b981';
+        }
+      }
+
+      window.verifyCaptchaHuman = async function(e) {
+        if (e && typeof e.stopPropagation === 'function') e.stopPropagation();
+        if (isVerified) {
+          enterRoster();
+          return;
+        }
+        if (isVerifying) return;
+        isVerifying = true;
+
+        const spinner = document.getElementById('noCaptchaSpinner');
+        const checkmark = document.getElementById('noCaptchaCheckmark');
+        const msg = document.getElementById('noCaptchaMsg');
+        if (spinner) spinner.style.display = 'block';
+        if (checkmark) checkmark.style.display = 'none';
+        if (msg) msg.textContent = 'กำลังวิเคราะห์ความปลอดภัย (NoCAPTCHA Risk Analysis)...';
+
+        const telemetry = {
+          webdriver: !!navigator.webdriver,
+          hardwareConcurrency: navigator.hardwareConcurrency || 4,
+          screen: { w: screen.width, h: screen.height, colorDepth: screen.colorDepth },
+          language: navigator.language,
+          cookieEnabled: navigator.cookieEnabled,
+          timestamp: Date.now()
+        };
+
+        try {
+          const res = await fetch('/api/security/verify_human', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ telemetry })
+          });
+          const data = await res.json();
+          if (data && data.success) {
+            markCaptchaVerified();
+            setTimeout(enterRoster, 400);
+          } else {
+            if (msg) {
+              msg.textContent = '❌ ' + (data.error || 'ตรวจพบความผิดปกติ กรุณาลองใหม่อีกครั้ง');
+              msg.style.color = '#ef4444';
+            }
+          }
+        } catch (err) {
+          markCaptchaVerified();
+          setTimeout(enterRoster, 350);
+        } finally {
+          isVerifying = false;
+        }
+      };
+
+      if (isVerified) {
+        markCaptchaVerified();
+      }
+
       // Start loading automatically on page load
       if (document.readyState === 'complete' || document.readyState === 'interactive') {
         setTimeout(startLoading, 150);
@@ -4352,15 +4567,23 @@
         window.addEventListener('DOMContentLoaded', () => setTimeout(startLoading, 150));
       }
 
-      // Click anywhere to immediately enter
-      landing.addEventListener('click', function() {
-        enterRoster();
+      // Click anywhere to enter or trigger verification
+      landing.addEventListener('click', function(e) {
+        if (!isVerified) {
+          window.verifyCaptchaHuman(e);
+        } else {
+          enterRoster();
+        }
       });
 
       // Enter / Space keys to enter immediately
       window.addEventListener('keydown', function(e) {
         if (!hasFinished && (e.key === 'Enter' || e.key === ' ')) {
-          enterRoster();
+          if (!isVerified) {
+            window.verifyCaptchaHuman(e);
+          } else {
+            enterRoster();
+          }
         }
       });
 
@@ -4378,6 +4601,7 @@
         window.scrollTo({ top: 0, behavior: 'instant' });
         setTimeout(startLoading, 150);
       };
+    })();
     // ===== CLIENT-SIDE ANTI-F5 FLOOD & SPAM GUARD =====
     (function() {
       let reloadKeyStrokes = [];

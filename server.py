@@ -7,6 +7,8 @@ import urllib.request
 import datetime
 import time
 import threading
+import uuid
+import http.cookies
 from collections import defaultdict
 from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 
@@ -97,6 +99,77 @@ def save_attendance_logs(logs):
             json.dump(logs, f, ensure_ascii=False, indent=2)
     except Exception as e:
         print(f"[!] Error saving {ATTENDANCE_FILE}: {e}")
+
+# ==============================================================================
+# 🍪 VISITOR COOKIE STORE & NOCAPTCHA VERIFICATION
+# ==============================================================================
+VISITOR_COOKIES_FILE = os.path.join(BASE_DIR, "visitor_cookies.json")
+VISITOR_LOCK = threading.Lock()
+
+def load_visitor_cookies():
+    if not os.path.exists(VISITOR_COOKIES_FILE):
+        return {}
+    try:
+        with open(VISITOR_COOKIES_FILE, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception as e:
+        print(f"[!] Error loading {VISITOR_COOKIES_FILE}: {e}")
+        return {}
+
+def save_visitor_cookies(data):
+    with VISITOR_LOCK:
+        try:
+            with open(VISITOR_COOKIES_FILE, "w", encoding="utf-8") as f:
+                json.dump(data, f, ensure_ascii=False, indent=2)
+        except Exception as e:
+            print(f"[!] Error saving {VISITOR_COOKIES_FILE}: {e}")
+
+def track_and_get_visitor(handler):
+    raw_cookie = handler.headers.get("Cookie", "")
+    cookie = http.cookies.SimpleCookie()
+    if raw_cookie:
+        try:
+            cookie.load(raw_cookie)
+        except Exception:
+            pass
+
+    visitor_id = None
+    is_new = False
+    if "gang_visitor_id" in cookie:
+        visitor_id = cookie["gang_visitor_id"].value
+
+    if not visitor_id or len(visitor_id) < 8:
+        visitor_id = f"vis_{uuid.uuid4().hex[:16]}"
+        is_new = True
+
+    is_verified = False
+    if "gang_human_verified" in cookie and cookie["gang_human_verified"].value == "1":
+        is_verified = True
+
+    real_ip = shield.get_real_ip(handler)
+    user_agent = handler.headers.get("User-Agent", "Unknown")
+    now_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    visitors = load_visitor_cookies()
+    if visitor_id not in visitors:
+        visitors[visitor_id] = {
+            "visitor_id": visitor_id,
+            "ip": real_ip,
+            "user_agent": user_agent,
+            "verified_human": is_verified,
+            "first_seen": now_str,
+            "last_seen": now_str,
+            "visit_count": 1
+        }
+    else:
+        visitors[visitor_id]["last_seen"] = now_str
+        visitors[visitor_id]["visit_count"] = visitors[visitor_id].get("visit_count", 1) + 1
+        visitors[visitor_id]["ip"] = real_ip
+        if is_verified:
+            visitors[visitor_id]["verified_human"] = True
+
+    save_visitor_cookies(visitors)
+    return visitor_id, is_new, is_verified
 
 def trigger_discord_webhook(title, description, fields=None, color=0xe11d48):
     try:
@@ -307,9 +380,12 @@ shield = SecurityShield()
 
 class GangRequestHandler(SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
+        self.new_visitor_cookie = None
         super().__init__(*args, directory=BASE_DIR, **kwargs)
 
     def end_headers(self):
+        if hasattr(self, "new_visitor_cookie") and self.new_visitor_cookie:
+            self.send_header("Set-Cookie", self.new_visitor_cookie)
         self.send_header("Access-Control-Allow-Origin", "*")
         self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
         self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization")
@@ -324,6 +400,9 @@ class GangRequestHandler(SimpleHTTPRequestHandler):
         self.end_headers()
 
     def do_HEAD(self):
+        vis_id, is_new, is_ver = track_and_get_visitor(self)
+        if is_new:
+            self.new_visitor_cookie = f"gang_visitor_id={vis_id}; Path=/; Max-Age=31536000; SameSite=Lax"
         allowed, status, err_msg, retry = shield.verify(self, is_api=False, is_auth=False)
         if not allowed:
             self.send_response(status)
@@ -384,6 +463,11 @@ class GangRequestHandler(SimpleHTTPRequestHandler):
         parsed = urllib.parse.urlparse(self.path)
         clean_path = parsed.path.rstrip("/")
         is_api = clean_path.startswith("/api/")
+
+        # Track visitor cookie and persistence
+        vis_id, is_new, is_ver = track_and_get_visitor(self)
+        if is_new:
+            self.new_visitor_cookie = f"gang_visitor_id={vis_id}; Path=/; Max-Age=31536000; SameSite=Lax"
 
         # Security & Rate Limiting Check
         allowed, status, err_msg, retry = shield.verify(self, is_api=is_api, is_auth=False)
@@ -473,6 +557,23 @@ class GangRequestHandler(SimpleHTTPRequestHandler):
             })
             return
 
+        elif clean_path == "/api/admin/visitors":
+            query = urllib.parse.parse_qs(parsed.query)
+            passcode = query.get("passcode", [""])[0].strip()
+            data = load_gang_data()
+            if not passcode or passcode != data.get("passcode", "gang123"):
+                self.send_json_response(401, {"success": False, "error": "รหัสผ่านไม่ถูกต้อง ไม่มีสิทธิ์เข้าถึงข้อมูล Cookies"})
+                return
+            visitors = load_visitor_cookies()
+            v_list = sorted(list(visitors.values()), key=lambda x: x.get("last_seen", ""), reverse=True)
+            self.send_json_response(200, {
+                "success": True,
+                "total_visitors": len(visitors),
+                "verified_humans": sum(1 for v in visitors.values() if v.get("verified_human")),
+                "visitors": v_list
+            })
+            return
+
         elif clean_path == "/health":
             self.send_response(200)
             self.send_header("Content-Type", "text/plain")
@@ -504,7 +605,47 @@ class GangRequestHandler(SimpleHTTPRequestHandler):
         except Exception:
             body = {}
 
-        if clean_path == "/api/gang/auth":
+        if clean_path == "/api/security/verify_human":
+            telemetry = body.get("telemetry", {})
+            is_webdriver = telemetry.get("webdriver", False)
+            if is_webdriver:
+                self.send_json_response(403, {"success": False, "error": "ตรวจพบบอทอัตโนมัติ (Automated Bot Blocked)"})
+                return
+
+            raw_cookie = self.headers.get("Cookie", "")
+            cookie = http.cookies.SimpleCookie()
+            if raw_cookie:
+                try: cookie.load(raw_cookie)
+                except Exception: pass
+
+            vis_id = cookie["gang_visitor_id"].value if "gang_visitor_id" in cookie else f"vis_{uuid.uuid4().hex[:16]}"
+            
+            visitors = load_visitor_cookies()
+            now_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            if vis_id in visitors:
+                visitors[vis_id]["verified_human"] = True
+                visitors[vis_id]["last_seen"] = now_str
+            else:
+                visitors[vis_id] = {
+                    "visitor_id": vis_id,
+                    "ip": shield.get_real_ip(self),
+                    "user_agent": self.headers.get("User-Agent", "Unknown"),
+                    "verified_human": True,
+                    "first_seen": now_str,
+                    "last_seen": now_str,
+                    "visit_count": 1
+                }
+            save_visitor_cookies(visitors)
+
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Set-Cookie", f"gang_visitor_id={vis_id}; Path=/; Max-Age=31536000; SameSite=Lax")
+            self.send_header("Set-Cookie", "gang_human_verified=1; Path=/; Max-Age=604800; SameSite=Lax")
+            self.end_headers()
+            self.wfile.write(json.dumps({"success": True, "message": "ยืนยันตัวตนสำเร็จ (NoCAPTCHA Verified)", "visitor_id": vis_id}, ensure_ascii=False).encode("utf-8"))
+            return
+
+        elif clean_path == "/api/gang/auth":
             input_pass = str(body.get("passcode", "")).strip()
             data = load_gang_data()
             correct_pass = str(data.get("passcode", "gang123")).strip()

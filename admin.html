@@ -716,6 +716,10 @@
             <i class="fa-solid fa-database"></i>
             <span>สำรองข้อมูล & รหัส</span>
           </div>
+          <div class="nav-item" onclick="switchTab('tabVisitors')">
+            <i class="fa-solid fa-cookie-bite"></i>
+            <span>คุกกี้ & ผู้เข้าชม (NoCAPTCHA)</span>
+          </div>
         </nav>
 
         <div class="sidebar-footer">
@@ -1126,6 +1130,71 @@
                   <i class="fa-solid fa-upload"></i> กู้คืนข้อมูลจากไฟล์สำรอง (Restore)
                 </button>
                 <input type="file" id="restoreFileInput" accept=".json" style="display: none;" onchange="handleRestoreBackup(event)">
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB: VISITORS & COOKIES (NoCAPTCHA LOGS) -->
+          <div class="tab-pane" id="tabVisitors">
+            <div class="stats-grid" style="margin-bottom: 24px;">
+              <div class="stat-card">
+                <div class="stat-icon-wrap" style="background: rgba(245, 158, 11, 0.15); color: var(--primary);">
+                  <i class="fa-solid fa-cookie-bite"></i>
+                </div>
+                <div class="stat-info">
+                  <div class="stat-val" id="statTotalCookies">0</div>
+                  <div class="stat-lbl">Cookies ผู้เข้าชมทั้งหมด</div>
+                </div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-icon-wrap" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">
+                  <i class="fa-solid fa-user-check"></i>
+                </div>
+                <div class="stat-info">
+                  <div class="stat-val" id="statVerifiedHumans">0</div>
+                  <div class="stat-lbl">ผ่าน NoCAPTCHA (มนุษย์)</div>
+                </div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-icon-wrap" style="background: rgba(59, 130, 246, 0.15); color: #3b82f6;">
+                  <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <div class="stat-info">
+                  <div class="stat-val" id="statTotalVisits">0</div>
+                  <div class="stat-lbl">ยอดการเข้าชมสะสม</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card" style="margin-bottom: 24px;">
+              <div class="card-header-bar">
+                <div class="card-title">
+                  <i class="fa-solid fa-table-list" style="color: var(--primary);"></i> บันทึก Cookie ผู้เข้าชมเว็บ (Visitor Cookies Log)
+                </div>
+                <div style="display: flex; gap: 8px;">
+                  <button class="btn btn-secondary btn-sm" onclick="loadVisitorCookies()">
+                    <i class="fa-solid fa-rotate-right"></i> รีเฟรชข้อมูล
+                  </button>
+                </div>
+              </div>
+
+              <div class="table-container">
+                <table class="custom-table">
+                  <thead>
+                    <tr>
+                      <th>Cookie ID (gang_visitor_id)</th>
+                      <th>IP Address</th>
+                      <th>สถานะ NoCAPTCHA</th>
+                      <th>จำนวนครั้ง (Visits)</th>
+                      <th>เข้าครั้งแรก</th>
+                      <th>เข้าล่าสุด</th>
+                      <th>เบราว์เซอร์ / อุปกรณ์ (User-Agent)</th>
+                    </tr>
+                  </thead>
+                  <tbody id="visitorsTableBody">
+                    <tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 30px;">กำลังโหลดข้อมูล...</td></tr>
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>
@@ -1556,7 +1625,7 @@
       if (targetPane) targetPane.classList.add("active");
 
       // Update Nav active
-      const tabs = ['tabOverview', 'tabMembers', 'tabAttendance', 'tabRoles', 'tabSettings', 'tabMusic', 'tabDiscord', 'tabBackup'];
+      const tabs = ['tabOverview', 'tabMembers', 'tabAttendance', 'tabRoles', 'tabSettings', 'tabMusic', 'tabDiscord', 'tabBackup', 'tabVisitors'];
       const idx = tabs.indexOf(tabId);
       if (idx !== -1) {
         const navItems = document.querySelectorAll(".sidebar-nav .nav-item");
@@ -1572,10 +1641,56 @@
         tabSettings: { icon: 'fa-sliders', text: 'ตั้งค่าแก๊ง & อัตลักษณ์ (Gang Settings)' },
         tabMusic: { icon: 'fa-music', text: 'เพลงประจำแก๊ง (Gang Music)' },
         tabDiscord: { icon: 'fa-brands fa-discord', text: 'Discord Webhook & การแจ้งเตือน' },
-        tabBackup: { icon: 'fa-database', text: 'สำรองข้อมูล & รหัสผ่าน (Backup & Security)' }
+        tabBackup: { icon: 'fa-database', text: 'สำรองข้อมูล & รหัสผ่าน (Backup & Security)' },
+        tabVisitors: { icon: 'fa-cookie-bite', text: 'บันทึก Cookie ผู้เข้าชม & NoCAPTCHA' }
       };
       if (titles[tabId]) {
         document.getElementById("pageTitleText").innerHTML = `<i class="fa-solid ${titles[tabId].icon}" style="color: var(--primary);"></i> <span>${titles[tabId].text}</span>`;
+      }
+
+      if (tabId === 'tabVisitors') {
+        loadVisitorCookies();
+      }
+    }
+
+    // ================= VISITOR COOKIES & NOCAPTCHA =================
+    async function loadVisitorCookies() {
+      const passcode = localStorage.getItem('gang_admin_passcode') || 'gang123';
+      const tbody = document.getElementById('visitorsTableBody');
+      if (!tbody) return;
+      try {
+        const res = await fetch(`/api/admin/visitors?passcode=${encodeURIComponent(passcode)}`);
+        const json = await res.json();
+        if (json.success) {
+          document.getElementById('statTotalCookies').textContent = json.total_visitors || 0;
+          document.getElementById('statVerifiedHumans').textContent = json.verified_humans || 0;
+          
+          let totalVisits = 0;
+          const list = json.visitors || [];
+          list.forEach(v => { totalVisits += (v.visit_count || 1); });
+          document.getElementById('statTotalVisits').textContent = totalVisits;
+
+          if (list.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 30px;">ยังไม่มีข้อมูลคุกกี้ผู้เข้าชม</td></tr>';
+            return;
+          }
+
+          tbody.innerHTML = list.map(v => `
+            <tr>
+              <td><code style="background: rgba(255,255,255,0.06); padding: 2px 6px; border-radius: 4px; font-size: 11px;">${escapeHtml(v.visitor_id || '-')}</code></td>
+              <td><span style="font-weight: 600; color: #38bdf8;">${escapeHtml(v.ip || '127.0.0.1')}</span></td>
+              <td>${v.verified_human ? '<span class="badge" style="background: rgba(16,185,129,0.2); color: #10b981; border: 1px solid #10b981;"><i class="fa-solid fa-check"></i> มนุษย์ (Verified)</span>' : '<span class="badge" style="background: rgba(148,163,184,0.15); color: #94a3b8;"><i class="fa-solid fa-clock"></i> รอตรวจสอบ</span>'}</td>
+              <td style="font-weight: 700;">${v.visit_count || 1} ครั้ง</td>
+              <td style="font-size: 12px; color: var(--text-muted);">${escapeHtml(v.first_seen || '-')}</td>
+              <td style="font-size: 12px; color: var(--text-main); font-weight: 500;">${escapeHtml(v.last_seen || '-')}</td>
+              <td style="font-size: 11px; color: var(--text-muted); max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${escapeHtml(v.user_agent || '')}">${escapeHtml(v.user_agent || '-')}</td>
+            </tr>
+          `).join('');
+        } else {
+          tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #ef4444; padding: 20px;">${escapeHtml(json.error || 'ไม่สามารถโหลดข้อมูลได้')}</td></tr>`;
+        }
+      } catch (e) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #ef4444; padding: 20px;">เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์</td></tr>';
       }
     }
 
