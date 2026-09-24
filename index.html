@@ -1691,19 +1691,24 @@
       .form-grid-2 { grid-template-columns: 1fr; }
     }
 
-    /* ===================== LANDING PAGE (SCROLLABLE WEBPAGE) ===================== */
+    /* ===================== LANDING PAGE (FIVEM FULLSCREEN LOADING SCREEN) ===================== */
     #landingPage {
       width: 100%;
-      min-height: 185vh;
+      height: 100vh;
+      min-height: 100vh;
       background: #000;
-      position: relative;
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
       color: #fff;
       padding: 0;
       display: flex;
       flex-direction: column;
       align-items: center;
-      overflow-x: hidden;
+      justify-content: center;
+      overflow: hidden;
       box-sizing: border-box;
+      cursor: pointer;
     }
 
     #landingParticles {
@@ -1715,32 +1720,23 @@
       z-index: 2;
       width: 100%;
       max-width: 1340px;
+      height: 100%;
       display: flex;
       flex-direction: column;
       align-items: center;
-    }
-
-    /* Screen 1: เต็มหน้าจอแรก 100vh มีแต่ Banner และปุ่มลูกศรเลื่อนลง */
-    .landing-hero-screen {
-      width: 100%;
-      min-height: 98vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 22px;
-      padding: 30px 16px;
+      justify-content: space-between;
+      padding: 20px 16px;
       box-sizing: border-box;
     }
 
-    /* Screen 2: ส่วนด้านล่าง ต้องเลื่อนหน้าเว็บลงมาจริงๆ ถึงจะเจอ */
-    .landing-scroll-target {
+    .landing-hero-screen {
       width: 100%;
+      height: 100%;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 30px;
-      padding: 8vh 16px 30vh 16px;
+      justify-content: space-between;
+      gap: 14px;
       box-sizing: border-box;
     }
 
@@ -1930,23 +1926,24 @@
       line-height: 1.6;
     }
 
-    /* ── 5. Bottom Loader Box (เมื่อเลื่อนหน้าเว็บลงมาถึง จะเริ่มดาวน์โหลด) ── */
+    /* ── 5. Bottom Loader Box (FiveM Style Loading Bar) ── */
     .bottom-loader-box {
       width: 100%;
-      max-width: 340px;
+      max-width: 380px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 14px;
-      margin-top: 45px;
-      margin-bottom: 90px;
+      gap: 10px;
+      margin-top: 10px;
+      margin-bottom: 20px;
       text-align: center;
+      cursor: pointer;
     }
     .loader-track {
       width: 100%;
-      height: 2.5px;
-      background: rgba(255, 255, 255, 0.18);
-      border-radius: 2px;
+      height: 3.5px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 3px;
       overflow: hidden;
       position: relative;
     }
@@ -1954,12 +1951,12 @@
       height: 100%;
       width: 0%;
       background: linear-gradient(90deg, #888888, #ffffff, #dddddd);
-      box-shadow: 0 0 10px rgba(255, 255, 255, 0.95);
-      transition: width 0.03s linear;
+      box-shadow: 0 0 12px rgba(255, 255, 255, 0.95);
+      transition: width 0.05s linear;
     }
     .loader-title {
       font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(36px, 6vw, 44px);
+      font-size: clamp(30px, 5vw, 40px);
       letter-spacing: 9px;
       line-height: 1;
       background: linear-gradient(180deg, #ffffff 0%, #d8d8d8 50%, #888888 100%);
@@ -1970,13 +1967,24 @@
     }
     .loader-sub {
       font-family: 'Rajdhani', sans-serif;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 700;
       letter-spacing: 12px;
       color: #888888;
       text-transform: uppercase;
       text-align: center;
       margin-left: 12px;
+    }
+    .loader-skip-hint {
+      font-family: 'Kanit', sans-serif;
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      color: rgba(255, 255, 255, 0.45);
+      margin-top: 4px;
+      transition: color 0.2s;
+    }
+    .bottom-loader-box:hover .loader-skip-hint {
+      color: rgba(255, 255, 255, 0.9);
     }
 
     /* Main Roster Container */
@@ -2025,14 +2033,11 @@
 </head>
 <body>
 
-  <!-- ===== HERO LANDING PAGE (SCROLLABLE WEBPAGE) ===== -->
-  <div id="landingPage">
-    <div id="landingParticles"></div>
-
+  <!-- ===== HERO LANDING PAGE (FIVEM LOADING SCREEN) ===== -->
+  <div id="landingPage" title="กดตรงไหนก็ได้เพื่อเข้าสู่เว็บทันที">
     <div class="landing-content">
-      <!-- ── SECTION 1: HERO SCREEN (หน้าแรก เต็มจอ 100vh) ── -->
       <div class="landing-hero-screen">
-        <!-- 1. Big HD Banner at Top (ใหญ่เด่นชัด พอดีสายตา 860px) -->
+        <!-- 1. Big HD Banner at Top -->
         <div class="landing-banner-wrap">
           <div class="corner corner-tl"></div>
           <div class="corner corner-tr"></div>
@@ -2049,34 +2054,14 @@
           <div class="landing-subtitle">N E W &nbsp; G E N &nbsp;&bull;&nbsp; OFFICIAL FIVEM GANG</div>
         </div>
 
-        <!-- 3. Scroll Down Guide -->
-        <div class="landing-scroll-guide">
-          <i class="fa-solid fa-angles-down scroll-arrow-anim"></i>
-          <span class="scroll-guide-txt">เลื่อนหน้าเว็บลงด้านล่าง</span>
-        </div>
-      </div>
-
-      <!-- ── SECTION 2: SCROLL DOWN TARGET (ต้องเลื่อนหน้าเว็บลงมาจริงๆ ถึงจะเจอ) ── -->
-      <div class="landing-scroll-target">
-        <!-- 4. Gang Emblem & Info (ปรากฏเมื่อเลื่อนหน้าเว็บลงมา) -->
-        <div class="landing-emblem-section">
-          <div class="landing-emblem-wrap">
-            <div class="logo-ring"></div>
-            <div class="logo-ring logo-ring-2"></div>
-            <div class="logo-glow"></div>
-            <img class="landing-emblem-img" src="/gang_logo.png" alt="SPONGEBOB" onerror="this.style.opacity='0'">
-          </div>
-          <div class="motto-badge">RESPECT &bull; LOYALTY &bull; BROTHERHOOD</div>
-          <p class="motto-desc">รายชื่อแก็งสมาชิกแก๊งอย่างเป็นทางการ อัปเดตสถานะและข้อมูลสมาชิกแบบเรียลไทม์</p>
-        </div>
-
-        <!-- 5. Bottom Loading (สไตล์รูปที่ 2: เส้นโหลดเงินบน + SPONGEBOB 577 + NEW GEN) -->
+        <!-- 3. FiveM Bottom Loading Bar (โหลดอัตโนมัติ 0% -> 100% ทันทีที่เข้าเว็บ) -->
         <div class="bottom-loader-box" id="bottomLoaderBox">
           <div class="loader-track">
             <div class="loader-fill" id="bottomLoaderFill"></div>
           </div>
           <div class="loader-title">SPONGEBOB 577</div>
           <div class="loader-sub">N E W &nbsp; G E N</div>
+          <div class="loader-skip-hint">กดที่ใดก็ได้เพื่อเข้าสู่เว็บทันที (CLICK TO ENTER)</div>
         </div>
       </div>
     </div>
@@ -4308,65 +4293,90 @@
 
       // Clean pure black background (no floating particles)
 
-      let hasStartedLoading = false;
       let hasFinished = false;
+      let hasStarted = false;
 
-      function startBottomLoading() {
-        if (hasStartedLoading || hasFinished) return;
-        // ป้องกันไม่ให้โหลดอัตโนมัติ: ต้องมีการเลื่อนหน้าเว็บลงมาจริงๆ
-        if (window.scrollY < 200) return;
-        hasStartedLoading = true;
+      function enterRoster() {
+        if (hasFinished) return;
+        hasFinished = true;
+        if (loaderFill) loaderFill.style.width = '100%';
 
-        let progress = 0;
+        landing.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+        landing.style.opacity = '0';
+        landing.style.transform = 'scale(1.02)';
+
+        setTimeout(function() {
+          landing.style.display = 'none';
+          if (rosterApp) {
+            rosterApp.style.display = 'block';
+            rosterApp.style.opacity = '0';
+            rosterApp.style.transition = 'opacity 0.4s ease';
+            requestAnimationFrame(() => { rosterApp.style.opacity = '1'; });
+          }
+          if (typeof renderRoster === 'function') renderRoster();
+          if (typeof renderStats === 'function') renderStats();
+          window.scrollTo({ top: 0, behavior: 'instant' });
+        }, 380);
+      }
+
+      function startLoading() {
+        if (hasStarted || hasFinished) return;
+        hasStarted = true;
+
         const startTime = performance.now();
-        const duration = 650; // Fast & snappy (0.65s), no waiting around!
+        const duration = 1400; // 1.4s smooth FiveM loading experience
 
-        function updateProgress(currentTime) {
-          const elapsed = currentTime - startTime;
-          progress = Math.min(100, Math.round((elapsed / duration) * 100));
+        function step(now) {
+          if (hasFinished) return;
+          const elapsed = now - startTime;
+          const progress = Math.min(100, Math.round((elapsed / duration) * 100));
 
-          if (loaderFill) loaderFill.style.width = progress + '%';
+          if (loaderFill) {
+            loaderFill.style.width = progress + '%';
+          }
 
           if (progress < 100) {
-            requestAnimationFrame(updateProgress);
+            requestAnimationFrame(step);
           } else {
-            // Finished loading! Immediately show gang roster
-            setTimeout(function() {
-              hasFinished = true;
-              if (landing) landing.style.display = 'none';
-              if (rosterApp) rosterApp.style.display = 'block';
-              if (typeof renderRoster === 'function') renderRoster();
-              if (typeof renderStats === 'function') renderStats();
-              window.scrollTo({ top: 0, behavior: 'instant' });
-            }, 100);
+            enterRoster();
           }
         }
 
-        requestAnimationFrame(updateProgress);
+        requestAnimationFrame(step);
       }
 
-      function checkVisibility() {
-        if (hasStartedLoading || hasFinished || !loaderBox) return;
-        // ต้องเลื่อนหน้าเว็บลงมาเกิน 250px และกล่องโหลดปรากฏในจอจริงๆ เท่านั้น!
-        if (window.scrollY < 250) return;
+      // Start loading automatically on page load
+      if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        setTimeout(startLoading, 150);
+      } else {
+        window.addEventListener('DOMContentLoaded', () => setTimeout(startLoading, 150));
+      }
 
-        const rect = loaderBox.getBoundingClientRect();
-        if (rect.top <= window.innerHeight - 30) {
-          startBottomLoading();
+      // Click anywhere to immediately enter
+      landing.addEventListener('click', function() {
+        enterRoster();
+      });
+
+      // Enter / Space keys to enter immediately
+      window.addEventListener('keydown', function(e) {
+        if (!hasFinished && (e.key === 'Enter' || e.key === ' ')) {
+          enterRoster();
         }
-      }
-
-      // ตรวจจับเมื่อผู้ใช้เลื่อนหน้าเว็บลงมาด้านล่างเท่านั้น (ไม่โหลดเองตอนเปิดเว็บ)
-      window.addEventListener('scroll', checkVisibility, { passive: true });
+      });
 
       // Click on brand in navbar to return to landing page
       window.returnToLanding = function() {
-        if (landing) landing.style.display = 'flex';
+        if (landing) {
+          landing.style.display = 'flex';
+          landing.style.opacity = '1';
+          landing.style.transform = 'none';
+        }
         if (rosterApp) rosterApp.style.display = 'none';
         hasFinished = false;
-        hasStartedLoading = false;
+        hasStarted = false;
         if (loaderFill) loaderFill.style.width = '0%';
         window.scrollTo({ top: 0, behavior: 'instant' });
+        setTimeout(startLoading, 150);
       };
     // ===== CLIENT-SIDE ANTI-F5 FLOOD & SPAM GUARD =====
     (function() {
