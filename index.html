@@ -340,6 +340,56 @@
       gap: 12px;
     }
 
+    .nav-security-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 9px;
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: #10b981;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+    .nav-security-btn:hover {
+      background: #10b981;
+      color: #000;
+      box-shadow: 0 0 16px rgba(16, 185, 129, 0.4);
+      transform: translateY(-1px);
+    }
+
+    .landing-security-badge {
+      position: absolute;
+      top: 18px;
+      right: 20px;
+      z-index: 20;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      background: rgba(12, 14, 20, 0.75);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: #10b981;
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-decoration: none;
+      backdrop-filter: blur(8px);
+      transition: all 0.2s ease;
+    }
+    .landing-security-badge:hover {
+      background: rgba(16, 185, 129, 0.2);
+      border-color: #10b981;
+      color: #fff;
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+      transform: translateY(-1px);
+    }
+
     .btn {
       display: inline-flex;
       align-items: center;
@@ -1986,6 +2036,10 @@
 
   <!-- ===== HERO LANDING PAGE (SCROLL DOWN TO LOAD) ===== -->
   <div id="landingPage">
+    <a href="/verify.html" class="landing-security-badge" title="ตรวจสอบความปลอดภัย NoCAPTCHA">
+      <i class="fa-solid fa-shield-halved"></i>
+      <span>NoCAPTCHA Protected</span>
+    </a>
     <div class="landing-content">
       <!-- ── SECTION 1: HERO SCREEN (หน้าแรก เต็มจอ 100vh) ── -->
       <div class="landing-hero-screen">
@@ -2086,6 +2140,12 @@
           <input type="range" id="musicVolumeSlider" class="music-vol-slider" min="0" max="100" value="70" oninput="changeGangMusicVolume(this.value)" title="ปรับระดับความดังเสียง">
         </div>
       </div>
+
+      <!-- Security Gate Link -->
+      <a href="/verify.html" class="nav-security-btn" title="ระบบความปลอดภัย NoCAPTCHA">
+        <i class="fa-solid fa-shield-halved"></i>
+        <span>NoCAPTCHA</span>
+      </a>
 
     </div>
   </nav>
