@@ -54,7 +54,7 @@
     /* Gang Character with SPONGEBOB logo on suit jacket */
     .ticker-character-wrap {
       position: absolute;
-      right: 5%;
+      right: 4%;
       bottom: 0;
       height: 92vh;
       max-height: 1000px;
@@ -62,10 +62,9 @@
       pointer-events: none;
       display: flex;
       align-items: flex-end;
-      opacity: 0.95;
-      filter: drop-shadow(0 15px 45px rgba(0, 0, 0, 0.98)) drop-shadow(0 0 35px rgba(255, 255, 255, 0.04));
-      mask-image: linear-gradient(to bottom, black 82%, transparent 100%);
-      -webkit-mask-image: linear-gradient(to bottom, black 82%, transparent 100%);
+      opacity: 0.96;
+      mask-image: linear-gradient(to bottom, black 80%, transparent 98%);
+      -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 98%);
       animation: characterFloat 6s ease-in-out infinite alternate;
       transition: all 0.4s ease;
     }
@@ -649,8 +648,8 @@
       border-radius: 16px;
       position: relative;
       overflow: hidden;
-      border: 1px solid rgba(255,255,255,0.1);
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.95), 0 0 35px rgba(0, 0, 0, 0.85);
+      border: none;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.95);
       background: #000;
       display: flex;
       align-items: center;
@@ -670,13 +669,9 @@
       transform: scale(1.015);
     }
 
-    /* ===================== CORNER ACCENTS ===================== */
+    /* ===================== CORNER ACCENTS REMOVED ===================== */
     .corner {
-      position: absolute;
-      width: 18px;
-      height: 18px;
-      z-index: 10;
-      pointer-events: none;
+      display: none !important;
     }
     .corner::before, .corner::after {
       content: '';
@@ -2148,10 +2143,6 @@
     <!-- Hero Banner with Tech Brackets, Shimmer & Accent Line -->
     <div class="hero-banner-container">
       <header class="hero-banner">
-        <div class="corner corner-tl"></div>
-        <div class="corner corner-tr"></div>
-        <div class="corner corner-bl"></div>
-        <div class="corner corner-br"></div>
         <img src="/gang_banner.jpg" alt="SPONGEBOB 577" class="banner-img" id="heroBannerImg"
              onerror="this.src='/gang_banner.jpg'">
         <div class="banner-shimmer"></div>
