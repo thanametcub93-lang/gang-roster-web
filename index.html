@@ -765,103 +765,198 @@
       color: var(--text-muted);
     }
 
-    /* ===== HOVER CARD STYLE ===== */
+    /* ===== CYBERPUNK CUT-CORNER HOVER CARD STYLE ===== */
     .member-card {
-      background: rgba(14, 14, 18, 0.92);
-      border: 1px solid rgba(225, 29, 72, 0.2);
-      border-radius: 16px;
-      padding: 14px 18px;
-      display: flex;
-      align-items: center;
-      gap: 16px;
       position: relative;
-      overflow: hidden;
+      background: var(--role-border, rgba(225, 29, 72, 0.45));
+      padding: 1.5px;
+      border-radius: 14px 14px 0 14px;
+      clip-path: polygon(
+        0 0,
+        100% 0,
+        100% calc(100% - 18px),
+        calc(100% - 18px) 100%,
+        0 100%
+      );
+      transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
       cursor: pointer;
-      animation: cardFadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
-      transition: all 0.32s cubic-bezier(0.4, 0, 0.2, 1);
-      /* Corner brackets */
-      box-shadow: 0 4px 18px rgba(0,0,0,0.4);
-    }
-    /* Red corner brackets */
-    .member-card::before,
-    .member-card::after {
-      content: '';
-      position: absolute;
-      width: 12px;
-      height: 12px;
-      border-color: rgba(225, 29, 72, 0.55);
-      border-style: solid;
-      transition: all 0.3s;
-    }
-    .member-card::before {
-      top: 6px; left: 6px;
-      border-width: 2px 0 0 2px;
-      border-radius: 3px 0 0 0;
-    }
-    .member-card::after {
-      bottom: 6px; right: 6px;
-      border-width: 0 2px 2px 0;
-      border-radius: 0 0 3px 0;
+      animation: cardFadeUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
     }
     .member-card:hover,
     .member-card.is-active {
-      background: rgba(20, 14, 20, 0.98);
-      border-color: rgba(225, 29, 72, 0.55);
-      box-shadow: 0 8px 32px rgba(225, 29, 72, 0.18);
+      background: var(--role-color, #fbbf24);
+      box-shadow: 0 8px 30px var(--role-glow, rgba(245, 158, 11, 0.25));
       transform: translateY(-2px);
     }
-    .member-card:hover::before,
-    .member-card:hover::after,
-    .member-card.is-active::before,
-    .member-card.is-active::after {
-      border-color: rgba(225, 29, 72, 0.9);
+    .member-card-inner {
+      background: #0c0d12;
+      border-radius: 13px 13px 0 13px;
+      clip-path: polygon(
+        0 0,
+        100% 0,
+        100% calc(100% - 17px),
+        calc(100% - 17px) 100%,
+        0 100%
+      );
+      padding: 12px 16px;
+      width: 100%;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transition: background 0.28s ease;
     }
-    @keyframes cardFadeUp {
-      from { opacity: 0; transform: translateY(16px); }
-      to   { opacity: 1; transform: translateY(0); }
+    .member-card:hover .member-card-inner,
+    .member-card.is-active .member-card-inner {
+      background: #11131a;
     }
-    /* Avatar */
-    .card-avatar-full {
-      width: 56px;
-      height: 56px;
+
+    /* Top-left corner tech bracket marker (L-bracket) */
+    .tech-corner-tl {
+      position: absolute;
+      top: 6px;
+      left: 6px;
+      width: 8px;
+      height: 8px;
+      border-top: 1.8px solid rgba(255, 255, 255, 0.4);
+      border-left: 1.8px solid rgba(255, 255, 255, 0.4);
+      pointer-events: none;
+      transition: border-color 0.25s ease;
+    }
+    .member-card:hover .tech-corner-tl,
+    .member-card.is-active .tech-corner-tl {
+      border-color: rgba(255, 255, 255, 0.9);
+    }
+
+    /* Top Row Layout */
+    .card-top-row {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      position: relative;
+    }
+
+    /* Avatar Container with Status */
+    .card-avatar-wrap {
+      position: relative;
+      flex-shrink: 0;
+      width: 50px;
+      height: 50px;
+    }
+    .card-avatar-cut {
+      width: 50px;
+      height: 50px;
       border-radius: 50%;
       object-fit: cover;
-      border: 2px solid rgba(225, 29, 72, 0.5);
+      border: 2px solid var(--role-color, #fbbf24);
+      box-shadow: 0 0 12px var(--role-glow, rgba(245, 158, 11, 0.25));
+      transition: all 0.28s ease;
+      display: block;
+    }
+    .member-card:hover .card-avatar-cut,
+    .member-card.is-active .card-avatar-cut {
+      transform: scale(1.04);
+      border-color: #fff;
+    }
+    .card-status-dot {
+      position: absolute;
+      bottom: 0px;
+      right: 0px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 2px solid #0c0d12;
       flex-shrink: 0;
-      box-shadow: 0 0 14px rgba(225,29,72,0.25);
-      transition: border-color 0.3s;
     }
-    .member-card:hover .card-avatar-full,
-    .member-card.is-active .card-avatar-full {
-      border-color: rgba(225,29,72,0.9);
-    }
+
     /* Card main body */
     .card-body {
       flex: 1;
       min-width: 0;
     }
     .card-name {
-      font-size: 1rem;
+      font-size: 1.02rem;
       font-weight: 700;
       color: #fff;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      font-family: 'Outfit', sans-serif;
+      line-height: 1.2;
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
     }
+    .card-nickname {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-weight: 400;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Rank Badge with Cut Corner */
     .card-rank-badge {
       display: inline-flex;
       align-items: center;
-      gap: 5px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      padding: 2px 9px;
-      border-radius: 6px;
+      gap: 6px;
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      padding: 3px 9px;
+      border-radius: 5px 5px 0 5px;
+      clip-path: polygon(
+        0 0,
+        100% 0,
+        100% calc(100% - 6px),
+        calc(100% - 6px) 100%,
+        0 100%
+      );
       margin-top: 5px;
-      background: rgba(225, 29, 72, 0.15);
-      color: #fda4af;
-      border: 1px solid rgba(225, 29, 72, 0.3);
+      background: var(--role-bg, rgba(245, 158, 11, 0.14));
+      color: var(--role-color, #fbbf24);
+      border: 1px solid var(--role-border, rgba(245, 158, 11, 0.4));
+      transition: all 0.25s ease;
     }
-    /* Hover info panel — hidden by default, slides in on hover */
+    .member-card:hover .card-rank-badge,
+    .member-card.is-active .card-rank-badge {
+      background: var(--role-color, #fbbf24);
+      color: #000;
+      border-color: var(--role-color, #fbbf24);
+    }
+
+    /* Cut Action Button on right */
+    .card-cut-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 9px 9px 0 9px;
+      clip-path: polygon(
+        0 0,
+        100% 0,
+        100% calc(100% - 9px),
+        calc(100% - 9px) 100%,
+        0 100%
+      );
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--role-border, rgba(245, 158, 11, 0.35));
+      color: var(--role-color, #fbbf24);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.15rem;
+      cursor: pointer;
+      transition: all 0.22s ease;
+      flex-shrink: 0;
+    }
+    .card-cut-btn:hover {
+      background: var(--role-bg, rgba(245, 158, 11, 0.25));
+      color: #fff;
+      border-color: var(--role-color, #fbbf24);
+      transform: scale(1.06);
+    }
+
+    /* Hover info panel — hidden by default, slides in on hover / tap */
     .card-hover-info {
       max-height: 0;
       overflow: hidden;
@@ -902,34 +997,6 @@
       cursor: pointer;
     }
     .hover-info-val:hover { color: var(--gold); }
-    /* Status dot */
-    .card-status-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      flex-shrink: 0;
-      border: 2px solid #07090e;
-    }
-    /* Discord icon button */
-    .card-discord-btn {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-      background: rgba(99,102,241,0.12);
-      border: 1px solid rgba(99,102,241,0.3);
-      color: #818cf8;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      font-size: 1rem;
-      transition: all 0.2s;
-      cursor: pointer;
-    }
-    .card-discord-btn:hover {
-      background: rgba(99,102,241,0.3);
-      color: #fff;
-    }
     /* Discord ID fix */
     .discord-id-val {
       max-width: 160px;
@@ -940,7 +1007,7 @@
       vertical-align: middle;
     }
     /* old classes compat */
-    .member-header, .card-cover-area, .card-profile-center, .card-nickname,
+    .member-header, .card-cover-area, .card-profile-center,
     .member-details, .card-editor-actions { display: none !important; }
 
     .member-header {
@@ -2332,43 +2399,71 @@
         const animDelay = (Math.min(idx * 0.045, 0.75) + 0.55).toFixed(2);
         const roles = GANG_DATA.roles || [];
         const roleObj = roles.find(x => x.name === m.rank);
-        const rankColor = roleObj ? (roleObj.color || '#e11d48') : '#e11d48';
+        const rankColor = roleObj ? (roleObj.color || '#fbbf24') : '#fbbf24';
+
+        // Rank badge text and icon
+        const rankPriority = getRolePriority(m.rank);
+        let rankIcon = 'fa-shield';
+        let cleanRankText = 'MEMBER';
+        if (rankPriority <= 1) {
+          rankIcon = 'fa-shield';
+          cleanRankText = 'LEADER';
+        } else if (rankPriority === 2) {
+          rankIcon = 'fa-shield-halved';
+          cleanRankText = 'CO-LEADER';
+        } else {
+          rankIcon = 'fa-shield';
+          cleanRankText = 'MEMBER';
+        }
 
         return `
-          <div class="member-card" id="member_card_${m.id}" onclick="this.classList.toggle('is-active')" style="animation-delay: ${animDelay}s; flex-direction: column; align-items: stretch;">
-            <!-- Top row: Avatar + Name & Rank + Status & Discord Copy -->
-            <div style="display:flex; align-items:center; gap:14px;">
-              <img src="${escapeHtml(avatarUrl)}" alt="${escapeHtml(m.name)}" class="card-avatar-full" onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'">
-              <div class="card-body">
-                <div class="card-name">${escapeHtml(m.name)} <span style="font-size:0.78rem;color:var(--text-muted);font-weight:400;">(${escapeHtml(m.nickname || '')})</span></div>
-                <div class="card-rank-badge" style="background:${rankColor}18; color:${rankColor}; border-color:${rankColor}45;">${escapeHtml(m.rank || 'สมาชิกแก๊ง')}</div>
-              </div>
-              <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
-                <div class="card-status-dot ${statusClass}" title="${m.status || 'offline'}"></div>
-                ${m.discord_id ? `<div class="card-discord-btn" title="คัดลอก Discord ID" onclick="event.stopPropagation(); copyToClipboard('${escapeHtml(m.discord_id)}','คัดลอก Discord ID แล้ว')"><i class="fa-brands fa-discord"></i></div>` : ''}
-              </div>
-            </div>
+          <div class="member-card" id="member_card_${m.id}" onclick="this.classList.toggle('is-active')" style="--role-color:${rankColor}; --role-border:${rankColor}55; --role-bg:${rankColor}16; --role-glow:${rankColor}33; animation-delay:${animDelay}s;">
+            <div class="member-card-inner">
+              <div class="tech-corner-tl"></div>
 
-            <!-- Hover / Active info panel -->
-            <div class="card-hover-info">
-              <div class="hover-info-row">
-                <span class="hover-info-label"><i class="fa-solid fa-phone" style="color:#f59e0b;"></i> เบอร์โทร IC</span>
-                <span class="hover-info-val" onclick="event.stopPropagation(); copyToClipboard('${escapeHtml(m.phone || 'ไม่มี')}','คัดลอกเบอร์แล้ว')">${escapeHtml(m.phone || 'ไม่มี')} <i class="fa-regular fa-copy" style="font-size:0.7rem;"></i></span>
+              <!-- Top row: Avatar + Name & Rank + Cut Action Button -->
+              <div class="card-top-row">
+                <div class="card-avatar-wrap">
+                  <img src="${escapeHtml(avatarUrl)}" alt="${escapeHtml(m.name)}" class="card-avatar-cut" onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'">
+                  <div class="card-status-dot ${statusClass}" title="${m.status || 'offline'}"></div>
+                </div>
+
+                <div class="card-body">
+                  <div class="card-name">
+                    <span>${escapeHtml(m.name)}</span>
+                    ${m.nickname ? `<span class="card-nickname">(${escapeHtml(m.nickname)})</span>` : ''}
+                  </div>
+                  <div class="card-rank-badge">
+                    <i class="fa-solid ${rankIcon}"></i> ${escapeHtml(cleanRankText)}
+                  </div>
+                </div>
+
+                <div class="card-cut-btn" title="${m.discord_id ? 'คัดลอก Discord ID: ' + escapeHtml(m.discord_id) : 'คัดลอกข้อมูล'}" onclick="event.stopPropagation(); copyToClipboard('${escapeHtml(m.discord_id || m.phone || '')}','${m.discord_id ? 'คัดลอก Discord ID แล้ว' : 'คัดลอกข้อมูลแล้ว'}')">
+                  <i class="fa-brands fa-discord"></i>
+                </div>
               </div>
-              <div class="hover-info-row">
-                <span class="hover-info-label"><i class="fa-brands fa-discord" style="color:#6366f1;"></i> Discord ID</span>
-                <span class="hover-info-val" title="${escapeHtml(m.discord_id || 'ไม่มี')}" onclick="event.stopPropagation(); copyToClipboard('${escapeHtml(m.discord_id || '')}','คัดลอก Discord ID แล้ว')"><span class="discord-id-val">${escapeHtml(m.discord_id || 'ไม่มี')}</span> <i class="fa-regular fa-copy" style="font-size:0.7rem;"></i></span>
+
+              <!-- Hover / Active info panel -->
+              <div class="card-hover-info">
+                <div class="hover-info-row">
+                  <span class="hover-info-label"><i class="fa-solid fa-phone" style="color:#f59e0b;"></i> เบอร์โทร IC</span>
+                  <span class="hover-info-val" onclick="event.stopPropagation(); copyToClipboard('${escapeHtml(m.phone || 'ไม่มี')}','คัดลอกเบอร์แล้ว')">${escapeHtml(m.phone || 'ไม่มี')} <i class="fa-regular fa-copy" style="font-size:0.7rem;"></i></span>
+                </div>
+                <div class="hover-info-row">
+                  <span class="hover-info-label"><i class="fa-brands fa-discord" style="color:#6366f1;"></i> Discord ID</span>
+                  <span class="hover-info-val" title="${escapeHtml(m.discord_id || 'ไม่มี')}" onclick="event.stopPropagation(); copyToClipboard('${escapeHtml(m.discord_id || '')}','คัดลอก Discord ID แล้ว')"><span class="discord-id-val">${escapeHtml(m.discord_id || 'ไม่มี')}</span> <i class="fa-regular fa-copy" style="font-size:0.7rem;"></i></span>
+                </div>
+                ${m.weapon ? `
+                <div class="hover-info-row">
+                  <span class="hover-info-label"><i class="fa-solid fa-gun" style="color:#ef4444;"></i> ความถนัด</span>
+                  <span class="hover-info-val" style="color:#fca5a5;">${escapeHtml(m.weapon)}</span>
+                </div>` : ''}
+                ${m.joined_date && m.joined_date !== '0001-01-01' ? `
+                <div class="hover-info-row">
+                  <span class="hover-info-label"><i class="fa-regular fa-calendar" style="color:#38bdf8;"></i> วันที่เข้า</span>
+                  <span class="hover-info-val">${escapeHtml(m.joined_date)}</span>
+                </div>` : ''}
               </div>
-              ${m.weapon ? `
-              <div class="hover-info-row">
-                <span class="hover-info-label"><i class="fa-solid fa-gun" style="color:#ef4444;"></i> ความถนัด</span>
-                <span class="hover-info-val" style="color:#fca5a5;">${escapeHtml(m.weapon)}</span>
-              </div>` : ''}
-              ${m.joined_date && m.joined_date !== '0001-01-01' ? `
-              <div class="hover-info-row">
-                <span class="hover-info-label"><i class="fa-regular fa-calendar" style="color:#38bdf8;"></i> วันที่เข้า</span>
-                <span class="hover-info-val">${escapeHtml(m.joined_date)}</span>
-              </div>` : ''}
             </div>
           </div>`;
       }
