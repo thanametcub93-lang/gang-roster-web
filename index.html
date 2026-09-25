@@ -141,26 +141,31 @@
       -webkit-backface-visibility: hidden;
     }
 
-    /* Crisscrossing diagonal tape angles (Optimized 4-tape layout) */
+    /* Crisscrossing diagonal tape angles (Optimized 5-tape layout) */
     .ticker-ribbon.ribbon-1 {
-      top: 6%;
+      top: 4%;
       transform: rotate(-12deg) translate3d(0, 0, 0);
       z-index: 2;
     }
     .ticker-ribbon.ribbon-2 {
-      top: 32%;
-      transform: rotate(9deg) translate3d(0, 0, 0);
+      top: 25%;
+      transform: rotate(10deg) translate3d(0, 0, 0);
       z-index: 3;
     }
     .ticker-ribbon.ribbon-3 {
-      top: 62%;
-      transform: rotate(-8deg) translate3d(0, 0, 0);
+      top: 48%;
+      transform: rotate(-7deg) translate3d(0, 0, 0);
       z-index: 2;
     }
     .ticker-ribbon.ribbon-4 {
-      top: 88%;
+      top: 70%;
       transform: rotate(11deg) translate3d(0, 0, 0);
       z-index: 3;
+    }
+    .ticker-ribbon.ribbon-5 {
+      top: 92%;
+      transform: rotate(-10deg) translate3d(0, 0, 0);
+      z-index: 2;
     }
 
     .ticker-track {
@@ -2218,6 +2223,7 @@
     <div class="ticker-ribbon ribbon-2" data-speed="36" data-dir="right"></div>
     <div class="ticker-ribbon ribbon-3" data-speed="30" data-dir="left"></div>
     <div class="ticker-ribbon ribbon-4" data-speed="38" data-dir="right"></div>
+    <div class="ticker-ribbon ribbon-5" data-speed="34" data-dir="left"></div>
     <div class="gang-ticker-overlay"></div>
   </div>
 
