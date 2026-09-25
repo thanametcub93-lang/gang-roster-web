@@ -131,25 +131,30 @@
       left: -30%;
       width: 160%;
       height: 62px;
-      background: #ffffff;
+      background: #000000;
       display: flex;
       align-items: center;
-      border-top: 3.5px solid #000000;
-      border-bottom: 3.5px solid #000000;
-      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.96), 0 4px 10px rgba(0, 0, 0, 0.6);
+      border-top: 3.5px solid #ffffff;
+      border-bottom: 3.5px solid #ffffff;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.98), 0 0 22px rgba(255, 255, 255, 0.12);
       overflow: hidden;
       user-select: none;
       opacity: 0.96;
       z-index: 2;
+      contain: layout paint;
+      transform-style: preserve-3d;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      perspective: 1000px;
       will-change: transform;
     }
 
-    /* Inverted Black Streetwear Tape */
+    /* Inverted Black Streetwear Tape (Kept fully compatible) */
     .ticker-ribbon.ribbon-inverted {
       background: #000000;
       border-top: 3.5px solid #ffffff;
       border-bottom: 3.5px solid #ffffff;
-      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.98), 0 0 20px rgba(255, 255, 255, 0.12);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.98), 0 0 25px rgba(255, 255, 255, 0.15);
     }
 
     /* Crisscrossing diagonal tape angles matching reference image */
@@ -189,21 +194,24 @@
       width: max-content;
       white-space: nowrap;
       will-change: transform;
+      transform: translate3d(0, 0, 0);
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
     }
     .ticker-track.scroll-left {
-      animation: tickerScrollLeft 24s linear infinite;
+      animation: tickerScrollLeft 32s linear infinite;
     }
     .ticker-track.scroll-right {
-      animation: tickerScrollRight 28s linear infinite;
+      animation: tickerScrollRight 36s linear infinite;
     }
 
     @keyframes tickerScrollLeft {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
+      0% { transform: translate3d(0, 0, 0); }
+      100% { transform: translate3d(-50%, 0, 0); }
     }
     @keyframes tickerScrollRight {
-      0% { transform: translateX(-50%); }
-      100% { transform: translateX(0); }
+      0% { transform: translate3d(-50%, 0, 0); }
+      100% { transform: translate3d(0, 0, 0); }
     }
 
     .ticker-content {
@@ -219,55 +227,135 @@
       letter-spacing: 3.5px;
       text-transform: uppercase;
       line-height: 1;
+      display: inline-block;
     }
 
-    /* Standard White Tape: Black Gothic Text */
+    /* Crisp White Gothic Text on Black Tape */
     .ticker-text.solid {
-      color: #000000;
-      -webkit-text-fill-color: #000000;
-      text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.4);
+      color: #ffffff;
+      -webkit-text-fill-color: #ffffff;
+      text-shadow: 0 0 12px rgba(255, 255, 255, 0.45);
     }
     .ticker-text.outline {
       color: transparent;
       -webkit-text-fill-color: transparent;
-      -webkit-text-stroke: 1.8px #000000;
-      text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.2);
+      -webkit-text-stroke: 1.8px #ffffff;
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.35);
     }
     .ticker-sep {
-      color: #000000;
+      color: #ffffff;
       font-family: 'Pirata One', serif;
       font-weight: 900;
       font-size: 2rem;
       margin: 0 18px;
       line-height: 1;
+      opacity: 0.85;
     }
     .ticker-hazard {
-      color: #000000;
+      color: #ffffff;
       font-family: 'Pirata One', sans-serif;
       font-weight: 900;
       font-size: 1.8rem;
       letter-spacing: 3px;
       margin: 0 16px;
       opacity: 0.9;
+      display: inline-block;
     }
 
-    /* Inverted Black Tape: Crisp White Gothic Text */
-    .ticker-ribbon.ribbon-inverted .ticker-text.solid {
-      color: #ffffff;
-      -webkit-text-fill-color: #ffffff;
-      text-shadow: 0 0 12px rgba(255, 255, 255, 0.6);
+    /* ===================== RANDOM NEON GLOW EFFECTS ===================== */
+    @keyframes tapeGlowSilver {
+      0%, 100% {
+        text-shadow: 0 0 6px rgba(255, 255, 255, 0.35), 0 0 12px rgba(255, 255, 255, 0.15);
+        opacity: 0.85;
+      }
+      50% {
+        text-shadow: 0 0 14px #ffffff, 0 0 28px #ffffff, 0 0 50px rgba(255, 255, 255, 0.95), 0 0 75px rgba(210, 235, 255, 0.75);
+        filter: drop-shadow(0 0 8px #ffffff);
+        opacity: 1;
+      }
     }
-    .ticker-ribbon.ribbon-inverted .ticker-text.outline {
-      color: transparent;
-      -webkit-text-fill-color: transparent;
-      -webkit-text-stroke: 1.8px #ffffff;
-      text-shadow: 0 0 8px rgba(255, 255, 255, 0.35);
+
+    @keyframes tapeGlowGold {
+      0%, 100% {
+        text-shadow: 0 0 5px rgba(245, 158, 11, 0.25);
+        opacity: 0.85;
+      }
+      50% {
+        text-shadow: 0 0 12px #fbbf24, 0 0 25px #f59e0b, 0 0 45px rgba(217, 119, 6, 0.9), 0 0 65px rgba(245, 158, 11, 0.5);
+        filter: drop-shadow(0 0 7px #fbbf24);
+        opacity: 1;
+      }
     }
-    .ticker-ribbon.ribbon-inverted .ticker-sep {
-      color: #ffffff;
+
+    @keyframes tapeGlowCyan {
+      0%, 100% {
+        text-shadow: 0 0 5px rgba(56, 189, 248, 0.25);
+        opacity: 0.85;
+      }
+      50% {
+        text-shadow: 0 0 12px #38bdf8, 0 0 26px #0ea5e9, 0 0 48px rgba(14, 165, 233, 0.9), 0 0 70px rgba(56, 189, 248, 0.55);
+        filter: drop-shadow(0 0 7px #38bdf8);
+        opacity: 1;
+      }
     }
-    .ticker-ribbon.ribbon-inverted .ticker-hazard {
-      color: #ffffff;
+
+    @keyframes tapeGlowFlicker {
+      0%, 18.99%, 21.5%, 62.99%, 64.8%, 66%, 100% {
+        text-shadow: 0 0 14px #ffffff, 0 0 30px #ffffff, 0 0 55px rgba(255, 255, 255, 0.95);
+        filter: drop-shadow(0 0 10px #ffffff);
+        opacity: 1;
+      }
+      19%, 21.49%, 63%, 64.79%, 66.01%, 70% {
+        text-shadow: none;
+        filter: none;
+        opacity: 0.35;
+      }
+    }
+
+    @keyframes tapeHazardPulse {
+      0%, 100% {
+        text-shadow: 0 0 4px rgba(255, 255, 255, 0.3);
+        opacity: 0.75;
+      }
+      50% {
+        text-shadow: 0 0 14px #ffffff, 0 0 28px rgba(255, 255, 255, 0.95);
+        filter: drop-shadow(0 0 8px #ffffff);
+        opacity: 1;
+      }
+    }
+
+    .tape-glow-silver {
+      animation: tapeGlowSilver 3s ease-in-out infinite;
+    }
+    .tape-glow-gold {
+      animation: tapeGlowGold 3.4s ease-in-out infinite;
+      color: #fef08a !important;
+      -webkit-text-fill-color: #fef08a !important;
+    }
+    .tape-glow-cyan {
+      animation: tapeGlowCyan 2.8s ease-in-out infinite;
+      color: #e0f2fe !important;
+      -webkit-text-fill-color: #e0f2fe !important;
+    }
+    .tape-glow-flicker {
+      animation: tapeGlowFlicker 3.8s linear infinite;
+    }
+    .tape-glow-hazard {
+      animation: tapeHazardPulse 2.5s ease-in-out infinite;
+    }
+
+    /* Outlines with glow inherit stroke color */
+    .ticker-text.outline.tape-glow-silver {
+      -webkit-text-stroke: 1.8px #ffffff !important;
+    }
+    .ticker-text.outline.tape-glow-gold {
+      -webkit-text-stroke: 1.8px #fef08a !important;
+    }
+    .ticker-text.outline.tape-glow-cyan {
+      -webkit-text-stroke: 1.8px #7dd3fc !important;
+    }
+    .ticker-text.outline.tape-glow-flicker {
+      -webkit-text-stroke: 1.8px #ffffff !important;
     }
 
     /* Top Navbar */
@@ -2222,12 +2310,12 @@
 
   <!-- ===================== INFINITE SCROLLING TICKER BACKGROUND (BLACK & WHITE GANG TAPE) ===================== -->
   <div class="gang-ticker-bg" id="gangTickerBg">
-    <div class="ticker-ribbon ribbon-1" data-speed="22" data-dir="left"></div>
-    <div class="ticker-ribbon ribbon-2 ribbon-inverted" data-speed="26" data-dir="right"></div>
-    <div class="ticker-ribbon ribbon-3" data-speed="18" data-dir="left"></div>
-    <div class="ticker-ribbon ribbon-4 ribbon-inverted" data-speed="28" data-dir="right"></div>
-    <div class="ticker-ribbon ribbon-5" data-speed="20" data-dir="left"></div>
-    <div class="ticker-ribbon ribbon-6" data-speed="24" data-dir="right"></div>
+    <div class="ticker-ribbon ribbon-1" data-speed="34" data-dir="left"></div>
+    <div class="ticker-ribbon ribbon-2 ribbon-inverted" data-speed="38" data-dir="right"></div>
+    <div class="ticker-ribbon ribbon-3" data-speed="30" data-dir="left"></div>
+    <div class="ticker-ribbon ribbon-4 ribbon-inverted" data-speed="42" data-dir="right"></div>
+    <div class="ticker-ribbon ribbon-5" data-speed="32" data-dir="left"></div>
+    <div class="ticker-ribbon ribbon-6 ribbon-inverted" data-speed="36" data-dir="right"></div>
     <div class="gang-ticker-overlay"></div>
   </div>
 
@@ -2821,24 +2909,41 @@
         { text: slogan, type: "outline" }
       ];
 
-      let singleChunk = '<div class="ticker-content">';
-      for (let i = 0; i < 3; i++) {
-        pattern.forEach((item, idx) => {
-          singleChunk += `<span class="ticker-text ${item.type}">${item.text}</span>`;
-          if (idx % 3 === 0) {
-            singleChunk += `<span class="ticker-hazard">///</span>`;
-          } else {
-            singleChunk += `<span class="ticker-sep">-</span>`;
-          }
-        });
-      }
-      singleChunk += '</div>';
+      const glowTypes = ["tape-glow-silver", "tape-glow-gold", "tape-glow-cyan", "tape-glow-flicker"];
 
-      const trackInnerHtml = singleChunk + singleChunk.replace('class="ticker-content"', 'class="ticker-content" aria-hidden="true"');
+      bg.querySelectorAll(".ticker-ribbon").forEach((ribbon, rIdx) => {
+        const dir = ribbon.dataset.dir || (rIdx % 2 === 0 ? "left" : "right");
+        const speed = ribbon.dataset.speed || (32 + (rIdx * 2));
 
-      bg.querySelectorAll(".ticker-ribbon").forEach(ribbon => {
-        const dir = ribbon.dataset.dir || "left";
-        const speed = ribbon.dataset.speed || "24";
+        let singleChunk = '<div class="ticker-content">';
+        for (let i = 0; i < 3; i++) {
+          pattern.forEach((item, idx) => {
+            let glowClass = "";
+            let inlineStyle = "";
+            // Randomly illuminate text with neon glow (~40% chance)
+            if (Math.random() < 0.40) {
+              const selectedGlow = glowTypes[Math.floor(Math.random() * glowTypes.length)];
+              const animDelay = (Math.random() * 4.5).toFixed(2);
+              const animDuration = (2.2 + Math.random() * 2.2).toFixed(2);
+              glowClass = ` ${selectedGlow}`;
+              inlineStyle = ` style="animation-delay: ${animDelay}s; animation-duration: ${animDuration}s;"`;
+            }
+
+            singleChunk += `<span class="ticker-text ${item.type}${glowClass}"${inlineStyle}>${item.text}</span>`;
+
+            if (idx % 3 === 0) {
+              const hasHazardGlow = Math.random() < 0.35;
+              const hClass = hasHazardGlow ? ' tape-glow-hazard' : '';
+              const hStyle = hasHazardGlow ? ` style="animation-delay: ${(Math.random() * 3.5).toFixed(2)}s;"` : '';
+              singleChunk += `<span class="ticker-hazard${hClass}"${hStyle}>///</span>`;
+            } else {
+              singleChunk += `<span class="ticker-sep">-</span>`;
+            }
+          });
+        }
+        singleChunk += '</div>';
+
+        const trackInnerHtml = singleChunk + singleChunk.replace('class="ticker-content"', 'class="ticker-content" aria-hidden="true"');
         ribbon.innerHTML = `<div class="ticker-track scroll-${dir}" style="animation-duration: ${speed}s;">${trackInnerHtml}</div>`;
       });
     }
