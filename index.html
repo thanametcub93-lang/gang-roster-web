@@ -189,21 +189,27 @@
       width: max-content;
       white-space: nowrap;
       will-change: transform;
+      transform: translate3d(0, 0, 0);
+      -webkit-transform: translate3d(0, 0, 0);
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      perspective: 1000px;
+      -webkit-perspective: 1000px;
     }
     .ticker-track.scroll-left {
-      animation: tickerScrollLeft 24s linear infinite;
+      animation: tickerScrollLeft 64s linear infinite;
     }
     .ticker-track.scroll-right {
-      animation: tickerScrollRight 28s linear infinite;
+      animation: tickerScrollRight 70s linear infinite;
     }
 
     @keyframes tickerScrollLeft {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
+      0% { transform: translate3d(0, 0, 0); }
+      100% { transform: translate3d(-50%, 0, 0); }
     }
     @keyframes tickerScrollRight {
-      0% { transform: translateX(-50%); }
-      100% { transform: translateX(0); }
+      0% { transform: translate3d(-50%, 0, 0); }
+      100% { transform: translate3d(0, 0, 0); }
     }
 
     .ticker-content {
@@ -433,9 +439,12 @@
       color: var(--primary);
       font-size: 1.1rem;
       transition: transform 0.2s;
+      will-change: transform;
+      transform: translate3d(0, 0, 0);
+      backface-visibility: hidden;
     }
     .music-widget.playing .music-disc {
-      animation: spinDisc 3s linear infinite;
+      animation: spinDisc 8s linear infinite;
     }
     @keyframes spinDisc {
       from { transform: rotate(0deg); }
@@ -2218,12 +2227,12 @@
 
   <!-- ===================== INFINITE SCROLLING TICKER BACKGROUND (BLACK & WHITE GANG TAPE) ===================== -->
   <div class="gang-ticker-bg" id="gangTickerBg">
-    <div class="ticker-ribbon ribbon-1" data-speed="22" data-dir="left"></div>
-    <div class="ticker-ribbon ribbon-2 ribbon-inverted" data-speed="26" data-dir="right"></div>
-    <div class="ticker-ribbon ribbon-3" data-speed="18" data-dir="left"></div>
-    <div class="ticker-ribbon ribbon-4 ribbon-inverted" data-speed="28" data-dir="right"></div>
-    <div class="ticker-ribbon ribbon-5" data-speed="20" data-dir="left"></div>
-    <div class="ticker-ribbon ribbon-6" data-speed="24" data-dir="right"></div>
+    <div class="ticker-ribbon ribbon-1" data-speed="62" data-dir="left"></div>
+    <div class="ticker-ribbon ribbon-2 ribbon-inverted" data-speed="70" data-dir="right"></div>
+    <div class="ticker-ribbon ribbon-3" data-speed="58" data-dir="left"></div>
+    <div class="ticker-ribbon ribbon-4 ribbon-inverted" data-speed="74" data-dir="right"></div>
+    <div class="ticker-ribbon ribbon-5" data-speed="64" data-dir="left"></div>
+    <div class="ticker-ribbon ribbon-6" data-speed="68" data-dir="right"></div>
     <div class="gang-ticker-overlay"></div>
   </div>
 
