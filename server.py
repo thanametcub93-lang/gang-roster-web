@@ -452,15 +452,6 @@ class GangRequestHandler(SimpleHTTPRequestHandler):
                 return super().do_GET()
 
         if clean_path in ["", "/gang", "/index.html"]:
-            # If not a crawler and not yet verified by NoCAPTCHA, redirect to /verify.html
-            ua = self.headers.get("User-Agent", "")
-            if not shield.is_crawler(ua):
-                if not is_ver:
-                    self.send_response(302)
-                    self.send_header("Location", "/verify.html")
-                    self.end_headers()
-                    return
-
             try:
                 html_path = os.path.join(BASE_DIR, "index.html")
                 with open(html_path, "r", encoding="utf-8") as f:
