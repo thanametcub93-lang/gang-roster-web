@@ -1178,7 +1178,6 @@
       grid-template-columns:repeat(auto-fill, minmax(240px, 1fr));
       gap:20px; max-width:1200px; margin:0 auto;
     }
-    .city-fullgrid > div:first-child { grid-column:1/-1; }
     /* Card height controlled by JS via --city-card-h */
     .city-fullgrid .city-card-btn {
       height: var(--city-card-h, 150px);
@@ -2653,15 +2652,8 @@
         เลือกหมวดหมู่ประเทศ
         <span class="city-select-sub">SELECT SERVER / CATEGORY</span>
       </div>
-      <!-- City grid + drag-resize handle -->
-      <div class="city-grid-resizable" id="cityGridResizable">
-        <div class="city-fullgrid" id="cityTabsContainer">
-          <!-- Dynamic City Cards -->
-        </div>
-        <!-- Drag Handle (bottom-right corner) -->
-        <div class="city-resize-handle" id="cityResizeHandle" title="ลากเพื่อปรับขนาด">
-          <i class="fa-solid fa-grip-lines"></i>
-        </div>
+      <div class="city-fullgrid" id="cityTabsContainer">
+        <!-- Dynamic City Cards -->
       </div>
     </div>
 
@@ -3204,12 +3196,14 @@
       }
 
       let html = '';
-      // "ทุกประเทศ" full-width card
-      html += `<div style="grid-column:1/-1;">${buildCard(null, true)}</div>`;
-      // Per-city cards
+      // Per-city cards only - NO "ทุกประเทศ" card per user request
       cities.forEach(c => { html += buildCard(c, false); });
 
       container.innerHTML = html;
+
+      // Apply card height set by Admin
+      const cardH = GANG_DATA.city_card_height || parseInt(localStorage.getItem('gang_city_card_height')) || 140;
+      container.style.setProperty('--city-card-h', cardH + 'px');
     }
 
     function setCityFilter(cityName) {
@@ -3255,85 +3249,11 @@
     }
 
 
-    // ===== DRAG RESIZE for city cards =====
-    (function() {
-      const STORAGE_KEY = 'cityCardH';
-      const MIN_H = 80, MAX_H = 280, DEFAULT_H = 150;
-
-      function setCardH(h) {
-        h = Math.max(MIN_H, Math.min(MAX_H, Math.round(h)));
-        const grid = document.getElementById('cityTabsContainer');
-        if (grid) grid.style.setProperty('--city-card-h', h + 'px');
-        const handle = document.getElementById('cityResizeHandle');
-        if (handle) handle.setAttribute('data-height', h + 'px');
-        try { localStorage.setItem(STORAGE_KEY, h); } catch(e) {}
-        return h;
-      }
-
-      function initDragResize() {
-        const handle = document.getElementById('cityResizeHandle');
-        if (!handle) return;
-
-        // Restore saved height
-        let saved = DEFAULT_H;
-        try { saved = parseInt(localStorage.getItem(STORAGE_KEY)) || DEFAULT_H; } catch(e) {}
-        setCardH(saved);
-
-        let startY = 0, startH = 0, dragging = false;
-
-        handle.addEventListener('mousedown', e => {
-          e.preventDefault();
-          dragging = true;
-          startY = e.clientY;
-          const grid = document.getElementById('cityTabsContainer');
-          const cards = grid ? grid.querySelectorAll('.city-card-btn') : [];
-          startH = cards.length > 0 ? cards[0].offsetHeight : DEFAULT_H;
-          handle.classList.add('dragging');
-          document.body.style.cursor = 'ns-resize';
-          document.body.style.userSelect = 'none';
-        });
-
-        // Touch support
-        handle.addEventListener('touchstart', e => {
-          dragging = true;
-          startY = e.touches[0].clientY;
-          const grid = document.getElementById('cityTabsContainer');
-          const cards = grid ? grid.querySelectorAll('.city-card-btn') : [];
-          startH = cards.length > 0 ? cards[0].offsetHeight : DEFAULT_H;
-          handle.classList.add('dragging');
-        }, { passive: true });
-
-        document.addEventListener('mousemove', e => {
-          if (!dragging) return;
-          const delta = e.clientY - startY;
-          setCardH(startH + delta);
-        });
-
-        document.addEventListener('touchmove', e => {
-          if (!dragging) return;
-          const delta = e.touches[0].clientY - startY;
-          setCardH(startH + delta);
-        }, { passive: true });
-
-        const stopDrag = () => {
-          if (!dragging) return;
-          dragging = false;
-          handle.classList.remove('dragging');
-          document.body.style.cursor = '';
-          document.body.style.userSelect = '';
-        };
-        document.addEventListener('mouseup', stopDrag);
-        document.addEventListener('touchend', stopDrag);
-      }
-
-      // Run after DOM is ready
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initDragResize);
-      } else {
-        // Re-init when city section becomes visible
-        window._initCityDragResize = initDragResize;
-      }
-    })();
+    function applyCityCardHeight() {
+      const h = GANG_DATA.city_card_height || parseInt(localStorage.getItem('gang_city_card_height')) || 140;
+      const grid = document.getElementById('cityTabsContainer');
+      if (grid) grid.style.setProperty('--city-card-h', h + 'px');
+    }
 
     function backToCities() {
       currentCityFilter = 'all';
@@ -3355,7 +3275,7 @@
       renderHeader();
       renderStats();
       renderCityTabs();
-      initCityCardSize();
+      // card size applied in renderCityTabs
       const phase1 = document.getElementById('citySectionWrapper');
       const phase2 = document.getElementById('rosterSection');
       const rawCities = GANG_DATA.cities || [];
@@ -3363,7 +3283,6 @@
         if (phase1) phase1.style.display = '';
         if (phase2) phase2.style.display = 'none';
         // Init drag resize after DOM visible
-        requestAnimationFrame(() => { if (window._initCityDragResize) window._initCityDragResize(); });
       } else {
         if (phase1) phase1.style.display = 'none';
         if (phase2) phase2.style.display = '';

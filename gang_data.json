@@ -39,7 +39,7 @@
       "joined_date": "0001-01-01",
       "note": "",
       "status": "online",
-      "city": "ประเทศ A"
+      "city": ""
     },
     {
       "id": "1790186224433",
@@ -53,7 +53,7 @@
       "joined_date": "0001-01-01",
       "note": "",
       "status": "online",
-      "city": "ประเทศ A"
+      "city": ""
     },
     {
       "id": "1790186300418",
@@ -67,7 +67,7 @@
       "joined_date": "0001-01-01",
       "note": "",
       "status": "online",
-      "city": "ประเทศ B"
+      "city": ""
     },
     {
       "id": "1790186388549",
@@ -81,23 +81,18 @@
       "joined_date": "0001-01-01",
       "note": "",
       "status": "online",
-      "city": "ประเทศ B"
+      "city": ""
     }
   ],
   "discord_webhook": "",
-  "passcode": "gang123",
   "cities": [
     {
-      "id": "city_a",
-      "name": "ประเทศ A",
-      "cover_url": "",
-      "logo_url": ""
-    },
-    {
-      "id": "city_b",
-      "name": "ประเทศ B",
+      "id": "city_1790343893187",
+      "name": "GOD OF",
       "cover_url": "",
       "logo_url": ""
     }
-  ]
+  ],
+  "city_card_height": 140,
+  "passcode": "gang123"
 }
