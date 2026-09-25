@@ -719,6 +719,10 @@
             <i class="fa-solid fa-users"></i>
             <span>จัดการสมาชิก</span>
           </div>
+          <div class="nav-item" onclick="switchTab('tabCities')">
+            <i class="fa-solid fa-city"></i>
+            <span>หมวดหมู่ประเทศ</span>
+          </div>
           <div class="nav-item" onclick="switchTab('tabAttendance')">
             <i class="fa-solid fa-calendar-check"></i>
             <span>เช็คชื่อรวมพล</span>
@@ -887,6 +891,9 @@
                   <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted);"></i>
                   <input type="text" id="memberSearchInput" class="form-control" style="padding-left: 38px;" placeholder="ค้นหาตามชื่อ, ชื่อเล่น, เบอร์โทร..." oninput="filterMembersTable()">
                 </div>
+                <select id="memberCityFilter" class="form-control" style="width: auto; min-width: 170px;" onchange="filterMembersTable()">
+                  <option value="">🌐 ทุกประเทศ / เซิร์ฟเวอร์</option>
+                </select>
                 <select id="memberRankFilter" class="form-control" style="width: auto; min-width: 170px;" onchange="filterMembersTable()">
                   <option value="">ทุกยศ / ทุกตำแหน่ง</option>
                 </select>
@@ -903,9 +910,10 @@
                 <table class="custom-table" id="membersTable">
                   <thead>
                     <tr>
-                      <th style="width: 60px;">#</th>
+                      <th style="width: 50px;">#</th>
                       <th>สมาชิก</th>
                       <th>ตำแหน่ง / ยศ</th>
+                      <th>ประเทศ</th>
                       <th>เบอร์โทร</th>
                       <th>Discord ID</th>
                       <th>สถานะ</th>
@@ -913,6 +921,38 @@
                     </tr>
                   </thead>
                   <tbody id="membersTableBody">
+                    <!-- Dynamic Rows -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- ================= TAB: CITIES ================= -->
+          <div class="tab-pane" id="tabCities">
+            <div class="content-card">
+              <div class="card-header-bar">
+                <div class="card-title">
+                  <i class="fa-solid fa-city" style="color: var(--primary);"></i> จัดการหมวดหมู่ประเทศ (Cities / Servers)
+                </div>
+                <button class="btn btn-primary btn-sm" onclick="openAddCityModal()">
+                  <i class="fa-solid fa-plus"></i> เพิ่มประเทศใหม่
+                </button>
+              </div>
+              <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 20px;">
+                กำหนดรายชื่อประเทศ/เซิร์ฟเวอร์ที่แก๊งประจำการอยู่ เช่น ประเทศ A, ประเทศ B, หรือชื่อเซิร์ฟเวอร์ต่างๆ เพื่อให้สมาชิกสามารถเลือกสังกัด และแสดงเป็นแท็บหมวดหมู่บนหน้าเว็บหลัก
+              </p>
+              <div class="table-container">
+                <table class="custom-table" id="citiesTable">
+                  <thead>
+                    <tr>
+                      <th style="width: 50px;">#</th>
+                      <th>ชื่อประเทศ / เซิร์ฟเวอร์</th>
+                      <th style="width: 150px;">จำนวนสมาชิก</th>
+                      <th style="width: 160px; text-align: right;">การจัดการ</th>
+                    </tr>
+                  </thead>
+                  <tbody id="citiesTableBody">
                     <!-- Dynamic Rows -->
                   </tbody>
                 </table>
@@ -1185,11 +1225,17 @@
         </div>
       </div>
 
-      <div class="form-grid-2">
+      <div class="form-grid-3">
         <div class="form-group">
           <label class="form-label">ตำแหน่ง / ยศ (Rank) *</label>
           <select id="memRankInput" class="form-control">
             <!-- Dynamic Role Options -->
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label"><i class="fa-solid fa-city" style="color:#06b6d4;"></i> ประเทศ (City / Server)</label>
+          <select id="memCityInput" class="form-control">
+            <!-- Dynamic City Options -->
           </select>
         </div>
         <div class="form-group">
@@ -1258,6 +1304,29 @@
         <button class="btn btn-secondary" onclick="closeModal('memberModal')">ยกเลิก</button>
         <button class="btn btn-primary" onclick="saveMemberData()">
           <i class="fa-solid fa-floppy-disk"></i> บันทึกข้อมูลสมาชิก
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL: ADD / EDIT CITY ==================== -->
+  <div class="modal-overlay" id="cityModal">
+    <div class="modal-card" style="max-width: 440px;">
+      <div class="modal-header">
+        <h3 id="cityModalTitle" style="font-size: 1.15rem; font-weight: 700;">
+          <i class="fa-solid fa-city" style="color: var(--primary);"></i> เพิ่มประเทศใหม่
+        </h3>
+        <button class="modal-close-btn" onclick="closeModal('cityModal')">&times;</button>
+      </div>
+      <input type="hidden" id="cityOldName">
+      <div class="form-group" style="margin-top: 14px;">
+        <label class="form-label">ชื่อประเทศ / เซิร์ฟเวอร์ *</label>
+        <input type="text" id="cityNameInput" class="form-control" placeholder="เช่น ประเทศ A หรือ Story City" onkeypress="if(event.key === 'Enter') saveCityData()">
+      </div>
+      <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+        <button class="btn btn-secondary" onclick="closeModal('cityModal')">ยกเลิก</button>
+        <button class="btn btn-primary" onclick="saveCityData()">
+          <i class="fa-solid fa-floppy-disk"></i> บันทึกข้อมูลประเทศ
         </button>
       </div>
     </div>
@@ -1545,6 +1614,8 @@
       document.getElementById("kpiLeaders").textContent = members.filter(m => m.rank && (m.rank.includes("Leader") || m.rank.includes("Officer") || m.rank.includes("หัวหน้า"))).length;
 
       // Render Tables
+      populateCitySelectOptions();
+      renderCitiesTable();
       renderMembersTable();
       renderRolesTable();
       populateSettingsForm();
@@ -1583,7 +1654,7 @@
       if (targetPane) targetPane.classList.add("active");
 
       // Update Nav active
-      const tabs = ['tabOverview', 'tabMembers', 'tabAttendance', 'tabRoles', 'tabSettings', 'tabMusic', 'tabDiscord', 'tabBackup'];
+      const tabs = ['tabOverview', 'tabMembers', 'tabCities', 'tabAttendance', 'tabRoles', 'tabSettings', 'tabMusic', 'tabDiscord', 'tabBackup'];
       const idx = tabs.indexOf(tabId);
       if (idx !== -1) {
         const navItems = document.querySelectorAll(".sidebar-nav .nav-item");
@@ -1594,6 +1665,7 @@
       const titles = {
         tabOverview: { icon: 'fa-chart-pie', text: 'ภาพรวมระบบ (Overview)' },
         tabMembers: { icon: 'fa-users', text: 'จัดการสมาชิก (Member Management)' },
+        tabCities: { icon: 'fa-city', text: 'จัดการหมวดหมู่ประเทศ (Cities / Servers)' },
         tabAttendance: { icon: 'fa-calendar-check', text: 'เช็คชื่อรวมพล (Attendance & Roll Call)' },
         tabRoles: { icon: 'fa-medal', text: 'ยศและตำแหน่ง (Roles & Ranks)' },
         tabSettings: { icon: 'fa-sliders', text: 'ตั้งค่าแก๊ง & อัตลักษณ์ (Gang Settings)' },
@@ -1618,14 +1690,14 @@
     }
 
     // ================= MEMBERS TABLE & CRUD =================
-    function renderMembersTable(filterText = "", rankFilter = "", statusFilter = "") {
+    function renderMembersTable(filterText = "", rankFilter = "", statusFilter = "", cityFilter = "") {
       const tbody = document.getElementById("membersTableBody");
       const members = GANG_DATA.members || [];
       const roles = GANG_DATA.roles || [];
 
       // Update Rank Filter dropdown
       const rankSelect = document.getElementById("memberRankFilter");
-      if (rankSelect.options.length <= 1) {
+      if (rankSelect && rankSelect.options.length <= 1) {
         roles.forEach(r => {
           const opt = document.createElement("option");
           opt.value = r.name;
@@ -1641,11 +1713,12 @@
                           (m.discord_id || "").includes(filterText);
         const rankMatch = !rankFilter || m.rank === rankFilter;
         const statusMatch = !statusFilter || m.status === statusFilter;
-        return nameMatch && rankMatch && statusMatch;
+        const cityMatch = !cityFilter || (m.city || (GANG_DATA.cities && GANG_DATA.cities[0]) || "") === cityFilter;
+        return nameMatch && rankMatch && statusMatch && cityMatch;
       });
 
       if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 30px; color: var(--text-muted);"><i class="fa-solid fa-user-slash" style="font-size: 1.8rem; margin-bottom: 8px; display: block;"></i> ไม่พบรายชื่อสมาชิกที่ตรงกับเงื่อนไข</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; padding: 30px; color: var(--text-muted);"><i class="fa-solid fa-user-slash" style="font-size: 1.8rem; margin-bottom: 8px; display: block;"></i> ไม่พบรายชื่อสมาชิกที่ตรงกับเงื่อนไข</td></tr>`;
         return;
       }
 
@@ -1653,6 +1726,7 @@
         const roleObj = roles.find(r => r.name === m.rank) || { color: "#94a3b8" };
         const statusColor = m.status === "online" ? "#10b981" : (m.status === "busy" ? "#f59e0b" : "#64748b");
         const statusLabel = m.status === "online" ? "ออนไลน์" : (m.status === "busy" ? "ไม่ว่าง" : "ออฟไลน์");
+        const cityName = m.city || (GANG_DATA.cities && GANG_DATA.cities[0]) || "ประเทศ A";
 
         return `
           <tr>
@@ -1669,6 +1743,11 @@
             <td>
               <span style="display: inline-block; padding: 4px 10px; border-radius: 6px; font-size: 0.82rem; font-weight: 600; background: ${roleObj.color}22; color: ${roleObj.color}; border: 1px solid ${roleObj.color}44;">
                 ${m.rank}
+              </span>
+            </td>
+            <td>
+              <span style="display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 6px; font-size: 0.8rem; font-weight: 700; background: rgba(6, 182, 212, 0.12); color: #22d3ee; border: 1px solid rgba(6, 182, 212, 0.3);">
+                <i class="fa-solid fa-city"></i> ${escapeHtml(cityName)}
               </span>
             </td>
             <td style="font-family: monospace; font-size: 0.88rem;">${m.phone || '-'}</td>
@@ -1698,7 +1777,143 @@
       const q = document.getElementById("memberSearchInput").value;
       const rank = document.getElementById("memberRankFilter").value;
       const status = document.getElementById("memberStatusFilter").value;
-      renderMembersTable(q, rank, status);
+      const city = document.getElementById("memberCityFilter") ? document.getElementById("memberCityFilter").value : "";
+      renderMembersTable(q, rank, status, city);
+    }
+
+    // ================= CITIES / SERVERS MANAGEMENT =================
+    function populateCitySelectOptions(selectedCity = "") {
+      const citySelect = document.getElementById("memCityInput");
+      const filterSelect = document.getElementById("memberCityFilter");
+      const cities = GANG_DATA.cities || ["ประเทศ A", "ประเทศ B"];
+
+      if (citySelect) {
+        citySelect.innerHTML = "";
+        cities.forEach(c => {
+          const opt = document.createElement("option");
+          opt.value = c;
+          opt.textContent = `🏙️ ${c}`;
+          if (c === selectedCity) opt.selected = true;
+          citySelect.appendChild(opt);
+        });
+      }
+
+      if (filterSelect) {
+        const curVal = filterSelect.value;
+        filterSelect.innerHTML = `<option value="">🌐 ทุกประเทศ / เซิร์ฟเวอร์</option>`;
+        cities.forEach(c => {
+          const opt = document.createElement("option");
+          opt.value = c;
+          opt.textContent = `🏙️ ${c}`;
+          if (c === curVal) opt.selected = true;
+          filterSelect.appendChild(opt);
+        });
+      }
+    }
+
+    function renderCitiesTable() {
+      const tbody = document.getElementById("citiesTableBody");
+      if (!tbody) return;
+      const cities = GANG_DATA.cities || [];
+      const members = GANG_DATA.members || [];
+
+      if (cities.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 24px; color: var(--text-muted);"><i class="fa-solid fa-city" style="font-size: 1.6rem; margin-bottom: 6px; display: block;"></i> ยังไม่มีรายชื่อประเทศ กรุณากดปุ่มเพิ่มประเทศใหม่ด้านบน</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = cities.map((c, idx) => {
+        const count = members.filter(m => (m.city || cities[0]) === c).length;
+        return `
+          <tr>
+            <td style="color: var(--text-muted); font-size: 0.85rem;">${idx + 1}</td>
+            <td>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-city" style="color: #06b6d4;"></i>
+                <span style="font-weight: 700; color: #fff; font-size: 0.95rem;">${escapeHtml(c)}</span>
+              </div>
+            </td>
+            <td>
+              <span style="display: inline-flex; align-items: center; gap: 5px; background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 0.82rem;">
+                <i class="fa-solid fa-users"></i> ${count} คน
+              </span>
+            </td>
+            <td style="text-align: right;">
+              <div style="display: inline-flex; gap: 6px;">
+                <button class="btn btn-secondary btn-sm" title="แก้ไขชื่อประเทศ" onclick="openEditCityModal('${escapeHtml(c)}')">
+                  <i class="fa-solid fa-pen-to-square"></i>
+                </button>
+                <button class="btn btn-danger btn-sm" title="ลบประเทศ" onclick="deleteCity('${escapeHtml(c)}')">
+                  <i class="fa-solid fa-trash-can"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function openAddCityModal() {
+      document.getElementById("cityModalTitle").innerHTML = `<i class="fa-solid fa-city" style="color: var(--primary);"></i> เพิ่มประเทศใหม่`;
+      document.getElementById("cityOldName").value = "";
+      document.getElementById("cityNameInput").value = "";
+      openModal("cityModal");
+      setTimeout(() => document.getElementById("cityNameInput").focus(), 100);
+    }
+
+    function openEditCityModal(name) {
+      document.getElementById("cityModalTitle").innerHTML = `<i class="fa-solid fa-pen-to-square" style="color: var(--primary);"></i> แก้ไขชื่อประเทศ`;
+      document.getElementById("cityOldName").value = name;
+      document.getElementById("cityNameInput").value = name;
+      openModal("cityModal");
+      setTimeout(() => document.getElementById("cityNameInput").focus(), 100);
+    }
+
+    async function saveCityData() {
+      const oldName = document.getElementById("cityOldName").value.trim();
+      const newName = document.getElementById("cityNameInput").value.trim();
+      if (!newName) {
+        alert("กรุณาระบุชื่อประเทศ / เซิร์ฟเวอร์");
+        return;
+      }
+
+      if (!GANG_DATA.cities) GANG_DATA.cities = [];
+
+      if (oldName) {
+        // Edit existing
+        const idx = GANG_DATA.cities.indexOf(oldName);
+        if (idx !== -1) {
+          GANG_DATA.cities[idx] = newName;
+        }
+        // Update all members belonging to oldName
+        (GANG_DATA.members || []).forEach(m => {
+          if (m.city === oldName) m.city = newName;
+        });
+      } else {
+        // Add new
+        if (GANG_DATA.cities.includes(newName)) {
+          alert("มีชื่อประเทศนี้อยู่แล้ว");
+          return;
+        }
+        GANG_DATA.cities.push(newName);
+      }
+
+      closeModal("cityModal");
+      await syncDataToServer();
+      populateAllData();
+      showToast(oldName ? `✏️ แก้ไขชื่อประเทศเป็น "${newName}" เรียบร้อย!` : `🏙️ เพิ่มประเทศ "${newName}" เรียบร้อย!`);
+    }
+
+    async function deleteCity(name) {
+      if (!confirm(`คุณแน่ใจหรือไม่ว่าต้องการลบประเทศ "${name}"?`)) return;
+      GANG_DATA.cities = (GANG_DATA.cities || []).filter(c => c !== name);
+      const fallback = (GANG_DATA.cities && GANG_DATA.cities[0]) || "ประเทศ A";
+      (GANG_DATA.members || []).forEach(m => {
+        if (m.city === name) m.city = fallback;
+      });
+      await syncDataToServer();
+      populateAllData();
+      showToast(`🗑️ ลบประเทศ "${name}" เรียบร้อยแล้ว`);
     }
 
     function openAddMemberModal() {
@@ -1717,6 +1932,7 @@
       document.getElementById("memCoverPreviewBox").innerHTML = "";
 
       populateRoleSelectOptions();
+      populateCitySelectOptions();
       openModal("memberModal");
     }
 
@@ -1742,6 +1958,7 @@
         : "";
 
       populateRoleSelectOptions(m.rank);
+      populateCitySelectOptions(m.city || "");
       openModal("memberModal");
     }
 
@@ -1795,6 +2012,7 @@
         name: name,
         nickname: document.getElementById("memNicknameInput").value.trim(),
         rank: document.getElementById("memRankInput").value,
+        city: (document.getElementById("memCityInput")?.value || "").trim() || ((GANG_DATA.cities && GANG_DATA.cities[0]) || "ประเทศ A"),
         phone: document.getElementById("memPhoneInput").value.trim(),
         discord_id: document.getElementById("memDiscordIdInput").value.trim(),
         avatar: document.getElementById("memAvatarInput").value.trim() || "/gang_logo.png",

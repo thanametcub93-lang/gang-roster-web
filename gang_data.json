@@ -38,7 +38,8 @@
       "weapon": "soon",
       "joined_date": "0001-01-01",
       "note": "",
-      "status": "online"
+      "status": "online",
+      "city": "ประเทศ A"
     },
     {
       "id": "1790186224433",
@@ -51,7 +52,8 @@
       "weapon": "pool",
       "joined_date": "0001-01-01",
       "note": "",
-      "status": "online"
+      "status": "online",
+      "city": "ประเทศ A"
     },
     {
       "id": "1790186300418",
@@ -64,7 +66,8 @@
       "weapon": "pool",
       "joined_date": "0001-01-01",
       "note": "",
-      "status": "online"
+      "status": "online",
+      "city": "ประเทศ B"
     },
     {
       "id": "1790186388549",
@@ -77,9 +80,14 @@
       "weapon": "pool",
       "joined_date": "0001-01-01",
       "note": "",
-      "status": "online"
+      "status": "online",
+      "city": "ประเทศ B"
     }
   ],
   "discord_webhook": "",
-  "passcode": "gang123"
+  "passcode": "gang123",
+  "cities": [
+    "ประเทศ A",
+    "ประเทศ B"
+  ]
 }

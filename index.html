@@ -930,9 +930,86 @@
       100% { transform: scale(0.9); opacity: 0.7; }
     }
 
+    /* ===================== CITY / SERVER CATEGORY TABS ===================== */
+    .city-tabs-container {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin: 1.8rem auto 0.6rem;
+      max-width: 1100px;
+      padding: 0 16px;
+      position: relative;
+      z-index: 5;
+    }
+
+    .city-tab-btn {
+      background: rgba(13, 16, 24, 0.88);
+      border: 1.5px solid rgba(255, 255, 255, 0.12);
+      color: #94a3b8;
+      border-radius: 30px;
+      padding: 9px 20px;
+      font-size: 0.94rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+      user-select: none;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+      outline: none;
+    }
+
+    .city-tab-btn:hover {
+      border-color: var(--primary);
+      color: #fff;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px var(--primary-glow);
+    }
+
+    .city-tab-btn.active {
+      background: linear-gradient(135deg, var(--primary) 0%, #991b1b 100%);
+      border-color: #ff1a4b;
+      color: #ffffff;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 22px var(--primary-glow), 0 0 12px rgba(225, 29, 72, 0.5);
+    }
+
+    .city-tab-badge {
+      background: rgba(0, 0, 0, 0.45);
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-size: 0.76rem;
+      font-weight: 800;
+      color: #cbd5e1;
+      transition: all 0.25s ease;
+    }
+
+    .city-tab-btn.active .city-tab-badge {
+      background: rgba(255, 255, 255, 0.28);
+      color: #ffffff;
+    }
+
+    .card-city-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      background: rgba(6, 182, 212, 0.15);
+      color: #22d3ee;
+      border: 1px solid rgba(6, 182, 212, 0.35);
+      text-transform: uppercase;
+      margin-top: 3px;
+    }
+
     /* Filter & Search Bar */
     .filter-section {
-      margin-top: 1.8rem;
+      margin-top: 1rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -2321,6 +2398,11 @@
     <!-- Editor Strip removed: use admin.html for all management -->
     <input type="file" id="importJsonFileInput" accept=".json" style="display:none;" onchange="handleImportJsonFile(event)">
 
+    <!-- City / Server Category Tabs (แท็บหมวดหมู่ประเทศ) -->
+    <div class="city-tabs-container" id="cityTabsContainer">
+      <!-- Dynamic City Tabs -->
+    </div>
+
     <!-- Search Control -->
     <section class="filter-section" style="justify-content: center;">
       <div class="search-box">
@@ -2800,10 +2882,55 @@
       }
     }
 
+    // ===== CITY / SERVER FILTER STATE =====
+    let currentCityFilter = "all";
+
+    function renderCityTabs() {
+      const container = document.getElementById("cityTabsContainer");
+      if (!container) return;
+
+      const cities = (GANG_DATA.cities && GANG_DATA.cities.length > 0) ? GANG_DATA.cities : [];
+      const members = GANG_DATA.members || [];
+
+      // Count per city
+      const allCount = members.length;
+      const countMap = {};
+      cities.forEach(c => {
+        countMap[c] = members.filter(m => (m.city || "") === c).length;
+      });
+
+      // Build tabs HTML
+      let html = '';
+
+      // "ทุกประเทศ" tab
+      const allActive = currentCityFilter === "all" ? "active" : "";
+      html += `<button class="city-tab-btn ${allActive}" onclick="setCityFilter('all')">
+        🌐 ทุกประเทศ <span class="city-tab-badge">${allCount}</span>
+      </button>`;
+
+      // Per-city tabs
+      cities.forEach(cityName => {
+        const isActive = currentCityFilter === cityName ? "active" : "";
+        const cnt = countMap[cityName] || 0;
+        html += `<button class="city-tab-btn ${isActive}" onclick="setCityFilter('${cityName.replace(/'/g, "\\'").replace(/"/g, '&quot;')}')">
+          🏙️ ${cityName} <span class="city-tab-badge">${cnt}</span>
+        </button>`;
+      });
+
+      container.innerHTML = html;
+    }
+
+    function setCityFilter(cityName) {
+      currentCityFilter = cityName;
+      renderCityTabs();
+      renderRoster();
+    }
+
     function renderAll() {
       renderGangTickerBg();
       renderHeader();
       renderStats();
+      renderCityTabs();
       renderRoster();
     }
 
@@ -3043,6 +3170,11 @@
       const searchQuery = (document.getElementById("searchInput").value || "").toLowerCase().trim();
       let members = GANG_DATA.members || [];
 
+      // Filter by city/server tab
+      if (currentCityFilter !== "all") {
+        members = members.filter(m => (m.city || "") === currentCityFilter);
+      }
+
       if (searchQuery) {
         members = members.filter(m => 
           (m.name || "").toLowerCase().includes(searchQuery) ||
@@ -3050,7 +3182,8 @@
           (m.rank || "").toLowerCase().includes(searchQuery) ||
           (m.phone || "").toLowerCase().includes(searchQuery) ||
           (m.discord_id || "").toLowerCase().includes(searchQuery) ||
-          (m.weapon || "").toLowerCase().includes(searchQuery)
+          (m.weapon || "").toLowerCase().includes(searchQuery) ||
+          (m.city || "").toLowerCase().includes(searchQuery)
         );
       }
 
@@ -3109,6 +3242,7 @@
                   <div class="card-rank-badge">
                     <i class="fa-solid ${rankIcon}"></i> ${escapeHtml(cleanRankText)}
                   </div>
+                  ${m.city ? `<div class="card-city-badge"><i class="fa-solid fa-location-dot"></i> ${escapeHtml(m.city)}</div>` : ''}
                 </div>
 
                 <div class="card-cut-btn" title="ดูโปรไฟล์ Discord"
@@ -3133,6 +3267,11 @@
                 <div class="hover-info-row">
                   <span class="hover-info-label"><i class="fa-solid fa-gun" style="color:#ef4444;"></i> ความถนัด</span>
                   <span class="hover-info-val" style="color:#fca5a5;">${escapeHtml(m.weapon)}</span>
+                </div>` : ''}
+                ${m.city ? `
+                <div class="hover-info-row">
+                  <span class="hover-info-label"><i class="fa-solid fa-location-dot" style="color:#22d3ee;"></i> ประเทศ</span>
+                  <span class="hover-info-val" style="color:#67e8f9;">${escapeHtml(m.city)}</span>
                 </div>` : ''}
                 ${m.joined_date && m.joined_date !== '0001-01-01' ? `
                 <div class="hover-info-row">
