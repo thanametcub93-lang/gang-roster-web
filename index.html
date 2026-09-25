@@ -980,14 +980,25 @@
       background: rgba(225, 29, 72, 0.7);
     }
 
-    /* Roster Grid — Centered & Compact Balanced */
+    /* Roster Grid — Centered & Compact Balanced with Translucent Dark Rounded Backdrop */
     .roster-grid {
-      margin-top: 1.8rem;
+      margin-top: 2rem;
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 36px;
-      width: 100%;
+      width: calc(100% - 32px);
+      max-width: 1240px;
+      margin-left: auto;
+      margin-right: auto;
+      background: rgba(8, 10, 15, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 24px;
+      padding: 34px 20px 44px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.85);
+      box-sizing: border-box;
+      position: relative;
+      z-index: 2;
     }
     .rank-section {
       display: flex;
@@ -1083,7 +1094,7 @@
       transform: translateY(-2px);
     }
     .member-card-inner {
-      background: #0c0d12;
+      background: rgba(12, 13, 18, 0.88);
       border-radius: 13px 13px 0 13px;
       clip-path: polygon(
         0 0,
@@ -1102,7 +1113,7 @@
     }
     .member-card:hover .member-card-inner,
     .member-card.is-active .member-card-inner {
-      background: #11131a;
+      background: rgba(17, 19, 26, 0.95);
     }
 
     /* Top-left corner tech bracket marker (L-bracket) */
@@ -1739,6 +1750,12 @@
       .filter-section { flex-direction: column; align-items: stretch; }
       .search-box { max-width: 100%; }
       .form-grid-2 { grid-template-columns: 1fr; }
+      .roster-grid {
+        width: calc(100% - 16px);
+        padding: 24px 12px 32px;
+        border-radius: 18px;
+        gap: 28px;
+      }
     }
 
     /* ===================== LANDING PAGE (SCROLL DOWN TO LOAD) ===================== */
