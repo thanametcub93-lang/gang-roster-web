@@ -998,28 +998,25 @@
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
-      transition: transform 0.4s cubic-bezier(0.16,1,0.3,1), opacity 0.3s;
-      opacity: 0.45;
+      transition: transform 0.4s cubic-bezier(0.16,1,0.3,1), filter 0.3s;
+      opacity: 1;
+      filter: contrast(1.05) saturate(1.1);
     }
     .city-card-btn:hover .city-card-bg,
     .city-card-btn.active .city-card-bg {
-      transform: scale(1.06);
-      opacity: 0.6;
+      transform: scale(1.04);
+      filter: contrast(1.08) saturate(1.15);
     }
     .city-card-overlay {
       position: absolute;
       inset: 0;
-      background: linear-gradient(90deg,
-        rgba(5,10,22,0.92) 0%,
-        rgba(5,10,22,0.65) 55%,
-        rgba(5,10,22,0.15) 100%);
+      background: radial-gradient(circle at center, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.55) 100%);
       pointer-events: none;
+      transition: background 0.3s;
     }
+    .city-card-btn:hover .city-card-overlay,
     .city-card-btn.active .city-card-overlay {
-      background: linear-gradient(90deg,
-        rgba(0,30,45,0.93) 0%,
-        rgba(0,30,45,0.65) 55%,
-        rgba(0,30,45,0.12) 100%);
+      background: radial-gradient(circle at center, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.42) 100%);
     }
     .city-card-accent {
       position: absolute;
@@ -1034,7 +1031,7 @@
     .city-card-btn.active .city-card-accent {
       opacity: 1; top: 6px; bottom: 6px;
     }
-    .city-card-logo-wrap {
+    .city-card-logo-wrap { display: none !important; 
       position: relative; z-index: 2; flex-shrink: 0;
       width: 86px; display: flex;
       align-items: center; justify-content: center;
@@ -1056,22 +1053,26 @@
     }
     .city-card-text {
       position: relative; z-index: 2; flex: 1;
-      display: flex; flex-direction: column; gap: 2px;
-      padding: 0 16px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; gap: 3px;
+      padding: 12px 24px;
     }
     .city-card-sub {
-      font-size: 0.62rem; font-weight: 700; letter-spacing: 3px;
-      color: #06b6d4; text-transform: uppercase; opacity: 0.9;
+      font-size: 0.72rem; font-weight: 800; letter-spacing: 3px;
+      color: #22d3ee; text-transform: uppercase;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.95), 0 0 12px rgba(0,0,0,0.9);
     }
     .city-card-name {
-      font-size: 1.5rem; font-weight: 900; color: #fff;
-      letter-spacing: 0.5px; line-height: 1.1;
-      text-shadow: 0 2px 14px rgba(6,182,212,0.4);
+      font-size: 1.8rem; font-weight: 900; color: #fff;
+      letter-spacing: 1px; line-height: 1.1;
+      text-shadow: 0 2px 12px rgba(0,0,0,0.95), 0 0 24px rgba(0,0,0,0.9), 0 0 12px rgba(6,182,212,0.6);
+      filter: drop-shadow(0 2px 8px rgba(0,0,0,0.95));
     }
     .city-card-btn.active .city-card-name { color: #67e8f9; }
     .city-card-count {
-      font-size: 0.7rem; color: #94a3b8; font-weight: 600;
-      letter-spacing: 0.5px; margin-top: 3px;
+      font-size: 0.8rem; color: #f1f5f9; font-weight: 700;
+      letter-spacing: 0.5px; margin-top: 4px;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.95), 0 0 10px rgba(0,0,0,0.9);
     }
     .city-card-btn.active .city-card-count { color: #67e8f9; }
     .city-card-click {
@@ -3190,7 +3191,6 @@
           <div class="city-card-overlay"></div>
           <div class="city-card-accent"></div>
           <div class="city-card-scan"></div>
-          ${logoHtml}
           <div class="city-card-text">
             <div class="city-card-sub">${isAll ? 'ALL SERVERS' : 'SERVER CATEGORY'}</div>
             <div class="city-card-name">${escapeHtml(name)}</div>
