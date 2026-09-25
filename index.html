@@ -1174,14 +1174,20 @@
 
     /* City fullgrid */
     .city-fullgrid {
-      display:grid;
-      grid-template-columns:repeat(auto-fill, minmax(240px, 1fr));
-      gap:20px; max-width:1200px; margin:0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
     }
-    /* Card height controlled by JS via --city-card-h */
+    /* Card width and height controlled by Admin */
     .city-fullgrid .city-card-btn {
-      height: var(--city-card-h, 150px);
-      transition: height 0.0s; /* instant while dragging */
+      width: var(--city-card-w, 280px);
+      max-width: 100%;
+      height: var(--city-card-h, 160px);
+      flex-shrink: 0;
+      transition: transform 0.2s, box-shadow 0.2s;
     }
 
     /* Drag Resize Handle */
@@ -3201,8 +3207,10 @@
 
       container.innerHTML = html;
 
-      // Apply card height set by Admin
-      const cardH = GANG_DATA.city_card_height || parseInt(localStorage.getItem('gang_city_card_height')) || 140;
+      // Apply card width and height set by Admin
+      const cardW = GANG_DATA.city_card_width || parseInt(localStorage.getItem('gang_city_card_width')) || 280;
+      const cardH = GANG_DATA.city_card_height || parseInt(localStorage.getItem('gang_city_card_height')) || 160;
+      container.style.setProperty('--city-card-w', cardW + 'px');
       container.style.setProperty('--city-card-h', cardH + 'px');
     }
 
@@ -3250,9 +3258,13 @@
 
 
     function applyCityCardHeight() {
-      const h = GANG_DATA.city_card_height || parseInt(localStorage.getItem('gang_city_card_height')) || 140;
+      const w = GANG_DATA.city_card_width || parseInt(localStorage.getItem('gang_city_card_width')) || 280;
+      const h = GANG_DATA.city_card_height || parseInt(localStorage.getItem('gang_city_card_height')) || 160;
       const grid = document.getElementById('cityTabsContainer');
-      if (grid) grid.style.setProperty('--city-card-h', h + 'px');
+      if (grid) {
+        grid.style.setProperty('--city-card-w', w + 'px');
+        grid.style.setProperty('--city-card-h', h + 'px');
+      }
     }
 
     function backToCities() {

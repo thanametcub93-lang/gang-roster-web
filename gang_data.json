@@ -93,6 +93,7 @@
       "logo_url": ""
     }
   ],
-  "city_card_height": 140,
+  "city_card_width": 280,
+  "city_card_height": 160,
   "passcode": "gang123"
 }
