@@ -930,65 +930,180 @@
       100% { transform: scale(0.9); opacity: 0.7; }
     }
 
-    /* ===================== CITY / SERVER CATEGORY TABS ===================== */
-    .city-tabs-container {
+    /* ===================== CITY / SERVER CATEGORY CARDS ===================== */
+    .city-section-label {
+      text-align: center;
+      margin: 2rem auto 1rem;
+      font-size: 0.75rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #64748b;
+      font-weight: 700;
       display: flex;
-      gap: 12px;
+      align-items: center;
       justify-content: center;
-      flex-wrap: wrap;
-      margin: 1.8rem auto 0.6rem;
+      gap: 10px;
+    }
+    .city-section-label::before,
+    .city-section-label::after {
+      content: '';
+      flex: 1;
+      max-width: 80px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #334155);
+    }
+
+    .city-tabs-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
       max-width: 1100px;
+      margin: 0 auto 1.5rem;
       padding: 0 16px;
       position: relative;
       z-index: 5;
     }
 
-    .city-tab-btn {
-      background: rgba(13, 16, 24, 0.88);
-      border: 1.5px solid rgba(255, 255, 255, 0.12);
-      color: #94a3b8;
-      border-radius: 30px;
-      padding: 9px 20px;
-      font-size: 0.94rem;
-      font-weight: 700;
+    .city-card-btn {
+      position: relative;
+      width: 100%;
+      height: 110px;
+      border-radius: 14px;
+      overflow: hidden;
       cursor: pointer;
-      display: inline-flex;
+      border: 2px solid rgba(255,255,255,0.08);
+      background: #0b0f1a;
+      display: flex;
       align-items: center;
-      gap: 9px;
-      transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
-      user-select: none;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+      transition: transform 0.3s cubic-bezier(0.16,1,0.3,1),
+                  border-color 0.3s ease,
+                  box-shadow 0.3s ease;
       outline: none;
+      user-select: none;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
     }
-
-    .city-tab-btn:hover {
-      border-color: var(--primary);
-      color: #fff;
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px var(--primary-glow);
+    .city-card-btn:hover {
+      transform: translateY(-4px) scale(1.01);
+      border-color: rgba(6, 182, 212, 0.55);
+      box-shadow: 0 10px 36px rgba(0,0,0,0.6), 0 0 0 1px rgba(6,182,212,0.2);
     }
-
-    .city-tab-btn.active {
-      background: linear-gradient(135deg, var(--primary) 0%, #991b1b 100%);
-      border-color: #ff1a4b;
-      color: #ffffff;
-      transform: translateY(-2px);
-      box-shadow: 0 6px 22px var(--primary-glow), 0 0 12px rgba(225, 29, 72, 0.5);
+    .city-card-btn.active {
+      border-color: #06b6d4;
+      box-shadow: 0 8px 30px rgba(6,182,212,0.35), 0 0 0 2px rgba(6,182,212,0.4);
+      transform: translateY(-3px);
     }
-
-    .city-tab-badge {
-      background: rgba(0, 0, 0, 0.45);
-      padding: 2px 8px;
-      border-radius: 20px;
-      font-size: 0.76rem;
-      font-weight: 800;
-      color: #cbd5e1;
-      transition: all 0.25s ease;
+    .city-card-bg {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      transition: transform 0.4s cubic-bezier(0.16,1,0.3,1), opacity 0.3s;
+      opacity: 0.45;
     }
-
-    .city-tab-btn.active .city-tab-badge {
-      background: rgba(255, 255, 255, 0.28);
-      color: #ffffff;
+    .city-card-btn:hover .city-card-bg,
+    .city-card-btn.active .city-card-bg {
+      transform: scale(1.06);
+      opacity: 0.6;
+    }
+    .city-card-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg,
+        rgba(5,10,22,0.92) 0%,
+        rgba(5,10,22,0.65) 55%,
+        rgba(5,10,22,0.15) 100%);
+      pointer-events: none;
+    }
+    .city-card-btn.active .city-card-overlay {
+      background: linear-gradient(90deg,
+        rgba(0,30,45,0.93) 0%,
+        rgba(0,30,45,0.65) 55%,
+        rgba(0,30,45,0.12) 100%);
+    }
+    .city-card-accent {
+      position: absolute;
+      left: 0; top: 12px; bottom: 12px;
+      width: 3px;
+      border-radius: 0 3px 3px 0;
+      background: #06b6d4;
+      opacity: 0.5;
+      transition: opacity 0.3s, top 0.3s, bottom 0.3s;
+    }
+    .city-card-btn:hover .city-card-accent,
+    .city-card-btn.active .city-card-accent {
+      opacity: 1; top: 6px; bottom: 6px;
+    }
+    .city-card-logo-wrap {
+      position: relative; z-index: 2; flex-shrink: 0;
+      width: 86px; display: flex;
+      align-items: center; justify-content: center;
+      padding: 0 8px 0 22px;
+    }
+    .city-card-logo {
+      width: 58px; height: 58px; border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid rgba(6,182,212,0.55);
+      box-shadow: 0 0 18px rgba(6,182,212,0.35);
+      background: rgba(6,182,212,0.1);
+    }
+    .city-card-logo-fallback {
+      width: 58px; height: 58px; border-radius: 50%;
+      border: 2px solid rgba(6,182,212,0.35);
+      background: rgba(6,182,212,0.1);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem; color: #22d3ee;
+    }
+    .city-card-text {
+      position: relative; z-index: 2; flex: 1;
+      display: flex; flex-direction: column; gap: 2px;
+      padding: 0 16px;
+    }
+    .city-card-sub {
+      font-size: 0.62rem; font-weight: 700; letter-spacing: 3px;
+      color: #06b6d4; text-transform: uppercase; opacity: 0.9;
+    }
+    .city-card-name {
+      font-size: 1.5rem; font-weight: 900; color: #fff;
+      letter-spacing: 0.5px; line-height: 1.1;
+      text-shadow: 0 2px 14px rgba(6,182,212,0.4);
+    }
+    .city-card-btn.active .city-card-name { color: #67e8f9; }
+    .city-card-count {
+      font-size: 0.7rem; color: #94a3b8; font-weight: 600;
+      letter-spacing: 0.5px; margin-top: 3px;
+    }
+    .city-card-btn.active .city-card-count { color: #67e8f9; }
+    .city-card-click {
+      position: absolute; z-index: 3;
+      bottom: 10px; right: 14px;
+      font-size: 0.58rem; letter-spacing: 2.5px; font-weight: 800;
+      color: #06b6d4; text-transform: uppercase; opacity: 0.5;
+      transition: opacity 0.25s;
+    }
+    .city-card-btn:hover .city-card-click,
+    .city-card-btn.active .city-card-click { opacity: 1; }
+    .city-card-active-badge {
+      position: absolute; z-index: 3; top: 10px; right: 12px;
+      background: #06b6d4; color: #000; font-size: 0.62rem;
+      font-weight: 800; letter-spacing: 1px; padding: 3px 8px;
+      border-radius: 20px; text-transform: uppercase; display: none;
+    }
+    .city-card-btn.active .city-card-active-badge { display: inline-block; }
+    .city-card-scan {
+      position: absolute; inset: 0; z-index: 1;
+      overflow: hidden; pointer-events: none;
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .city-card-btn:hover .city-card-scan { opacity: 1; }
+    .city-card-scan::after {
+      content: ''; position: absolute; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(6,182,212,0.6), transparent);
+      animation: cityCardScan 1.5s linear infinite;
+    }
+    @keyframes cityCardScan {
+      from { top: -2px; } to { top: 100%; }
     }
 
     .card-city-badge {
@@ -2398,9 +2513,15 @@
     <!-- Editor Strip removed: use admin.html for all management -->
     <input type="file" id="importJsonFileInput" accept=".json" style="display:none;" onchange="handleImportJsonFile(event)">
 
-    <!-- City / Server Category Tabs (แท็บหมวดหมู่ประเทศ) -->
-    <div class="city-tabs-container" id="cityTabsContainer">
-      <!-- Dynamic City Tabs -->
+    <!-- City / Server Category Cards (หมวดหมู่ประเทศ) -->
+    <div id="citySectionWrapper">
+      <div class="city-section-label" style="max-width:1100px;margin:2rem auto 1rem;padding:0 16px;">
+        <i class="fa-solid fa-layer-group" style="color:#06b6d4;font-size:0.85rem;"></i>
+        หมวดหมู่ประเทศ / Server
+      </div>
+      <div class="city-tabs-container" id="cityTabsContainer">
+        <!-- Dynamic City Cards -->
+      </div>
     </div>
 
     <!-- Search Control -->
@@ -2889,33 +3010,65 @@
       const container = document.getElementById("cityTabsContainer");
       if (!container) return;
 
-      const cities = (GANG_DATA.cities && GANG_DATA.cities.length > 0) ? GANG_DATA.cities : [];
+      const rawCities = (GANG_DATA.cities && GANG_DATA.cities.length > 0) ? GANG_DATA.cities : [];
       const members = GANG_DATA.members || [];
 
-      // Count per city
+      // Normalize: support both old string[] and new object[] format
+      const cities = rawCities.map(c =>
+        typeof c === 'string' ? { id: c, name: c, cover_url: '', logo_url: '' } : c
+      );
+
       const allCount = members.length;
       const countMap = {};
       cities.forEach(c => {
-        countMap[c] = members.filter(m => (m.city || "") === c).length;
+        countMap[c.name] = members.filter(m => (m.city || '') === c.name).length;
       });
 
-      // Build tabs HTML
-      let html = '';
+      function buildCard(cityObj, isAll) {
+        const name     = isAll ? 'ทุกประเทศ' : cityObj.name;
+        const key      = isAll ? 'all' : cityObj.name;
+        const count    = isAll ? allCount : (countMap[cityObj.name] || 0);
+        const isActive = currentCityFilter === key;
+        const activeClass = isActive ? 'active' : '';
+        const coverStyle = (!isAll && cityObj.cover_url)
+          ? `style="background-image:url('${cityObj.cover_url.replace(/'/g,'\\&apos;')}');"`
+          : '';
+        const safeKey = key.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 
-      // "ทุกประเทศ" tab
-      const allActive = currentCityFilter === "all" ? "active" : "";
-      html += `<button class="city-tab-btn ${allActive}" onclick="setCityFilter('all')">
-        🌐 ทุกประเทศ <span class="city-tab-badge">${allCount}</span>
-      </button>`;
+        const logoHtml = (!isAll && cityObj.logo_url)
+          ? `<div class="city-card-logo-wrap"><img src="${cityObj.logo_url.replace(/"/g,'&quot;')}" class="city-card-logo" alt="${name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"><div class="city-card-logo-fallback" style="display:none;">🏙️</div></div>`
+          : `<div class="city-card-logo-wrap"><div class="city-card-logo-fallback">${isAll ? '🌐' : '🏙️'}</div></div>`;
 
-      // Per-city tabs
-      cities.forEach(cityName => {
-        const isActive = currentCityFilter === cityName ? "active" : "";
-        const cnt = countMap[cityName] || 0;
-        html += `<button class="city-tab-btn ${isActive}" onclick="setCityFilter('${cityName.replace(/'/g, "\\'").replace(/"/g, '&quot;')}')">
-          🏙️ ${cityName} <span class="city-tab-badge">${cnt}</span>
+        return `<button class="city-card-btn ${activeClass}" onclick="setCityFilter('${safeKey}')">
+          <div class="city-card-bg" ${coverStyle}></div>
+          <div class="city-card-overlay"></div>
+          <div class="city-card-accent"></div>
+          <div class="city-card-scan"></div>
+          ${logoHtml}
+          <div class="city-card-text">
+            <div class="city-card-sub">${isAll ? 'ALL SERVERS' : 'SERVER CATEGORY'}</div>
+            <div class="city-card-name">${escapeHtml(name)}</div>
+            <div class="city-card-count"><i class="fa-solid fa-users" style="font-size:0.65rem;"></i> ${count} สมาชิก</div>
+          </div>
+          <div class="city-card-click">CLICK</div>
+          ${isActive ? '<div class="city-card-active-badge">✓ เลือกอยู่</div>' : ''}
         </button>`;
-      });
+      }
+
+      // Hide section if no cities defined
+      const wrapper = document.getElementById('citySectionWrapper');
+      if (cities.length === 0) {
+        if (wrapper) wrapper.style.display = 'none';
+        container.innerHTML = '';
+        return;
+      }
+      if (wrapper) wrapper.style.display = '';
+
+      let html = '';
+      // "ทุกประเทศ" full-width card
+      html += `<div style="grid-column:1/-1;">${buildCard(null, true)}</div>`;
+      // Per-city cards
+      cities.forEach(c => { html += buildCard(c, false); });
 
       container.innerHTML = html;
     }

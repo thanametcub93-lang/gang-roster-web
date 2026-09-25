@@ -87,7 +87,17 @@
   "discord_webhook": "",
   "passcode": "gang123",
   "cities": [
-    "ประเทศ A",
-    "ประเทศ B"
+    {
+      "id": "city_a",
+      "name": "ประเทศ A",
+      "cover_url": "",
+      "logo_url": ""
+    },
+    {
+      "id": "city_b",
+      "name": "ประเทศ B",
+      "cover_url": "",
+      "logo_url": ""
+    }
   ]
 }

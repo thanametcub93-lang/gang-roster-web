@@ -948,7 +948,8 @@
                     <tr>
                       <th style="width: 50px;">#</th>
                       <th>ชื่อประเทศ / เซิร์ฟเวอร์</th>
-                      <th style="width: 150px;">จำนวนสมาชิก</th>
+                      <th style="width: 90px;">ภาพปก</th>
+                      <th style="width: 130px;">จำนวนสมาชิก</th>
                       <th style="width: 160px; text-align: right;">การจัดการ</th>
                     </tr>
                   </thead>
@@ -1311,17 +1312,32 @@
 
   <!-- ==================== MODAL: ADD / EDIT CITY ==================== -->
   <div class="modal-overlay" id="cityModal">
-    <div class="modal-card" style="max-width: 440px;">
+    <div class="modal-card" style="max-width: 520px;">
       <div class="modal-header">
         <h3 id="cityModalTitle" style="font-size: 1.15rem; font-weight: 700;">
           <i class="fa-solid fa-city" style="color: var(--primary);"></i> เพิ่มประเทศใหม่
         </h3>
         <button class="modal-close-btn" onclick="closeModal('cityModal')">&times;</button>
       </div>
-      <input type="hidden" id="cityOldName">
+      <input type="hidden" id="cityOldId">
       <div class="form-group" style="margin-top: 14px;">
         <label class="form-label">ชื่อประเทศ / เซิร์ฟเวอร์ *</label>
-        <input type="text" id="cityNameInput" class="form-control" placeholder="เช่น ประเทศ A หรือ Story City" onkeypress="if(event.key === 'Enter') saveCityData()">
+        <input type="text" id="cityNameInput" class="form-control" placeholder="เช่น ประเทศ A หรือ Story City">
+      </div>
+      <div class="form-group" style="margin-top: 12px;">
+        <label class="form-label"><i class="fa-solid fa-image" style="color:#06b6d4;"></i> URL ภาพปก (Cover Image)</label>
+        <input type="url" id="cityCoverInput" class="form-control" placeholder="https://...ภาพพื้นหลังการ์ด...">
+        <div id="cityCoverPreview" style="margin-top:8px;border-radius:8px;overflow:hidden;display:none;">
+          <img id="cityCoverPreviewImg" src="" alt="cover preview" style="width:100%;height:80px;object-fit:cover;border-radius:6px;">
+        </div>
+      </div>
+      <div class="form-group" style="margin-top: 12px;">
+        <label class="form-label"><i class="fa-solid fa-circle" style="color:#06b6d4;"></i> URL โลโก้ประเทศ (Logo)</label>
+        <input type="url" id="cityLogoInput" class="form-control" placeholder="https://...URL รูปโลโก้ประเทศ...">
+        <div id="cityLogoPreview" style="margin-top:8px;display:flex;align-items:center;gap:10px;display:none;">
+          <img id="cityLogoPreviewImg" src="" alt="logo preview" style="width:48px;height:48px;border-radius:50%;object-fit:cover;border:2px solid rgba(6,182,212,0.5);">
+          <span style="font-size:0.8rem;color:#94a3b8;">ตัวอย่างโลโก้</span>
+        </div>
       </div>
       <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
         <button class="btn btn-secondary" onclick="closeModal('cityModal')">ยกเลิก</button>
@@ -1785,15 +1801,16 @@
     function populateCitySelectOptions(selectedCity = "") {
       const citySelect = document.getElementById("memCityInput");
       const filterSelect = document.getElementById("memberCityFilter");
-      const cities = GANG_DATA.cities || ["ประเทศ A", "ประเทศ B"];
+      const rawCities = GANG_DATA.cities || [];
+      const cities = rawCities.map(c => typeof c === 'string' ? { id: c, name: c } : c);
 
       if (citySelect) {
         citySelect.innerHTML = "";
         cities.forEach(c => {
           const opt = document.createElement("option");
-          opt.value = c;
-          opt.textContent = `🏙️ ${c}`;
-          if (c === selectedCity) opt.selected = true;
+          opt.value = c.name;
+          opt.textContent = `🏙️ ${c.name}`;
+          if (c.name === selectedCity) opt.selected = true;
           citySelect.appendChild(opt);
         });
       }
@@ -1803,9 +1820,9 @@
         filterSelect.innerHTML = `<option value="">🌐 ทุกประเทศ / เซิร์ฟเวอร์</option>`;
         cities.forEach(c => {
           const opt = document.createElement("option");
-          opt.value = c;
-          opt.textContent = `🏙️ ${c}`;
-          if (c === curVal) opt.selected = true;
+          opt.value = c.name;
+          opt.textContent = `🏙️ ${c.name}`;
+          if (c.name === curVal) opt.selected = true;
           filterSelect.appendChild(opt);
         });
       }
@@ -1814,25 +1831,39 @@
     function renderCitiesTable() {
       const tbody = document.getElementById("citiesTableBody");
       if (!tbody) return;
-      const cities = GANG_DATA.cities || [];
+      const rawCities = GANG_DATA.cities || [];
+      // Normalize string[] -> object[]
+      const cities = rawCities.map(c =>
+        typeof c === 'string' ? { id: c, name: c, cover_url: '', logo_url: '' } : c
+      );
       const members = GANG_DATA.members || [];
 
       if (cities.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 24px; color: var(--text-muted);"><i class="fa-solid fa-city" style="font-size: 1.6rem; margin-bottom: 6px; display: block;"></i> ยังไม่มีรายชื่อประเทศ กรุณากดปุ่มเพิ่มประเทศใหม่ด้านบน</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 24px; color: var(--text-muted);"><i class="fa-solid fa-city" style="font-size: 1.6rem; margin-bottom: 6px; display: block;"></i> ยังไม่มีรายชื่อประเทศ กรุณากดปุ่มเพิ่มประเทศใหม่ด้านบน</td></tr>`;
         return;
       }
 
       tbody.innerHTML = cities.map((c, idx) => {
-        const count = members.filter(m => (m.city || cities[0]) === c).length;
+        const count = members.filter(m => (m.city || '') === c.name).length;
+        const coverThumb = c.cover_url
+          ? `<img src="${escapeHtml(c.cover_url)}" style="width:52px;height:30px;object-fit:cover;border-radius:4px;border:1px solid rgba(6,182,212,0.3);" onerror="this.style.display='none'" alt="cover">`
+          : `<span style="color:#475569;font-size:0.75rem;">ไม่มีภาพ</span>`;
+        const logoThumb = c.logo_url
+          ? `<img src="${escapeHtml(c.logo_url)}" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:1px solid rgba(6,182,212,0.4);" onerror="this.style.display='none'" alt="logo">`
+          : `<span style="color:#475569;font-size:0.75rem;">-</span>`;
         return `
           <tr>
             <td style="color: var(--text-muted); font-size: 0.85rem;">${idx + 1}</td>
             <td>
-              <div style="display: flex; align-items: center; gap: 8px;">
-                <i class="fa-solid fa-city" style="color: #06b6d4;"></i>
-                <span style="font-weight: 700; color: #fff; font-size: 0.95rem;">${escapeHtml(c)}</span>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                ${logoThumb}
+                <div>
+                  <div style="font-weight: 700; color: #fff; font-size: 0.95rem;">${escapeHtml(c.name)}</div>
+                  <div style="font-size:0.7rem;color:#475569;">${c.id || c.name}</div>
+                </div>
               </div>
             </td>
+            <td>${coverThumb}</td>
             <td>
               <span style="display: inline-flex; align-items: center; gap: 5px; background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 0.82rem;">
                 <i class="fa-solid fa-users"></i> ${count} คน
@@ -1840,10 +1871,10 @@
             </td>
             <td style="text-align: right;">
               <div style="display: inline-flex; gap: 6px;">
-                <button class="btn btn-secondary btn-sm" title="แก้ไขชื่อประเทศ" onclick="openEditCityModal('${escapeHtml(c)}')">
+                <button class="btn btn-secondary btn-sm" title="แก้ไขประเทศ" onclick="openEditCityModal('${escapeHtml(c.id || c.name)}')">
                   <i class="fa-solid fa-pen-to-square"></i>
                 </button>
-                <button class="btn btn-danger btn-sm" title="ลบประเทศ" onclick="deleteCity('${escapeHtml(c)}')">
+                <button class="btn btn-danger btn-sm" title="ลบประเทศ" onclick="deleteCity('${escapeHtml(c.id || c.name)}')">
                   <i class="fa-solid fa-trash-can"></i>
                 </button>
               </div>
@@ -1855,65 +1886,107 @@
 
     function openAddCityModal() {
       document.getElementById("cityModalTitle").innerHTML = `<i class="fa-solid fa-city" style="color: var(--primary);"></i> เพิ่มประเทศใหม่`;
-      document.getElementById("cityOldName").value = "";
+      document.getElementById("cityOldId").value = "";
       document.getElementById("cityNameInput").value = "";
+      document.getElementById("cityCoverInput").value = "";
+      document.getElementById("cityLogoInput").value = "";
+      document.getElementById("cityCoverPreview").style.display = "none";
+      document.getElementById("cityLogoPreview").style.display = "none";
       openModal("cityModal");
       setTimeout(() => document.getElementById("cityNameInput").focus(), 100);
     }
 
-    function openEditCityModal(name) {
-      document.getElementById("cityModalTitle").innerHTML = `<i class="fa-solid fa-pen-to-square" style="color: var(--primary);"></i> แก้ไขชื่อประเทศ`;
-      document.getElementById("cityOldName").value = name;
-      document.getElementById("cityNameInput").value = name;
+    function openEditCityModal(cityId) {
+      const rawCities = GANG_DATA.cities || [];
+      const cities = rawCities.map(c => typeof c === 'string' ? { id: c, name: c, cover_url: '', logo_url: '' } : c);
+      const cityObj = cities.find(c => (c.id || c.name) === cityId);
+      if (!cityObj) return;
+
+      document.getElementById("cityModalTitle").innerHTML = `<i class="fa-solid fa-pen-to-square" style="color: var(--primary);"></i> แก้ไขประเทศ: ${cityObj.name}`;
+      document.getElementById("cityOldId").value = cityObj.id || cityObj.name;
+      document.getElementById("cityNameInput").value = cityObj.name;
+      document.getElementById("cityCoverInput").value = cityObj.cover_url || "";
+      document.getElementById("cityLogoInput").value = cityObj.logo_url || "";
+
+      const coverPrev = document.getElementById("cityCoverPreview");
+      const coverImg = document.getElementById("cityCoverPreviewImg");
+      if (cityObj.cover_url) {
+        coverImg.src = cityObj.cover_url;
+        coverPrev.style.display = "block";
+      } else {
+        coverPrev.style.display = "none";
+      }
+
+      const logoPrev = document.getElementById("cityLogoPreview");
+      const logoImg = document.getElementById("cityLogoPreviewImg");
+      if (cityObj.logo_url) {
+        logoImg.src = cityObj.logo_url;
+        logoPrev.style.display = "flex";
+      } else {
+        logoPrev.style.display = "none";
+      }
+
       openModal("cityModal");
       setTimeout(() => document.getElementById("cityNameInput").focus(), 100);
     }
 
     async function saveCityData() {
-      const oldName = document.getElementById("cityOldName").value.trim();
+      const oldId  = document.getElementById("cityOldId").value.trim();
       const newName = document.getElementById("cityNameInput").value.trim();
+      const coverUrl = document.getElementById("cityCoverInput").value.trim();
+      const logoUrl  = document.getElementById("cityLogoInput").value.trim();
       if (!newName) {
         alert("กรุณาระบุชื่อประเทศ / เซิร์ฟเวอร์");
         return;
       }
 
       if (!GANG_DATA.cities) GANG_DATA.cities = [];
+      // Normalize to objects
+      GANG_DATA.cities = GANG_DATA.cities.map(c =>
+        typeof c === 'string' ? { id: c, name: c, cover_url: '', logo_url: '' } : c
+      );
 
-      if (oldName) {
+      if (oldId) {
         // Edit existing
-        const idx = GANG_DATA.cities.indexOf(oldName);
+        const idx = GANG_DATA.cities.findIndex(c => (c.id || c.name) === oldId);
         if (idx !== -1) {
-          GANG_DATA.cities[idx] = newName;
+          const oldName = GANG_DATA.cities[idx].name;
+          GANG_DATA.cities[idx] = { id: GANG_DATA.cities[idx].id || oldName, name: newName, cover_url: coverUrl, logo_url: logoUrl };
+          // Update all members belonging to oldName
+          (GANG_DATA.members || []).forEach(m => {
+            if (m.city === oldName) m.city = newName;
+          });
         }
-        // Update all members belonging to oldName
-        (GANG_DATA.members || []).forEach(m => {
-          if (m.city === oldName) m.city = newName;
-        });
       } else {
         // Add new
-        if (GANG_DATA.cities.includes(newName)) {
+        const newId = 'city_' + Date.now();
+        if (GANG_DATA.cities.some(c => c.name === newName)) {
           alert("มีชื่อประเทศนี้อยู่แล้ว");
           return;
         }
-        GANG_DATA.cities.push(newName);
+        GANG_DATA.cities.push({ id: newId, name: newName, cover_url: coverUrl, logo_url: logoUrl });
       }
 
       closeModal("cityModal");
       await syncDataToServer();
       populateAllData();
-      showToast(oldName ? `✏️ แก้ไขชื่อประเทศเป็น "${newName}" เรียบร้อย!` : `🏙️ เพิ่มประเทศ "${newName}" เรียบร้อย!`);
+      showToast(oldId ? `✏️ แก้ไขประเทศเป็น "${newName}" เรียบร้อย!` : `🏙️ เพิ่มประเทศ "${newName}" เรียบร้อย!`);
     }
 
-    async function deleteCity(name) {
-      if (!confirm(`คุณแน่ใจหรือไม่ว่าต้องการลบประเทศ "${name}"?`)) return;
-      GANG_DATA.cities = (GANG_DATA.cities || []).filter(c => c !== name);
-      const fallback = (GANG_DATA.cities && GANG_DATA.cities[0]) || "ประเทศ A";
+    async function deleteCity(cityId) {
+      const rawCities = GANG_DATA.cities || [];
+      const cities = rawCities.map(c => typeof c === 'string' ? { id: c, name: c, cover_url: '', logo_url: '' } : c);
+      const cityObj = cities.find(c => (c.id || c.name) === cityId);
+      if (!cityObj) return;
+      if (!confirm(`คุณแน่ใจหรือไม่ว่าต้องการลบประเทศ "${cityObj.name}"?`)) return;
+      GANG_DATA.cities = cities.filter(c => (c.id || c.name) !== cityId);
+      const fallback = GANG_DATA.cities.length > 0 ? GANG_DATA.cities[0].name : '';
       (GANG_DATA.members || []).forEach(m => {
-        if (m.city === name) m.city = fallback;
+        if (m.city === cityObj.name) m.city = fallback;
       });
       await syncDataToServer();
       populateAllData();
-      showToast(`🗑️ ลบประเทศ "${name}" เรียบร้อยแล้ว`);
+      showToast(`🗑️ ลบประเทศ "${cityObj.name}" เรียบร้อยแล้ว`);
     }
 
     function openAddMemberModal() {
