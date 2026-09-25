@@ -82,7 +82,9 @@
       pointer-events: none;
       z-index: 0;
       overflow: hidden;
-      background: radial-gradient(circle at 50% 50%, rgba(225, 29, 72, 0.16) 0%, #0d0f17 55%, #000000 100%);
+      contain: strict;
+      transform: translate3d(0, 0, 0);
+      background: radial-gradient(circle at 50% 50%, rgba(225, 29, 72, 0.22) 0%, rgba(13, 15, 23, 0.95) 55%, #000000 100%);
     }
 
     /* Centered / Prominent Gang Insignia Artwork in background amidst scrolling tapes */
@@ -113,7 +115,7 @@
       max-width: 100%;
       max-height: 100%;
       object-fit: contain;
-      filter: drop-shadow(0 0 35px rgba(225, 29, 72, 0.4)) drop-shadow(0 0 60px rgba(255, 255, 255, 0.15)) drop-shadow(0 30px 70px rgba(0, 0, 0, 0.98));
+      filter: drop-shadow(0 0 16px rgba(225, 29, 72, 0.6)) drop-shadow(0 15px 35px rgba(0, 0, 0, 0.95));
       user-select: none;
       pointer-events: none;
     }
@@ -121,7 +123,7 @@
     .gang-ticker-overlay {
       position: absolute;
       inset: 0;
-      background: radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.15) 0%, rgba(0, 0, 0, 0.75) 100%);
+      background: radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.12) 0%, rgba(0, 0, 0, 0.75) 100%);
       pointer-events: none;
       z-index: 6;
     }
@@ -134,21 +136,22 @@
       background: #ffffff;
       display: flex;
       align-items: center;
-      border-top: 3.5px solid #000000;
-      border-bottom: 3.5px solid #000000;
-      box-shadow: 0 0 25px rgba(255, 255, 255, 0.45), 0 0 10px rgba(255, 255, 255, 0.6), 0 16px 36px rgba(0, 0, 0, 0.96);
+      border-top: 3px solid #000000;
+      border-bottom: 3px solid #000000;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 8px 20px rgba(0, 0, 0, 0.85);
       overflow: hidden;
       user-select: none;
       opacity: 0.98;
       z-index: 2;
+      contain: paint;
     }
 
-    /* Inverted Black Streetwear Tape with Glowing Red/White Edge Aura */
+    /* Inverted Black Streetwear Tape with Neon Red Edge Glow */
     .ticker-ribbon.ribbon-inverted {
-      background: #000000;
-      border-top: 3.5px solid #ffffff;
-      border-bottom: 3.5px solid #ffffff;
-      box-shadow: 0 0 35px rgba(225, 29, 72, 0.55), 0 0 15px rgba(255, 255, 255, 0.4), inset 0 0 14px rgba(225, 29, 72, 0.25), 0 18px 40px rgba(0, 0, 0, 0.98);
+      background: #08080c;
+      border-top: 3px solid #ff1a4b;
+      border-bottom: 3px solid #ff1a4b;
+      box-shadow: 0 0 14px #e11d48, 0 8px 20px rgba(0, 0, 0, 0.9);
     }
 
     /* Crisscrossing diagonal tape angles matching reference image */
@@ -230,13 +233,12 @@
     .ticker-text.solid {
       color: #000000;
       -webkit-text-fill-color: #000000;
-      text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.5);
+      text-shadow: 0 0 2px rgba(0, 0, 0, 0.6);
     }
     .ticker-text.outline {
       color: transparent;
       -webkit-text-fill-color: transparent;
       -webkit-text-stroke: 1.8px #000000;
-      text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.25);
     }
     .ticker-sep {
       color: #000000;
@@ -254,28 +256,28 @@
       letter-spacing: 3px;
       margin: 0 16px;
       opacity: 0.95;
-      text-shadow: 0 0 8px rgba(225, 29, 72, 0.7);
+      text-shadow: 0 0 6px #e11d48;
     }
 
-    /* Inverted Black Tape: Crisp White Gothic Text with Brilliant Neon Glow */
+    /* Inverted Black Tape: Crisp White Gothic Text with Neon Glow */
     .ticker-ribbon.ribbon-inverted .ticker-text.solid {
       color: #ffffff;
       -webkit-text-fill-color: #ffffff;
-      text-shadow: 0 0 12px rgba(255, 255, 255, 0.85), 0 0 24px rgba(225, 29, 72, 0.5);
+      text-shadow: 0 0 6px #ffffff, 0 0 10px #e11d48;
     }
     .ticker-ribbon.ribbon-inverted .ticker-text.outline {
       color: transparent;
       -webkit-text-fill-color: transparent;
       -webkit-text-stroke: 1.8px #ffffff;
-      text-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
+      text-shadow: 0 0 6px rgba(255, 255, 255, 0.7);
     }
     .ticker-ribbon.ribbon-inverted .ticker-sep {
       color: #ffffff;
-      text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+      text-shadow: 0 0 6px #ffffff;
     }
     .ticker-ribbon.ribbon-inverted .ticker-hazard {
-      color: #e11d48;
-      text-shadow: 0 0 12px rgba(225, 29, 72, 0.9), 0 0 26px rgba(225, 29, 72, 0.6);
+      color: #ff1a4b;
+      text-shadow: 0 0 8px #ff1a4b;
     }
 
     /* Top Navbar */
@@ -283,10 +285,9 @@
       position: sticky;
       top: 0;
       z-index: 100;
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      background: rgba(7, 9, 14, 0.88);
+      background: rgba(8, 10, 15, 0.96);
       border-bottom: 1px solid var(--border);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
       padding: 0.9rem 2rem;
       display: flex;
       justify-content: space-between;
@@ -859,8 +860,7 @@
     }
 
     .stat-badge {
-      background: rgba(16, 20, 31, 0.85);
-      backdrop-filter: blur(10px);
+      background: rgba(16, 20, 31, 0.95);
       border: 1px solid var(--border);
       border-radius: 14px;
       padding: 10px 18px;
@@ -1003,11 +1003,9 @@
       max-width: 1240px;
       margin-left: auto;
       margin-right: auto;
-      background: rgba(0, 0, 0, 0.84);
+      background: rgba(4, 5, 8, 0.94);
       border: 2px solid #000000;
       border-radius: 20px;
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
       padding: 34px 20px 44px;
       box-shadow: 0 16px 50px rgba(0, 0, 0, 0.95);
       box-sizing: border-box;
@@ -2823,7 +2821,7 @@
       ];
 
       let singleChunk = '<div class="ticker-content">';
-      for (let i = 0; i < 3; i++) {
+      for (let i = 0; i < 2; i++) {
         pattern.forEach((item, idx) => {
           singleChunk += `<span class="ticker-text ${item.type}">${item.text}</span>`;
           if (idx % 3 === 0) {
