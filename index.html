@@ -1095,15 +1095,15 @@
         calc(100% - 18px) 100%,
         0 100%
       );
-      transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1), background 0.35s cubic-bezier(0.16, 1, 0.3, 1);
       cursor: pointer;
       animation: cardFadeUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
     }
     .member-card:hover,
     .member-card.is-active {
       background: var(--role-color, #fbbf24);
-      box-shadow: 0 8px 30px var(--role-glow, rgba(245, 158, 11, 0.25));
-      transform: translateY(-2px);
+      box-shadow: 0 10px 32px var(--role-glow, rgba(245, 158, 11, 0.3));
+      transform: translateY(-4px);
     }
     .member-card-inner {
       background: rgba(12, 13, 18, 0.88);
@@ -1273,21 +1273,27 @@
       transform: scale(1.06);
     }
 
-    /* Hover info panel — hidden by default, slides in on hover / tap */
+    /* Hover info panel - smooth expansion on hover / tap */
     .card-hover-info {
       max-height: 0;
       overflow: hidden;
-      transition: max-height 0.32s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.22s ease, margin 0.25s ease;
       opacity: 0;
       margin-top: 0;
+      transform: translateY(-6px);
+      transition: max-height 0.38s cubic-bezier(0.16, 1, 0.3, 1), 
+                  opacity 0.28s cubic-bezier(0.16, 1, 0.3, 1), 
+                  margin-top 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
       pointer-events: none;
+      will-change: max-height, opacity, transform;
     }
-    /* Hover info panel — hidden by default, slides in on hover / tap (except when hovering on discord button) */
+    /* Hover info panel - slides in smoothly (except when hovering on discord button) */
     .member-card:hover:not(:has(.card-cut-btn:hover)) .card-hover-info,
     .member-card.is-active:not(.is-hovering-btn) .card-hover-info {
-      max-height: 220px;
+      max-height: 140px;
       opacity: 1;
       margin-top: 10px;
+      transform: translateY(0);
       pointer-events: auto;
     }
     .member-card:has(.card-cut-btn:hover) .card-hover-info,
@@ -1295,6 +1301,7 @@
       max-height: 0 !important;
       opacity: 0 !important;
       margin-top: 0 !important;
+      transform: translateY(-6px) !important;
       pointer-events: none !important;
     }
     .hover-info-row {
@@ -1346,12 +1353,13 @@
       z-index: 99999;
       opacity: 0;
       visibility: hidden;
-      transform: translateY(6px) scale(0.97);
-      transition: opacity 0.18s cubic-bezier(0.4, 0, 0.2, 1), transform 0.18s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.18s;
+      transform: translateY(8px) scale(0.92);
+      transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.3s;
       pointer-events: none;
       display: flex;
       flex-direction: column;
       gap: 10px;
+      will-change: transform, opacity;
     }
     .discord-global-popover.visible {
       opacity: 1;
