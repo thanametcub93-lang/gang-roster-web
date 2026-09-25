@@ -1815,91 +1815,57 @@
       visibility: visible !important;
     }
 
-    /* ===================== STAGGERED ENTRANCE KEYFRAMES ===================== */
+    /* ===================== STAGGERED ENTRANCE KEYFRAMES (NO BLUR, CLEAN SLIDE) ===================== */
     @keyframes landingElemFadeUp {
       0% {
         opacity: 0;
-        transform: translateY(28px) scale(0.96);
-        filter: blur(5px);
-      }
-      60% {
-        opacity: 0.9;
-        filter: blur(0px);
+        transform: translateY(22px);
       }
       100% {
         opacity: 1;
-        transform: translateY(0) scale(1);
-        filter: blur(0px);
+        transform: translateY(0);
       }
     }
 
     @keyframes bannerCinematicIn {
       0% {
         opacity: 0;
-        transform: scale(0.93) translateY(24px);
-        filter: blur(8px);
-        box-shadow: 0 0 0 rgba(225, 29, 72, 0);
+        transform: scale(0.97) translateY(18px);
       }
       100% {
         opacity: 1;
         transform: scale(1) translateY(0);
-        filter: blur(0);
-        box-shadow: 0 24px 65px rgba(0, 0, 0, 0.95), 0 0 45px rgba(225, 29, 72, 0.22);
       }
     }
 
     @keyframes badgeSlideDown {
       0% {
         opacity: 0;
-        transform: translateY(-24px) scale(0.9);
+        transform: translateY(-20px);
       }
       100% {
         opacity: 1;
-        transform: translateY(0) scale(1);
-      }
-    }
-
-    @keyframes haloPulseAnim {
-      0% {
-        transform: scale(0.9);
-        opacity: 0.35;
-        box-shadow: 0 0 20px rgba(225, 29, 72, 0.4);
-      }
-      50% {
-        transform: scale(1.18);
-        opacity: 0.85;
-        box-shadow: 0 0 40px rgba(245, 158, 11, 0.6), 0 0 60px rgba(225, 29, 72, 0.45);
-      }
-      100% {
-        transform: scale(0.9);
-        opacity: 0.35;
-        box-shadow: 0 0 20px rgba(225, 29, 72, 0.4);
+        transform: translateY(0);
       }
     }
 
     @keyframes cardFadeUp {
       0% {
         opacity: 0;
-        transform: translateY(26px) scale(0.96);
-        filter: blur(4px);
-      }
-      60% {
-        opacity: 0.9;
-        filter: blur(0px);
+        transform: translateY(20px);
       }
       100% {
         opacity: 1;
-        transform: translateY(0) scale(1);
-        filter: blur(0px);
+        transform: translateY(0);
       }
     }
 
     /* Staggered entrance for Section 1 (Opening web page) */
     .landing-security-badge {
-      animation: badgeSlideDown 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+      animation: badgeSlideDown 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
     }
     .landing-banner-wrap {
-      animation: bannerCinematicIn 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.22s both;
+      animation: bannerCinematicIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
     }
     .landing-header {
       text-align: center;
@@ -1917,7 +1883,7 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       margin: 0;
-      animation: landingElemFadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.42s both;
+      animation: landingElemFadeUp 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.38s both;
     }
     .landing-header .landing-subtitle {
       font-family: 'Rajdhani', sans-serif;
@@ -1926,7 +1892,7 @@
       color: #888;
       font-weight: 700;
       text-transform: uppercase;
-      animation: landingElemFadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.58s both;
+      animation: landingElemFadeUp 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.52s both;
     }
 
     /* ── Scroll Down Guide ── */
@@ -1937,7 +1903,7 @@
       gap: 8px;
       margin-top: 10px;
       color: #aaa;
-      animation: landingElemFadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.74s both;
+      animation: landingElemFadeUp 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.66s both;
     }
     .landing-scroll-guide-inner {
       display: flex;
@@ -1963,7 +1929,7 @@
       text-transform: uppercase;
     }
 
-    /* ── SECTION 2: SCROLL DOWN TARGET (หน้าดาวโหลด เข้าสู่ระบบ) ── */
+    /* ── SECTION 2: SCROLL DOWN TARGET (หน้าดาวโหลด) ── */
     .landing-scroll-target {
       width: 100%;
       min-height: 80vh;
@@ -1976,39 +1942,34 @@
       box-sizing: border-box;
     }
 
-    /* Staggered entrance for Section 2 (Loading Screen "หน้าดาวโหลด") */
+    /* Staggered entrance for Section 2 (ขึ้นทีละอันแบบไม่เบลอ) */
     .landing-scroll-target .landing-emblem-wrap,
     .landing-scroll-target .motto-badge,
     .landing-scroll-target .motto-desc,
     .landing-scroll-target .bottom-loader-box {
       opacity: 0;
-      transform: translateY(26px) scale(0.97);
-      filter: blur(4px);
-      transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), transform 0.65s cubic-bezier(0.16, 1, 0.3, 1), filter 0.65s ease;
+      transform: translateY(20px);
+      transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1), transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .landing-scroll-target.is-visible .landing-emblem-wrap {
       opacity: 1;
-      transform: translateY(0) scale(1);
-      filter: blur(0);
-      transition-delay: 0.12s;
+      transform: translateY(0);
+      transition-delay: 0.1s;
     }
     .landing-scroll-target.is-visible .motto-badge {
       opacity: 1;
-      transform: translateY(0) scale(1);
-      filter: blur(0);
-      transition-delay: 0.28s;
+      transform: translateY(0);
+      transition-delay: 0.24s;
     }
     .landing-scroll-target.is-visible .motto-desc {
       opacity: 1;
-      transform: translateY(0) scale(1);
-      filter: blur(0);
-      transition-delay: 0.44s;
+      transform: translateY(0);
+      transition-delay: 0.38s;
     }
     .landing-scroll-target.is-visible .bottom-loader-box {
       opacity: 1;
-      transform: translateY(0) scale(1);
-      filter: blur(0);
-      transition-delay: 0.60s;
+      transform: translateY(0);
+      transition-delay: 0.52s;
     }
 
     .landing-emblem-section {
@@ -2021,28 +1982,20 @@
     }
     .landing-emblem-wrap {
       position: relative;
-      width: 96px;
-      height: 96px;
+      width: 90px;
+      height: 90px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
     }
-    .emblem-halo-ring {
-      position: absolute;
-      inset: -8px;
-      border-radius: 50%;
-      border: 1.5px solid rgba(225, 29, 72, 0.5);
-      animation: haloPulseAnim 2.8s ease-in-out infinite;
-      pointer-events: none;
-    }
     .landing-emblem-img {
-      width: 76px;
-      height: 76px;
+      width: 70px;
+      height: 70px;
       object-fit: contain;
       position: relative;
       z-index: 2;
-      filter: drop-shadow(0 0 20px rgba(255,255,255,0.45));
+      filter: drop-shadow(0 0 18px rgba(255,255,255,0.3));
       animation: logoFloat 3.5s ease-in-out infinite;
     }
     @keyframes logoFloat {
@@ -2059,7 +2012,6 @@
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid rgba(255, 255, 255, 0.12);
       color: #ddd;
-      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.5);
     }
     .motto-desc {
       font-size: 14px;
@@ -2067,10 +2019,10 @@
       line-height: 1.6;
     }
 
-    /* ── FiveM Bottom Loader Box (หน้าดาวโหลด) ── */
+    /* ── FiveM Bottom Loader Box (แบบเดิมต้นฉบับ 100%) ── */
     .bottom-loader-box {
       width: 100%;
-      max-width: 420px;
+      max-width: 380px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -2078,92 +2030,53 @@
       margin-top: 10px;
       text-align: center;
       cursor: pointer;
-      padding: 16px 20px;
-      background: rgba(15, 17, 23, 0.75);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 16px;
-      backdrop-filter: blur(12px);
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8), 0 0 30px rgba(225, 29, 72, 0.1);
-      transition: all 0.3s ease;
-    }
-    .bottom-loader-box:hover {
-      border-color: rgba(225, 29, 72, 0.4);
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9), 0 0 40px rgba(225, 29, 72, 0.25);
-      transform: translateY(-2px);
     }
     .loader-track {
       width: 100%;
-      height: 4px;
-      background: rgba(255, 255, 255, 0.14);
-      border-radius: 4px;
+      height: 3.5px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 3px;
       overflow: hidden;
       position: relative;
     }
     .loader-fill {
       height: 100%;
       width: 0%;
-      background: linear-gradient(90deg, #e11d48, #f59e0b, #38bdf8);
-      box-shadow: 0 0 16px rgba(56, 189, 248, 0.95), 0 0 8px #e11d48;
-      transition: width 0.04s linear;
-      position: relative;
-    }
-    .loader-fill::after {
-      content: '';
-      position: absolute;
-      right: 0;
-      top: -2px;
-      bottom: -2px;
-      width: 8px;
-      background: #ffffff;
-      box-shadow: 0 0 12px #ffffff, 0 0 20px #38bdf8;
-      border-radius: 50%;
-    }
-    .loader-header-row {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      width: 100%;
-      padding: 0 2px;
+      background: linear-gradient(90deg, #888888, #ffffff, #dddddd);
+      box-shadow: 0 0 12px rgba(255, 255, 255, 0.95);
+      transition: width 0.05s linear;
     }
     .loader-title {
       font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(28px, 4.5vw, 36px);
-      letter-spacing: 8px;
+      font-size: clamp(30px, 5vw, 40px);
+      letter-spacing: 9px;
       line-height: 1;
       background: linear-gradient(180deg, #ffffff 0%, #d8d8d8 50%, #888888 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       margin: 0;
-      text-align: left;
-    }
-    .loader-percent {
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 1.25rem;
-      font-weight: 800;
-      color: #38bdf8;
-      text-shadow: 0 0 14px rgba(56, 189, 248, 0.6);
-      letter-spacing: 1px;
+      text-align: center;
     }
     .loader-sub {
       font-family: 'Rajdhani', sans-serif;
-      font-size: 12.5px;
+      font-size: 13px;
       font-weight: 700;
-      letter-spacing: 10px;
-      color: #94a3b8;
+      letter-spacing: 12px;
+      color: #888888;
       text-transform: uppercase;
       text-align: center;
-      margin-left: 10px;
+      margin-left: 12px;
     }
     .loader-skip-hint {
       font-family: 'Kanit', sans-serif;
-      font-size: 12px;
-      letter-spacing: 1px;
-      color: rgba(255, 255, 255, 0.6);
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      color: rgba(255, 255, 255, 0.45);
       margin-top: 4px;
       transition: color 0.2s;
     }
     .bottom-loader-box:hover .loader-skip-hint {
-      color: rgba(255, 255, 255, 0.95);
+      color: rgba(255, 255, 255, 0.9);
     }
 
     /* Main Roster Container */
@@ -2188,7 +2101,7 @@
       animation: heroBannerIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.16s both;
     }
     @keyframes heroBannerIn {
-      from { opacity: 0; transform: translateY(28px) scale(0.98); }
+      from { opacity: 0; transform: translateY(24px) scale(0.98); }
       to   { opacity: 1; transform: translateY(0) scale(1); }
     }
 
@@ -2196,7 +2109,7 @@
       animation: statsIn 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.26s both;
     }
     @keyframes statsIn {
-      from { opacity: 0; transform: translateY(22px); }
+      from { opacity: 0; transform: translateY(20px); }
       to   { opacity: 1; transform: translateY(0); }
     }
 
@@ -2260,15 +2173,14 @@
         </div>
       </div>
 
-      <!-- ── SECTION 2: SCROLL DOWN TARGET (หน้าดาวโหลด เข้าสู่ระบบ) ── -->
+      <!-- ── SECTION 2: SCROLL DOWN TARGET (ต้องเลื่อนหน้าเว็บลงมาจริงๆ ถึงจะเจอและเริ่มโหลด) ── -->
       <div class="landing-scroll-target" id="landingScrollTarget">
         <!-- 4. Gang Emblem & Info (ปรากฏเมื่อเลื่อนหน้าเว็บลงมา) -->
         <div class="landing-emblem-section">
           <div class="landing-emblem-wrap">
-            <div class="emblem-halo-ring"></div>
             <img class="landing-emblem-img" src="/gang_logo.png" alt="SPONGEBOB" onerror="this.style.opacity='0'">
           </div>
-          <div class="motto-badge"><i class="fa-solid fa-crown" style="color: #f59e0b; margin-right: 6px;"></i> RESPECT &bull; LOYALTY &bull; BROTHERHOOD</div>
+          <div class="motto-badge">RESPECT &bull; LOYALTY &bull; BROTHERHOOD</div>
           <p class="motto-desc">รายชื่อสมาชิกแก๊งอย่างเป็นทางการ อัปเดตสถานะและข้อมูลสมาชิกแบบเรียลไทม์</p>
         </div>
 
@@ -2277,12 +2189,9 @@
           <div class="loader-track">
             <div class="loader-fill" id="bottomLoaderFill"></div>
           </div>
-          <div class="loader-header-row">
-            <div class="loader-title">SPONGEBOB 577</div>
-            <div class="loader-percent" id="bottomLoaderPercent">0%</div>
-          </div>
+          <div class="loader-title">SPONGEBOB 577</div>
           <div class="loader-sub">N E W &nbsp; G E N</div>
-          <div class="loader-skip-hint" id="bottomLoaderStatus">กำลังเชื่อมต่อระบบ SPONGEBOB 577...</div>
+          <div class="loader-skip-hint">กำลังโหลดระบบแก๊ง...</div>
         </div>
       </div>
     </div>
@@ -4557,9 +4466,7 @@
         if (target) target.classList.add('is-visible');
 
         const startTime = performance.now();
-        const duration = 1200; // Smooth 1.2s FiveM loading bar
-        const percentEl = document.getElementById('bottomLoaderPercent');
-        const statusEl = document.getElementById('bottomLoaderStatus');
+        const duration = 850; // Smooth 0.85s FiveM loading bar
 
         function step(now) {
           if (hasFinished) return;
@@ -4569,25 +4476,11 @@
           if (loaderFill) {
             loaderFill.style.width = progress + '%';
           }
-          if (percentEl) {
-            percentEl.textContent = progress + '%';
-          }
-          if (statusEl) {
-            if (progress < 30) {
-              statusEl.textContent = "กำลังเชื่อมต่อระบบ SPONGEBOB 577...";
-            } else if (progress < 65) {
-              statusEl.textContent = "กำลังดาวน์โหลดรายชื่อสมาชิก & สถิติ...";
-            } else if (progress < 95) {
-              statusEl.textContent = "กำลังเตรียมระบบเสียงและเอฟเฟกต์...";
-            } else {
-              statusEl.textContent = "✓ โหลดสำเร็จ! กำลังเข้าสู่หน้าเว็บหลัก...";
-            }
-          }
 
           if (progress < 100) {
             requestAnimationFrame(step);
           } else {
-            setTimeout(enterRoster, 220);
+            enterRoster();
           }
         }
 
@@ -4621,15 +4514,11 @@
           });
         }
 
-        // คลิกที่กล่องโหลดด้านล่างก็เริ่มโหลดหรือเข้าสู่ระบบทันที
+        // คลิกที่กล่องโหลดด้านล่างก็เข้าได้เช่นกัน
         if (loaderBox) {
           loaderBox.addEventListener('click', function(e) {
             e.stopPropagation();
-            if (!hasStartedLoading) {
-              startBottomLoading();
-            } else {
-              enterRoster();
-            }
+            enterRoster();
           });
         }
       }
@@ -4655,10 +4544,6 @@
         hasFinished = false;
         hasStartedLoading = false;
         if (loaderFill) loaderFill.style.width = '0%';
-        const percentEl = document.getElementById('bottomLoaderPercent');
-        if (percentEl) percentEl.textContent = '0%';
-        const statusEl = document.getElementById('bottomLoaderStatus');
-        if (statusEl) statusEl.textContent = 'กำลังโหลดระบบแก๊ง...';
         window.scrollTo({ top: 0, behavior: 'instant' });
       };
     })();
