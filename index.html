@@ -1165,37 +1165,75 @@
       box-shadow:0 0 8px rgba(6,182,212,0.3);
     }
 
-    /* City fullgrid - size-aware */
+
+    /* City grid resizable wrapper */
+    .city-grid-resizable {
+      position: relative;
+      padding-bottom: 18px; /* space for handle */
+    }
+
+    /* City fullgrid */
     .city-fullgrid {
       display:grid;
-      grid-template-columns:repeat(auto-fill, minmax(var(--city-card-min, 280px), 1fr));
-      gap:22px; max-width:1200px; margin:0 auto;
-      transition: gap 0.3s ease;
+      grid-template-columns:repeat(auto-fill, minmax(240px, 1fr));
+      gap:20px; max-width:1200px; margin:0 auto;
     }
-    /* Size variants */
-    .city-fullgrid.size-sm {
-      --city-card-min: 160px;
-      gap:14px;
+    .city-fullgrid > div:first-child { grid-column:1/-1; }
+    /* Card height controlled by JS via --city-card-h */
+    .city-fullgrid .city-card-btn {
+      height: var(--city-card-h, 150px);
+      transition: height 0.0s; /* instant while dragging */
     }
-    .city-fullgrid.size-sm .city-card-btn { height:100px; }
-    .city-fullgrid.size-sm .city-card-name { font-size:1.1rem; }
-    .city-fullgrid.size-sm .city-card-logo { width:28px; height:28px; }
-    .city-fullgrid.size-sm .city-card-count { font-size:0.65rem; }
 
-    .city-fullgrid.size-md {
-      --city-card-min: 280px;
-      gap:22px;
+    /* Drag Resize Handle */
+    .city-resize-handle {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: ns-resize;
+      color: #475569;
+      border-radius: 6px;
+      transition: color 0.2s, background 0.2s;
+      user-select: none;
+      z-index: 10;
     }
-    .city-fullgrid.size-md .city-card-btn { height:165px; }
-    .city-fullgrid.size-md .city-card-name { font-size:2rem; }
-
-    .city-fullgrid.size-lg {
-      --city-card-min: 380px;
-      gap:28px;
+    .city-resize-handle:hover {
+      color: #22d3ee;
+      background: rgba(6,182,212,0.08);
     }
-    .city-fullgrid.size-lg .city-card-btn { height:220px; }
-    .city-fullgrid.size-lg .city-card-name { font-size:2.6rem; }
-    .city-fullgrid.size-lg .city-card-logo { width:56px; height:56px; }
+    .city-resize-handle.dragging {
+      color: #06b6d4;
+      background: rgba(6,182,212,0.15);
+    }
+    .city-resize-handle i {
+      font-size: 0.9rem;
+      pointer-events: none;
+    }
+    /* Tooltip while dragging */
+    .city-resize-handle::after {
+      content: attr(data-height);
+      position: absolute;
+      bottom: 22px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(6,182,212,0.9);
+      color: #000;
+      font-size: 0.65rem;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 6px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.15s;
+      white-space: nowrap;
+    }
+    .city-resize-handle.dragging::after { opacity: 1; }
 
 
     .roster-city-header {
@@ -2608,22 +2646,22 @@
     <!-- Editor Strip removed: use admin.html for all management -->
     <input type="file" id="importJsonFileInput" accept=".json" style="display:none;" onchange="handleImportJsonFile(event)">
 
-    <!-- PHASE 1: City Category Selection (แสดงตอนโหลดหน้าแรก) -->
+    <!-- PHASE 1: City Category Selection -->
     <div id="citySectionWrapper">
       <div class="city-select-heading">
         <i class="fa-solid fa-layer-group"></i>
         เลือกหมวดหมู่ประเทศ
         <span class="city-select-sub">SELECT SERVER / CATEGORY</span>
-        <!-- Size Toggle Buttons -->
-        <div class="city-size-toggle" id="citySizeToggle">
-          <span class="size-toggle-label"><i class="fa-solid fa-expand"></i> ขนาดการ์ด</span>
-          <button class="size-btn" data-size="sm" onclick="setCityCardSize('sm')" title="ขนาดเล็ก">S</button>
-          <button class="size-btn active" data-size="md" onclick="setCityCardSize('md')" title="ขนาดกลาง">M</button>
-          <button class="size-btn" data-size="lg" onclick="setCityCardSize('lg')" title="ขนาดใหญ่">L</button>
-        </div>
       </div>
-      <div class="city-fullgrid" id="cityTabsContainer">
-        <!-- Dynamic City Cards -->
+      <!-- City grid + drag-resize handle -->
+      <div class="city-grid-resizable" id="cityGridResizable">
+        <div class="city-fullgrid" id="cityTabsContainer">
+          <!-- Dynamic City Cards -->
+        </div>
+        <!-- Drag Handle (bottom-right corner) -->
+        <div class="city-resize-handle" id="cityResizeHandle" title="ลากเพื่อปรับขนาด">
+          <i class="fa-solid fa-grip-lines"></i>
+        </div>
       </div>
     </div>
 
@@ -3216,25 +3254,86 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    function setCityCardSize(size) {
-      const grid = document.getElementById('cityTabsContainer');
-      if (!grid) return;
-      // Remove all size classes
-      grid.classList.remove('size-sm', 'size-md', 'size-lg');
-      grid.classList.add('size-' + size);
-      // Update active button
-      document.querySelectorAll('.size-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.size === size);
-      });
-      // Save preference
-      try { localStorage.setItem('cityCardSize', size); } catch(e) {}
-    }
 
-    function initCityCardSize() {
-      let saved = 'md';
-      try { saved = localStorage.getItem('cityCardSize') || 'md'; } catch(e) {}
-      setCityCardSize(saved);
-    }
+    // ===== DRAG RESIZE for city cards =====
+    (function() {
+      const STORAGE_KEY = 'cityCardH';
+      const MIN_H = 80, MAX_H = 280, DEFAULT_H = 150;
+
+      function setCardH(h) {
+        h = Math.max(MIN_H, Math.min(MAX_H, Math.round(h)));
+        const grid = document.getElementById('cityTabsContainer');
+        if (grid) grid.style.setProperty('--city-card-h', h + 'px');
+        const handle = document.getElementById('cityResizeHandle');
+        if (handle) handle.setAttribute('data-height', h + 'px');
+        try { localStorage.setItem(STORAGE_KEY, h); } catch(e) {}
+        return h;
+      }
+
+      function initDragResize() {
+        const handle = document.getElementById('cityResizeHandle');
+        if (!handle) return;
+
+        // Restore saved height
+        let saved = DEFAULT_H;
+        try { saved = parseInt(localStorage.getItem(STORAGE_KEY)) || DEFAULT_H; } catch(e) {}
+        setCardH(saved);
+
+        let startY = 0, startH = 0, dragging = false;
+
+        handle.addEventListener('mousedown', e => {
+          e.preventDefault();
+          dragging = true;
+          startY = e.clientY;
+          const grid = document.getElementById('cityTabsContainer');
+          const cards = grid ? grid.querySelectorAll('.city-card-btn') : [];
+          startH = cards.length > 0 ? cards[0].offsetHeight : DEFAULT_H;
+          handle.classList.add('dragging');
+          document.body.style.cursor = 'ns-resize';
+          document.body.style.userSelect = 'none';
+        });
+
+        // Touch support
+        handle.addEventListener('touchstart', e => {
+          dragging = true;
+          startY = e.touches[0].clientY;
+          const grid = document.getElementById('cityTabsContainer');
+          const cards = grid ? grid.querySelectorAll('.city-card-btn') : [];
+          startH = cards.length > 0 ? cards[0].offsetHeight : DEFAULT_H;
+          handle.classList.add('dragging');
+        }, { passive: true });
+
+        document.addEventListener('mousemove', e => {
+          if (!dragging) return;
+          const delta = e.clientY - startY;
+          setCardH(startH + delta);
+        });
+
+        document.addEventListener('touchmove', e => {
+          if (!dragging) return;
+          const delta = e.touches[0].clientY - startY;
+          setCardH(startH + delta);
+        }, { passive: true });
+
+        const stopDrag = () => {
+          if (!dragging) return;
+          dragging = false;
+          handle.classList.remove('dragging');
+          document.body.style.cursor = '';
+          document.body.style.userSelect = '';
+        };
+        document.addEventListener('mouseup', stopDrag);
+        document.addEventListener('touchend', stopDrag);
+      }
+
+      // Run after DOM is ready
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initDragResize);
+      } else {
+        // Re-init when city section becomes visible
+        window._initCityDragResize = initDragResize;
+      }
+    })();
 
     function backToCities() {
       currentCityFilter = 'all';
@@ -3263,6 +3362,8 @@
       if (rawCities.length > 0) {
         if (phase1) phase1.style.display = '';
         if (phase2) phase2.style.display = 'none';
+        // Init drag resize after DOM visible
+        requestAnimationFrame(() => { if (window._initCityDragResize) window._initCityDragResize(); });
       } else {
         if (phase1) phase1.style.display = 'none';
         if (phase2) phase2.style.display = '';
