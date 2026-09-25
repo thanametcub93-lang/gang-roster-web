@@ -82,97 +82,34 @@
       pointer-events: none;
       z-index: 0;
       overflow: hidden;
-      background-color: #050608;
-      background-image: 
-        radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.05) 0%, transparent 75%),
-        linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
-      background-size: 100% 100%, 46px 46px, 46px 46px;
+      background: #000000;
       contain: strict;
       transform: translate3d(0, 0, 0);
     }
 
-    /* Giant Faded Gothic Watermarks in Background */
-    .gang-bg-watermark {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      z-index: 1;
-      overflow: hidden;
-      user-select: none;
-    }
-    .watermark-text {
-      position: absolute;
-      font-family: 'Pirata One', 'UnifrakturMaguntia', 'Cinzel Decorative', cursive, serif;
-      font-weight: 900;
-      color: transparent;
-      -webkit-text-stroke: 1.6px rgba(255, 255, 255, 0.06);
-      text-transform: uppercase;
-      letter-spacing: 10px;
-      line-height: 0.85;
-      white-space: nowrap;
-      pointer-events: none;
-      user-select: none;
-    }
-    .watermark-text.wm-1 {
-      top: 9%;
-      left: 1%;
-      font-size: 15vw;
-      transform: rotate(-6deg);
-    }
-    .watermark-text.wm-2 {
-      top: 38%;
-      right: 1%;
-      font-size: 14vw;
-      transform: rotate(5deg);
-    }
-    .watermark-text.wm-3 {
-      bottom: 8%;
-      left: 3%;
-      font-size: 16vw;
-      transform: rotate(-4deg);
-    }
-
-    /* Tactical HUD Corner Elements */
-    .hud-tag {
-      position: absolute;
-      font-family: 'Outfit', sans-serif;
-      font-size: 0.72rem;
-      font-weight: 800;
-      letter-spacing: 2px;
-      color: rgba(255, 255, 255, 0.18);
-      text-transform: uppercase;
-      pointer-events: none;
-      user-select: none;
-      z-index: 1.8;
-    }
-    .hud-tag.top-left { top: 76px; left: 28px; }
-    .hud-tag.top-right { top: 76px; right: 28px; }
-    .hud-tag.btm-left { bottom: 28px; left: 28px; }
-    .hud-tag.btm-right { bottom: 28px; right: 28px; }
-
-    /* Centered Gang Insignia Artwork in background */
+    /* Centered / Prominent Gang Insignia Artwork in background amidst scrolling tapes */
     .ticker-logo-wrap {
       position: absolute;
       left: 50%;
       top: 50%;
       transform: translate3d(-50%, -50%, 0);
-      width: 560px;
-      max-width: 85vw;
-      height: 560px;
-      max-height: 85vh;
+      width: 660px;
+      max-width: 92vw;
+      height: 660px;
+      max-height: 90vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      z-index: 1.5;
+      z-index: 2.5;
       pointer-events: none;
-      opacity: 0.25;
+      opacity: 0.94;
     }
 
     .ticker-logo-img {
       max-width: 100%;
       max-height: 100%;
       object-fit: contain;
+      filter: drop-shadow(0 0 35px rgba(255, 255, 255, 0.2)) drop-shadow(0 20px 50px rgba(0, 0, 0, 0.95));
       user-select: none;
       pointer-events: none;
     }
@@ -180,7 +117,7 @@
     .gang-ticker-overlay {
       position: absolute;
       inset: 0;
-      background: radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.15) 0%, rgba(0, 0, 0, 0.75) 100%);
+      background: radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, 0.8) 100%);
       pointer-events: none;
       z-index: 6;
     }
@@ -2293,25 +2230,6 @@
 
   <!-- ===================== INFINITE SCROLLING TICKER BACKGROUND (BLACK & WHITE GANG TAPE) ===================== -->
   <div class="gang-ticker-bg" id="gangTickerBg">
-    <!-- Tactical Corner HUD Markers -->
-    <div class="hud-tag top-left">+ + + &nbsp; LOS SANTOS // 577</div>
-    <div class="hud-tag top-right">SYSTEM ONLINE &bull; 60FPS</div>
-    <div class="hud-tag btm-left">[ SECURE AREA // SPONGEBOB ]</div>
-    <div class="hud-tag btm-right">LAT 34.0522&deg; N &bull; LON 118.2437&deg; W</div>
-
-    <!-- Giant Faded Gothic Background Watermarks -->
-    <div class="gang-bg-watermark">
-      <div class="watermark-text wm-1">SPONGEBOB</div>
-      <div class="watermark-text wm-2">NEW GEN</div>
-      <div class="watermark-text wm-3">577 GANG</div>
-    </div>
-
-    <!-- Center Insignia Watermark -->
-    <div class="ticker-logo-wrap">
-      <img src="/gang_logo.png" alt="Gang Logo" class="ticker-logo-img">
-    </div>
-
-    <!-- 7 Crisscrossing Streetwear Tapes -->
     <div class="ticker-ribbon ribbon-1" data-speed="32" data-dir="left"></div>
     <div class="ticker-ribbon ribbon-2" data-speed="36" data-dir="right"></div>
     <div class="ticker-ribbon ribbon-3" data-speed="30" data-dir="left"></div>
