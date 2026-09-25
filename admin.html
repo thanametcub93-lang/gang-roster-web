@@ -1149,6 +1149,7 @@
                 <button class="btn btn-secondary" onclick="downloadBackupJson()">
                   <i class="fa-solid fa-download"></i> ดาวน์โหลดไฟล์สำรอง (Backup JSON)
                 </button>
+                <input type="file" id="restoreFileInput" accept=".json,application/json" style="display: none;" onchange="handleRestoreBackup(event)">
                 <button class="btn btn-secondary" onclick="document.getElementById('restoreFileInput').click()">
                   <i class="fa-solid fa-upload"></i> กู้คืนข้อมูลจากไฟล์สำรอง (Restore)
                 </button>
@@ -2176,23 +2177,29 @@
     }
 
     function handleRestoreBackup(e) {
-      const file = e.target.files[0];
+      const file = e.target.files && e.target.files[0];
       if (!file) return;
 
       const reader = new FileReader();
       reader.onload = async (evt) => {
         try {
           const parsed = JSON.parse(evt.target.result);
-          if (parsed && parsed.members) {
+          if (parsed && (Array.isArray(parsed.members) || parsed.gang_name)) {
+            if (!confirm("⚠️ คุณต้องการกู้คืนข้อมูลจากไฟล์สำรองนี้ใช่หรือไม่?\nข้อมูลปัจจุบันทั้งหมดจะถูกแทนที่ด้วยข้อมูลจากไฟล์นี้")) {
+              e.target.value = "";
+              return;
+            }
             GANG_DATA = parsed;
             await syncDataToServer();
             populateAllData();
             showToast("♻️ กู้คืนข้อมูลจากไฟล์สำรองสำเร็จสมบูรณ์!");
           } else {
-            alert("รูปแบบไฟล์ JSON ไม่ถูกต้อง");
+            alert("รูปแบบไฟล์ JSON ไม่ถูกต้อง (ไม่พบโครงสร้างข้อมูลแก๊ง)");
           }
         } catch (err) {
           alert("ไม่สามารถอ่านไฟล์ JSON ได้: " + err.message);
+        } finally {
+          e.target.value = "";
         }
       };
       reader.readAsText(file);
