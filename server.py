@@ -852,8 +852,15 @@ if __name__ == "__main__":
     print("=" * 60, flush=True)
     print(f"🚀 GANG ROSTER WEB SERVER ONLINE ON PORT {PORT}", flush=True)
     print("=" * 60, flush=True)
-    try:
-        httpd.serve_forever()
-    except KeyboardInterrupt:
-        print("\n[*] Server stopped", flush=True)
-        httpd.server_close()
+    while True:
+        try:
+            httpd.serve_forever()
+        except KeyboardInterrupt:
+            print("\n[*] Server stopped", flush=True)
+            httpd.server_close()
+            break
+        except Exception as e:
+            import traceback
+            print(f"[!] Server exception: {e}", flush=True)
+            traceback.print_exc()
+            time.sleep(1)
