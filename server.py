@@ -74,12 +74,79 @@ def load_gang_data():
         print(f"[!] Error loading {DATA_FILE}: {e}")
         return {}
 
+RENDER_SYNC_URL = os.environ.get("RENDER_SYNC_URL", "https://gang.dekrew.online/api/gang/update")
+IS_RENDER_ENV = (os.environ.get("RENDER") == "true" or os.environ.get("IS_RENDER") == "true")
+
+_sync_lock = threading.Lock()
+
+def sync_data_to_render_and_github(data=None):
+    """
+    Background worker that:
+    1. Directly updates live Render instance via /api/gang/update (Instant live sync)
+    2. Automatically commits gang_data.json and pushes to GitHub main
+       so Render persists the backup & data 24/7 across any cold restarts/redeploys!
+    """
+    def _run():
+        if not _sync_lock.acquire(blocking=False):
+            return
+        try:
+            target_data = data or load_gang_data()
+            if not target_data:
+                return
+
+            # 1. Direct POST to Render live website
+            if not IS_RENDER_ENV and RENDER_SYNC_URL:
+                try:
+                    payload = json.dumps({
+                        "passcode": str(target_data.get("passcode", "gang123")),
+                        "gang_data": target_data
+                    }).encode("utf-8")
+                    req = urllib.request.Request(
+                        RENDER_SYNC_URL,
+                        data=payload,
+                        headers={"Content-Type": "application/json", "User-Agent": "GangAutoSync/1.0"}
+                    )
+                    with urllib.request.urlopen(req, timeout=12) as resp:
+                        res_json = json.loads(resp.read().decode("utf-8"))
+                        if res_json.get("success"):
+                            print(f"[Auto-Sync] [OK] Direct push to Render ({RENDER_SYNC_URL}) successful!", flush=True)
+                except Exception as e:
+                    print(f"[Auto-Sync] [WARN] Render API push: {e}", flush=True)
+
+            # 2. Push to GitHub main repository (Persistent 24/7)
+            if not IS_RENDER_ENV and os.path.exists(os.path.join(BASE_DIR, ".git")):
+                try:
+                    import subprocess
+                    subprocess.run(["git", "add", "gang_data.json"], cwd=BASE_DIR, capture_output=True, timeout=15)
+                    status_res = subprocess.run(["git", "status", "--porcelain", "gang_data.json"], cwd=BASE_DIR, capture_output=True, text=True, timeout=15)
+                    if status_res.stdout.strip():
+                        commit_res = subprocess.run(["git", "commit", "-m", "Auto-sync gang data to Render & GitHub 24/7 [skip ci]"], cwd=BASE_DIR, capture_output=True, text=True, timeout=15)
+                        if commit_res.returncode == 0:
+                            push_res = subprocess.run(["git", "push", "origin", "main"], cwd=BASE_DIR, capture_output=True, text=True, timeout=35)
+                            if push_res.returncode == 0:
+                                print("[Auto-Sync] [OK] Successfully pushed to GitHub main (Persistent 24/7 on Render)!", flush=True)
+                            else:
+                                print(f"[Auto-Sync] [WARN] Git push stderr: {push_res.stderr.strip()}", flush=True)
+                except Exception as e:
+                    print(f"[Auto-Sync] [WARN] Git sync exception: {e}", flush=True)
+        finally:
+            _sync_lock.release()
+
+    t = threading.Thread(target=_run, daemon=True)
+    t.start()
+
 def save_gang_data(data):
     try:
         with open(DATA_FILE, "w", encoding="utf-8") as f:
             json.dump(data, f, ensure_ascii=False, indent=2)
     except Exception as e:
         print(f"[!] Error saving {DATA_FILE}: {e}")
+
+    # Auto sync to Render and GitHub in background thread
+    try:
+        sync_data_to_render_and_github(data)
+    except Exception as e:
+        print(f"[Auto-Sync] Trigger error: {e}")
 
 ATTENDANCE_FILE = os.path.join(BASE_DIR, "attendance_logs.json")
 
@@ -598,6 +665,21 @@ class GangRequestHandler(SimpleHTTPRequestHandler):
 
             save_gang_data(updated_data)
             self.send_json_response(200, {"success": True, "message": "บันทึกข้อมูลทำเนียบแก๊งเรียบร้อยแล้ว!"})
+            return
+
+        elif clean_path == "/api/gang/sync_render":
+            input_pass = str(body.get("passcode", "")).strip()
+            data = load_gang_data()
+            correct_pass = str(data.get("passcode", "gang123")).strip()
+            if not input_pass or input_pass != correct_pass:
+                self.send_json_response(401, {"success": False, "error": "รหัสผ่านไม่ถูกต้อง"})
+                return
+
+            sync_data_to_render_and_github(data)
+            self.send_json_response(200, {
+                "success": True, 
+                "message": "ส่งคำขอซิงค์ข้อมูลไปยัง Render (gang.dekrew.online) และ GitHub เรียบร้อยแล้ว!"
+            })
             return
 
         elif clean_path == "/api/gang/change_pass":

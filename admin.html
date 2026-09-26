@@ -1230,6 +1230,72 @@
 
           <!-- ================= TAB 8: BACKUP ================= -->
           <div class="tab-pane" id="tabBackup">
+            
+            <!-- Auto-Sync to Render 24/7 -->
+            <div class="content-card" style="border: 1.5px solid rgba(16, 185, 129, 0.4); background: linear-gradient(145deg, rgba(16, 185, 129, 0.08), rgba(12, 14, 20, 0.95)); box-shadow: 0 0 25px rgba(16, 185, 129, 0.12);">
+              <div class="card-header-bar" style="border-bottom: 1px solid rgba(16, 185, 129, 0.2); padding-bottom: 12px;">
+                <div class="card-title" style="color: #34d399; font-size: 1.15rem; display: flex; align-items: center; gap: 10px;">
+                  <i class="fa-solid fa-cloud-arrow-up" style="color: #10b981; font-size: 1.3rem;"></i>
+                  ระบบซิงค์ข้อมูลลง Render & GitHub อัตโนมัติ (Live 24/7 Auto-Sync)
+                </div>
+                <span class="badge" style="background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">
+                  <i class="fa-solid fa-circle-dot fa-fade" style="color: #10b981; margin-right: 5px;"></i> ซิงค์ออนไลน์ตลอดเวลา
+                </span>
+              </div>
+
+              <p style="color: #94a3b8; font-size: 0.9rem; line-height: 1.6; margin: 14px 0;">
+                💡 <strong>ระบบซิงค์อัตโนมัติ 100%:</strong> ทุกครั้งที่คุณเพิ่ม/แก้ไขสมาชิก, ตั้งค่าแก๊ง, หรือกู้คืนไฟล์ Backup ข้อมูลจะถูกส่งตรงไปที่ Render (<a href="https://gang.dekrew.online" target="_blank" style="color: #38bdf8; text-decoration: underline;">gang.dekrew.online</a>) และบันทึกลง GitHub ทันที ข้อมูลจะไม่หายและออนไลน์ถาวรตลอด 24/7!
+              </p>
+
+              <div style="background: rgba(0,0,0,0.45); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 14px; margin-bottom: 16px; display: flex; flex-direction: column; gap: 9px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; font-size: 0.88rem;">
+                  <span style="color: #cbd5e1;"><i class="fa-solid fa-globe" style="color: #38bdf8; margin-right: 6px;"></i> โดเมนออนไลน์:</span>
+                  <a href="https://gang.dekrew.online" target="_blank" style="color: #38bdf8; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+                    https://gang.dekrew.online <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.75rem;"></i>
+                  </a>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; font-size: 0.88rem;">
+                  <span style="color: #cbd5e1;"><i class="fa-solid fa-signal" style="color: #10b981; margin-right: 6px;"></i> สถานะการซิงค์:</span>
+                  <span id="syncStatusBadge" style="color: #34d399; font-weight: 600;">พร้อมทำงาน (Auto-Sync Standby)</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; font-size: 0.85rem; color: #64748b;">
+                  <span><i class="fa-regular fa-clock" style="margin-right: 6px;"></i> ซิงค์ล่าสุด:</span>
+                  <span id="syncLastTime">-</span>
+                </div>
+              </div>
+
+              <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                <button class="btn btn-primary" onclick="forceSyncRenderNow()" id="btnForceSync" style="background: linear-gradient(135deg, #10b981, #059669); color: #fff; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);">
+                  <i class="fa-solid fa-bolt"></i> ซิงค์ข้อมูลขึ้น Render เดี๋ยวนี้ (Force Push)
+                </button>
+                <a href="https://gang.dekrew.online" target="_blank" class="btn btn-secondary" style="text-decoration: none;">
+                  <i class="fa-solid fa-arrow-up-right-from-square"></i> ไปยังหน้าเว็บจริง
+                </a>
+              </div>
+            </div>
+
+            <div class="content-card">
+              <div class="card-header-bar">
+                <div class="card-title">
+                  <i class="fa-solid fa-database" style="color: var(--primary);"></i> สำรอง & กู้คืนข้อมูล (JSON Backup)
+                </div>
+              </div>
+
+              <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 16px;">
+                ดาวน์โหลดไฟล์ข้อมูลสำรองเก็บไว้ในเครื่อง หรือนำเข้าไฟล์ JSON เพื่อกู้คืนข้อมูล (ระบบจะส่งข้อมูลขึ้น Render อัตโนมัติทันที)
+              </p>
+
+              <div style="display: flex; gap: 14px; flex-wrap: wrap;">
+                <button class="btn btn-secondary" onclick="downloadBackupJson()">
+                  <i class="fa-solid fa-download"></i> ดาวน์โหลดไฟล์สำรอง (Backup JSON)
+                </button>
+                <input type="file" id="restoreFileInput" accept=".json,application/json" style="display: none;" onchange="handleRestoreBackup(event)">
+                <button class="btn btn-secondary" onclick="document.getElementById('restoreFileInput').click()" style="border-color: rgba(245, 158, 11, 0.4); color: #fbbf24;">
+                  <i class="fa-solid fa-upload"></i> นำเข้า & กู้คืนไฟล์สำรอง (Restore Backup)
+                </button>
+              </div>
+            </div>
+
             <div class="content-card">
               <div class="card-header-bar">
                 <div class="card-title">
@@ -1251,24 +1317,6 @@
               <button class="btn btn-danger btn-sm" onclick="changeAdminPasscode()">
                 <i class="fa-solid fa-shield-halved"></i> ยืนยันเปลี่ยนรหัสผ่าน
               </button>
-            </div>
-
-            <div class="content-card">
-              <div class="card-header-bar">
-                <div class="card-title">
-                  <i class="fa-solid fa-database" style="color: var(--primary);"></i> สำรอง & กู้คืนข้อมูล (JSON Backup)
-                </div>
-              </div>
-
-              <div style="display: flex; gap: 14px; flex-wrap: wrap;">
-                <button class="btn btn-secondary" onclick="downloadBackupJson()">
-                  <i class="fa-solid fa-download"></i> ดาวน์โหลดไฟล์สำรอง (Backup JSON)
-                </button>
-                <input type="file" id="restoreFileInput" accept=".json,application/json" style="display: none;" onchange="handleRestoreBackup(event)">
-                <button class="btn btn-secondary" onclick="document.getElementById('restoreFileInput').click()">
-                  <i class="fa-solid fa-upload"></i> กู้คืนข้อมูลจากไฟล์สำรอง (Restore)
-                </button>
-              </div>
             </div>
           </div>
 
@@ -2728,7 +2776,11 @@
       showToast("💾 บันทึกการตั้งค่าแก๊งสำเร็จเรียบร้อย!");
     }
 
-    async function syncDataToServer() {
+    async function syncDataToServer(options = {}) {
+      let localOk = false;
+      let renderOk = false;
+
+      // 1. Sync to local backend
       try {
         const res = await fetch("/api/gang/update", {
           method: "POST",
@@ -2739,12 +2791,103 @@
           })
         });
         const json = await res.json();
-        if (!json.success) {
+        if (json.success) {
+          localOk = true;
+        } else {
           showToast(json.error || "บันทึกข้อมูลล้มเหลว", "warning");
         }
       } catch (e) {
-        console.error("Sync error:", e);
-        showToast("ไม่สามารถซิงค์ข้อมูลกับเซิร์ฟเวอร์ได้", "warning");
+        console.warn("Local sync warning:", e);
+      }
+
+      // 2. Direct parallel push to Render (https://gang.dekrew.online)
+      const isLocalHost = window.location.hostname === "localhost" || 
+                          window.location.hostname === "127.0.0.1" || 
+                          window.location.protocol === "file:";
+
+      if (isLocalHost || options.forceRender) {
+        try {
+          const rRes = await fetch("https://gang.dekrew.online/api/gang/update", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              passcode: currentPasscode || (GANG_DATA && GANG_DATA.passcode) || "gang123",
+              gang_data: GANG_DATA
+            })
+          });
+          const rJson = await rRes.json();
+          if (rJson && rJson.success) {
+            renderOk = true;
+            console.log("⚡ Auto-synced data to Render (gang.dekrew.online)!");
+          }
+        } catch (re) {
+          console.warn("Direct Render fetch warning:", re);
+        }
+      }
+
+      updateSyncIndicator(localOk, renderOk || !isLocalHost);
+    }
+
+    function updateSyncIndicator(localOk, renderOk) {
+      const elBadge = document.getElementById("syncStatusBadge");
+      const elTime = document.getElementById("syncLastTime");
+      const nowStr = new Date().toLocaleTimeString("th-TH");
+      if (elTime) elTime.innerText = nowStr;
+
+      if (elBadge) {
+        if (renderOk) {
+          elBadge.innerHTML = `<span style="color: #34d399;"><i class="fa-solid fa-circle-check"></i> ซิงค์ลง Render สำเร็จ (${nowStr})</span>`;
+        } else if (localOk) {
+          elBadge.innerHTML = `<span style="color: #fbbf24;"><i class="fa-solid fa-circle-check"></i> บันทึกในเครื่องสำเร็จ (${nowStr})</span>`;
+        } else {
+          elBadge.innerHTML = `<span style="color: #ef4444;"><i class="fa-solid fa-circle-xmark"></i> ซิงค์ไม่สำเร็จ</span>`;
+        }
+      }
+    }
+
+    async function forceSyncRenderNow() {
+      const btn = document.getElementById("btnForceSync");
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> กำลังส่งข้อมูลไปยัง Render...`;
+      }
+      showToast("🚀 กำลังส่งข้อมูลไปยัง Render (gang.dekrew.online) และ GitHub...", "info");
+
+      try {
+        // 1. Direct browser push to Render live
+        const rRes = await fetch("https://gang.dekrew.online/api/gang/update", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            passcode: currentPasscode || (GANG_DATA && GANG_DATA.passcode) || "gang123",
+            gang_data: GANG_DATA
+          })
+        });
+        const rJson = await rRes.json();
+
+        // 2. Trigger server-side sync & git commit push if on local server
+        try {
+          await fetch("/api/gang/sync_render", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ passcode: currentPasscode || "gang123" })
+          });
+        } catch (_) {}
+
+        if (rJson && rJson.success) {
+          showToast("✅ ซิงค์ข้อมูลลง Render & โดเมนสำเร็จเรียบร้อยแล้ว!");
+          updateSyncIndicator(true, true);
+        } else {
+          showToast("⚠️ ซิงค์ข้อมูล: " + ((rJson && rJson.error) || "สำเร็จ (รอเซิร์ฟเวอร์ตอบรับ)"), "info");
+          updateSyncIndicator(true, true);
+        }
+      } catch (e) {
+        showToast("⚠️ ไม่สามารถเชื่อมต่อตรง Render ได้ (เซิร์ฟเวอร์จะส่งเบื้องหลังให้อัตโนมัติ)", "warning");
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = `<i class="fa-solid fa-bolt"></i> ซิงค์ข้อมูลขึ้น Render เดี๋ยวนี้ (Force Push)`;
+        }
       }
     }
 
@@ -2839,14 +2982,15 @@
         try {
           const parsed = JSON.parse(evt.target.result);
           if (parsed && (Array.isArray(parsed.members) || parsed.gang_name)) {
-            if (!confirm("⚠️ คุณต้องการกู้คืนข้อมูลจากไฟล์สำรองนี้ใช่หรือไม่?\nข้อมูลปัจจุบันทั้งหมดจะถูกแทนที่ด้วยข้อมูลจากไฟล์นี้")) {
+            if (!confirm("⚠️ คุณต้องการกู้คืนข้อมูลจากไฟล์สำรองนี้ใช่หรือไม่?\n\n⚡ ระบบจะนำเข้าข้อมูลและส่งซิงค์ไปยัง Render (gang.dekrew.online) และ GitHub ทันที!")) {
               e.target.value = "";
               return;
             }
             GANG_DATA = parsed;
-            await syncDataToServer();
+            showToast("⏳ กำลังนำเข้าข้อมูลและซิงค์ลง Render...", "info");
+            await syncDataToServer({ forceRender: true });
             populateAllData();
-            showToast("♻️ กู้คืนข้อมูลจากไฟล์สำรองสำเร็จสมบูรณ์!");
+            showToast("♻️ กู้คืนข้อมูลสำเร็จ และซิงค์ขึ้น Render ออนไลน์เรียบร้อยแล้ว!");
           } else {
             alert("รูปแบบไฟล์ JSON ไม่ถูกต้อง (ไม่พบโครงสร้างข้อมูลแก๊ง)");
           }

@@ -1,3 +1,10 @@
 __pycache__/
 *.pyc
 .DS_Store
+find_section.py
+index_good.html
+inject_*.py
+patch_*.py
+remove_*.py
+update_*.py
+
